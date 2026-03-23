@@ -17,10 +17,10 @@ type Report = {
 };
 
 type AxisProfile = {
-  social: number;   // -2 내향 ~ +2 외향
-  judgment: number; // -2 감정 ~ +2 사고
-  track: number;    // -2 문과 ~ +2 이과
-  style: number;    // -2 자유 ~ +2 책임
+  social: number;
+  judgment: number;
+  track: number;
+  style: number;
 };
 
 const QUESTIONS: string[] = [
@@ -443,13 +443,55 @@ function resolveResult(scores: Record<string, number>) {
   const profile = getAxisProfile(scores);
 
   let bestKey = "DEFAULT";
-  let bestDistance = Infinity;
+  let bestScore = -Infinity;
 
   Object.entries(PROFILE_TARGETS).forEach(([key, target]) => {
     if (key === "DEFAULT") return;
-    const distance = getProfileDistance(profile, target);
-    if (distance < bestDistance) {
-      bestDistance = distance;
+
+    const socialDiff = Math.abs(profile.social - target.social);
+    const judgmentDiff = Math.abs(profile.judgment - target.judgment);
+    const trackDiff = Math.abs(profile.track - target.track);
+    const styleDiff = Math.abs(profile.style - target.style);
+
+    let score =
+      100 -
+      socialDiff * 18 -
+      judgmentDiff * 18 -
+      trackDiff * 24 -
+      styleDiff * 22;
+
+    if (Math.sign(profile.social) === Math.sign(target.social)) score += 6;
+    if (Math.sign(profile.judgment) === Math.sign(target.judgment)) score += 6;
+    if (Math.sign(profile.track) === Math.sign(target.track)) score += 8;
+    if (Math.sign(profile.style) === Math.sign(target.style)) score += 8;
+
+    if (Math.abs(profile.social) > 1.0 && Math.abs(target.social) > 1.0) score += 3;
+    if (Math.abs(profile.judgment) > 1.0 && Math.abs(target.judgment) > 1.0) score += 3;
+    if (Math.abs(profile.track) > 1.0 && Math.abs(target.track) > 1.0) score += 4;
+    if (Math.abs(profile.style) > 1.0 && Math.abs(target.style) > 1.0) score += 4;
+
+    const scienceBias = scores.O - scores.M;
+    const extroBias = scores.E - scores.P;
+    const thinkBias = scores.C - scores.R;
+    const structureBias = scores.S - scores.F;
+
+    if (scienceBias > 8 && target.track > 0) score += 4;
+    if (scienceBias < -8 && target.track < 0) score += 4;
+
+    if (extroBias > 8 && target.social > 0) score += 3;
+    if (extroBias < -8 && target.social < 0) score += 3;
+
+    if (thinkBias > 8 && target.judgment > 0) score += 3;
+    if (thinkBias < -8 && target.judgment < 0) score += 3;
+
+    if (structureBias > 8 && target.style > 0) score += 3;
+    if (structureBias < -8 && target.style < 0) score += 3;
+
+    const distancePenalty = getProfileDistance(profile, target) * 2.2;
+    score -= distancePenalty;
+
+    if (score > bestScore) {
+      bestScore = score;
       bestKey = key;
     }
   });
@@ -1174,16 +1216,6 @@ function LandingScreen({
             </div>
 
             <div className="grid gap-4">
-              <div className="rounded-[30px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-2xl">
-                <div className="text-sm font-semibold text-sky-200">결과 미리보기</div>
-                <div className="mt-3 text-3xl font-black">문과 모범형 영재형</div>
-                <div className="mt-2 text-sm text-white/70">상위권 학습 잠재력 · 정밀 코칭형 리포트</div>
-                <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-7 text-white/90">
-                  통제보다 신뢰와 점검이 더 잘 맞고, 선행·심화와 체력·멘탈 관리까지
-                  함께 챙길 때 완성도가 높아지는 유형입니다.
-                </div>
-              </div>
-
               <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-lg">
                 <div className="text-sm font-semibold text-slate-500">이런 분께 잘 맞아요</div>
                 <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-700">
@@ -1191,6 +1223,15 @@ function LandingScreen({
                   <li>• 부모 상담용으로 정리된 결과 문구가 필요한 경우</li>
                   <li>• PDF로 저장해서 활용하고 싶은 경우</li>
                 </ul>
+              </div>
+
+              <div className="rounded-[30px] border border-slate-200 bg-gradient-to-br from-sky-50 to-violet-50 p-6 shadow-lg">
+                <div className="text-sm font-semibold text-slate-500">검사 특징</div>
+                <div className="mt-4 space-y-3 text-sm leading-7 text-slate-700">
+                  <p>• 80문항 기반으로 보다 세밀하게 성향을 분석합니다.</p>
+                  <p>• 학습 전략, 부모 코칭, 진로 방향까지 함께 제안합니다.</p>
+                  <p>• 결과 화면은 인쇄 및 PDF 저장용 리포트로 활용할 수 있습니다.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -1491,7 +1532,6 @@ export default function Page() {
   const previewResult = () => {
     setStep("result");
     setCurrentIndex(QUESTIONS.length - 1);
-
     setAnswers([
       1, 1, 1, 0, 0, 1, 0, 0, 1, 0,
       0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
