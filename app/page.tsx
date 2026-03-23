@@ -1,1043 +1,486 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 
-type Step = "landing" | "test" | "result";
+type ResultType =
+  | "분석탐구형"
+  | "성실축적형"
+  | "전략실행형"
+  | "관계소통형"
+  | "잠재성장형";
 
-type Report = {
+type Question = {
+  id: number;
+  text: string;
+  subtitle?: string;
+  yesScores: Partial<Record<ResultType, number>>;
+};
+
+type ResultMeta = {
   title: string;
-  subtitle: string;
+  keyword: string;
   summary: string;
-  strategy: string;
-  parent: string;
-  path: string;
-  danger: string;
-  talk: string;
-  color: string;
+  description: string;
+  strengths: string[];
+  growthTips: string[];
+  suitableStudy: string[];
+  colorFrom: string;
+  colorTo: string;
+  badgeBg: string;
+  accentText: string;
 };
 
-type AxisProfile = {
-  social: number;   // -2 내향 ~ +2 외향
-  judgment: number; // -2 감정 ~ +2 사고
-  track: number;    // -2 문과 ~ +2 이과
-  style: number;    // -2 자유 ~ +2 책임
+const RESULT_META: Record<ResultType, ResultMeta> = {
+  분석탐구형: {
+    title: "분석탐구형",
+    keyword: "논리와 구조를 통해 깊이 이해하는 유형",
+    summary:
+      "개념의 원리를 파악하고 체계적으로 정리할 때 가장 큰 학습 효율을 발휘합니다.",
+    description:
+      "분석탐구형은 단순 암기보다 ‘왜 그런가’를 이해할 때 학습 몰입도가 높아집니다. 문제의 구조를 해석하고 핵심 개념 간의 연결을 파악하는 능력이 뛰어나며, 스스로 학습 체계를 세울 때 강점을 보입니다. 깊이 있는 이해를 바탕으로 흔들리지 않는 실력을 쌓아가는 유형입니다.",
+    strengths: [
+      "개념과 원리를 구조적으로 이해하는 힘이 뛰어납니다.",
+      "복잡한 정보를 논리적으로 정리하는 능력이 좋습니다.",
+      "암기보다 이해 중심 학습에서 높은 성과를 냅니다.",
+    ],
+    growthTips: [
+      "이해한 내용을 한 문장으로 요약해보세요.",
+      "개념 간 연결도를 직접 그려보면 효과가 커집니다.",
+      "너무 오래 분석만 하지 않도록 문제 풀이와 병행하세요.",
+    ],
+    suitableStudy: [
+      "개념 정리 노트",
+      "오답 원인 분석",
+      "단원별 구조화 복습",
+    ],
+    colorFrom: "from-sky-500",
+    colorTo: "to-blue-700",
+    badgeBg: "bg-sky-50",
+    accentText: "text-sky-700",
+  },
+  성실축적형: {
+    title: "성실축적형",
+    keyword: "꾸준함과 반복을 통해 실력을 완성하는 유형",
+    summary:
+      "계획을 지키고 정해진 루틴을 지속할 때 안정적으로 성과를 만들어냅니다.",
+    description:
+      "성실축적형은 하루의 분량을 차분히 쌓아가며 실력을 완성하는 유형입니다. 급격한 변화보다 일관된 반복과 성실한 실행에서 강점이 드러나며, 기본기를 단단히 다지는 과정에서 높은 안정성을 보입니다. 시간이 지날수록 성장 곡선이 더욱 뚜렷해지는 유형입니다.",
+    strengths: [
+      "반복과 누적 학습에 매우 강합니다.",
+      "기초를 탄탄히 다지는 힘이 뛰어납니다.",
+      "학습 루틴을 유지하는 안정성이 높습니다.",
+    ],
+    growthTips: [
+      "작은 목표를 자주 달성하며 동기를 유지하세요.",
+      "기록형 체크리스트를 활용하면 성취감이 커집니다.",
+      "지나치게 보수적으로 가지 않도록 도전 문제도 섞어보세요.",
+    ],
+    suitableStudy: [
+      "루틴형 학습 계획표",
+      "반복 복습 시스템",
+      "체크리스트 기반 진도 관리",
+    ],
+    colorFrom: "from-emerald-500",
+    colorTo: "to-teal-700",
+    badgeBg: "bg-emerald-50",
+    accentText: "text-emerald-700",
+  },
+  전략실행형: {
+    title: "전략실행형",
+    keyword: "목표를 정하고 효율적으로 달성하는 유형",
+    summary:
+      "우선순위를 빠르게 정하고 핵심에 집중할 때 높은 성과를 냅니다.",
+    description:
+      "전략실행형은 목표 달성을 위해 필요한 과정을 빠르게 파악하고 실행으로 옮기는 능력이 뛰어난 유형입니다. 효율을 중시하며, 무엇을 먼저 해야 하는지 판단하는 감각이 좋습니다. 시간과 에너지를 효과적으로 분배할 줄 알기 때문에 실전형 학습에서 특히 강점을 보입니다.",
+    strengths: [
+      "목표 설정과 우선순위 판단이 빠릅니다.",
+      "핵심에 집중하는 효율성이 높습니다.",
+      "실전 감각과 문제 해결력이 좋습니다.",
+    ],
+    growthTips: [
+      "속도뿐 아니라 정확도 점검 루틴도 함께 두세요.",
+      "중장기 계획을 세분화하면 완성도가 더 높아집니다.",
+      "기본 개념 복습을 생략하지 않도록 주의하세요.",
+    ],
+    suitableStudy: [
+      "목표 역산형 계획",
+      "시간 제한 문제 풀이",
+      "핵심 개념 압축 정리",
+    ],
+    colorFrom: "from-violet-500",
+    colorTo: "to-fuchsia-700",
+    badgeBg: "bg-violet-50",
+    accentText: "text-violet-700",
+  },
+  관계소통형: {
+    title: "관계소통형",
+    keyword: "소통과 상호작용 속에서 성장하는 유형",
+    summary:
+      "함께 배우고 설명하며 피드백을 주고받을 때 학습 에너지가 극대화됩니다.",
+    description:
+      "관계소통형은 타인과의 상호작용 속에서 생각이 정리되고 이해가 깊어지는 유형입니다. 혼자만의 학습보다 질문하고 설명하며 피드백을 나누는 과정에서 강점이 살아납니다. 정서적 안정과 관계적 동기가 학습 성과에 긍정적으로 작용하는 유형입니다.",
+    strengths: [
+      "설명하고 나누는 과정에서 이해가 깊어집니다.",
+      "피드백 수용과 협업 능력이 좋습니다.",
+      "학습 동기를 관계 속에서 잘 유지합니다.",
+    ],
+    growthTips: [
+      "스터디나 발표형 복습을 활용해보세요.",
+      "질문을 메모해두었다가 함께 점검하면 좋습니다.",
+      "관계 의존이 커지지 않도록 개인 학습 시간도 확보하세요.",
+    ],
+    suitableStudy: [
+      "스터디 학습",
+      "설명형 복습",
+      "질문-답변 정리 노트",
+    ],
+    colorFrom: "from-rose-500",
+    colorTo: "to-pink-700",
+    badgeBg: "bg-rose-50",
+    accentText: "text-rose-700",
+  },
+  잠재성장형: {
+    title: "잠재성장형",
+    keyword: "가능성을 품고 크게 성장할 수 있는 유형",
+    summary:
+      "지금의 결과보다 앞으로의 확장 가능성이 더욱 기대되는 성장 잠재력이 높은 유형입니다.",
+    description:
+      "잠재성장형은 현재의 학습 패턴이 완전히 고정되어 있지 않지만, 적절한 환경과 방향을 만나면 빠르게 도약할 수 있는 유형입니다. 익숙한 방식에 갇히기보다 새로운 학습 자극과 맞춤형 전략을 통해 자신만의 강점을 발견할 가능성이 큽니다. 지금은 과정의 초입일 수 있지만, 앞으로의 성장 폭은 매우 인상적일 수 있습니다.",
+    strengths: [
+      "환경과 자극에 따라 빠르게 성장할 가능성이 큽니다.",
+      "숨은 강점을 발굴할 여지가 많습니다.",
+      "유연하게 새로운 학습 방식을 받아들일 수 있습니다.",
+    ],
+    growthTips: [
+      "작은 성공 경험을 자주 만들며 자신감을 키워주세요.",
+      "나에게 맞는 학습 방식을 비교하며 찾아보는 과정이 중요합니다.",
+      "꾸준한 기록을 통해 성장 변화를 시각화해보세요.",
+    ],
+    suitableStudy: [
+      "맞춤형 학습 실험",
+      "짧은 목표 달성 루틴",
+      "성장 기록 기반 피드백",
+    ],
+    colorFrom: "from-amber-400",
+    colorTo: "to-orange-600",
+    badgeBg: "bg-amber-50",
+    accentText: "text-amber-700",
+  },
 };
 
-const QUESTIONS: string[] = [
-  "정해진 규칙을 잘 지킨다는 소리를 듣는다",
-  "시험 보기 일주일 전부터는 봉사활동 등 학교의 다른 활동에 참여하지 않는다",
-  "모둠 과제 발표는 주로 내가 하며 적극적으로 내 의견을 주장한다",
-  "내 재능을 발전시킬 수 있는 책을 읽고 그 내용을 실천해 보았다",
-  "영화 내용을 이야기할 때 생각나는 장면과 등장 인물에 대해 먼저 말한다",
-  "일을 할 때, 사람들이 많이 사용하는 방법보다 내 방식대로 하는 경우가 많다",
-  "시험 준비를 하거나 숙제를 제출해야 할 때, 바로 전날이 되어야 준비가 잘 된다",
-  "개성이 강하고 좀 독특한 부분이 있어서 보통 사람들과 많이 다르다는 이야기를 자주 듣는다",
-  "다른 사람에 비해 친구를 쉽게 사귀고 친구가 많다",
-  "암기 과목을 좋아하며 성적도 좋다",
-  "추리하거나 생각한 것을 상황에 맞게 차근차근 잘 설명한다는 말을 듣는 것이 좋다",
-  "어떤 일이 벌어졌을 때 내 느낌대로 바로 결정하고 실행해도 결과가 좋다",
-  "집중력이 강하다",
-  "어떤 일이든 실수하는 것이 싫어서 시간이 많이 걸려도 천천히 한다",
-  "단어를 이용하는 게임을 잘한다",
-  "그냥 무조건 외우는 것보다 그렇게 된 이유를 아는 것이 더 재미있다",
-  "나의 감정을 글로 쓸 때 보통 짧은 문장으로 정확하게 표현한다",
-  "평소 어떤 일을 할 때 계획을 세우고 차례차례 실천한다",
-  "어떤 의견의 옳고 그름을 판단할 때, 그와 비슷한 예나 전문적인 자료를 보고 결정한다",
-  "영화 내용을 말할 때 등장 인물보다 주로 벌어진 사건에 대해 이야기한다",
-  "글을 쓸 때 여러 번 고쳐 가며 써서 시간이 오래 걸린다",
-  "노력한 것보다 결과가 좋지 않을 때가 자주 있다",
-  "미리 계획을 세우고 공부와 과제를 한다",
-  "감정보다 규칙에 따라 일을 처리하는 것을 중요하게 생각한다",
-  "숫자와 관계가 있는 게임을 잘한다",
-  "다른 사람을 설득할 때 보통 그 사람을 감동시키는 방법을 사용한다",
-  "일의 결과도 중요하지만 결과만큼 일을 하는 과정도 중요하다고 생각한다",
-  "중요한 의견을 나눌 때는 결론이 날 때까지 내가 회장이 된 것처럼 대화를 진행한다",
-  "시험을 보는 등 다른 사람에게 평가를 받는 것은 언제나 마음이 편하지 않다",
-  "다른 사람의 감정과 기분을 잘 이해한다",
-  "규칙에 따라 일을 하는 것이 훨씬 좋은 결과를 얻을 수 있다고 생각한다",
-  "일을 할 때 망설이지 않고 확실하게 결정하고 빠르게 진행한다",
-  "어떤 것을 결정할 때 내 생각보다 다른 사람들의 의견을 듣고 받아들일 때가 많다",
-  "내 감정을 한 단어로 분명하게 말하지 않고 비슷하게 표현하는 것이 더 좋다고 생각한다",
-  "옳고 그름을 판단할 때 그 일이나 행동이 발생하게 된 원인을 중요하게 생각한다",
-  "정해진 규칙대로 하지 않고 자유로운 분위기에서 생각하고 일을 하는 것이 훨씬 잘 된다",
-  "새로운 메뉴가 있으면 먼저 먹어 본다",
-  "사고하는 방식이 매우 새롭고 창의적이고 독특하다는 얘기를 듣는다",
-  "일을 할 때 꼭 정해진 시간 안에 해야 한다는 생각을 하지 않는다",
-  "다른 사람들의 입장에서 생각하고 판단하는 것을 정말 잘한다",
-  "설명을 듣는 것보다 문장을 읽고 이해하는 것이 더 쉽다",
-  "시험 기간이라도 하고 싶은 것이 있으면 이것저것 할 수 있다",
-  "중요한 결정을 할 때는 다른 사람의 생각보다 내 생각과 뜻에 따른다",
-  "시작한 일은 꼭 끝까지 하고 다른 일을 시작하려고 한다",
-  "결과가 마음에 안 들어도 그동안의 노력과 시간이 아까워서 포기하지 못한다",
-  "다른 사람을 설득할 때 전문가의 의견이나 사람들에게 인정 받은 자료를 사용한다",
-  "다른 사람들이 보았을 때 어지럽고 지저분한 내 책상도 사실은 내 방식대로 정리되어 있는 것이다",
-  "글을 쓸 때 그때그때 떠오르는 생각과 느낌을 바로 쓰고, 다시 고쳐 쓰는 일은 별로 없다",
-  "마음먹고 일을 하면 결과가 늘 만족스럽다",
-  "내 기분과 생각에 따라 대화 중간에 대화 내용이 바뀌기도 한다",
-  "내 생각과 다르더라도 여러 사람들의 의견이 같으면 그 의견에 따른다",
-  "시험 시작 바로 전에 공부해도 가끔씩 성적이 좋다",
-  "사람마다 성격, 취향 등 개성이 다른 것을 인정한다",
-  "결과가 마음에 안 들면 처음부터 다시 시작한다",
-  "도표나 간단한 공식 등을 이용하여 설명해 주면 이해하기가 쉽다",
-  "사람을 만날 때 첫인상과 느낌이 중요하다",
-  "내 의견과 다르면 많은 사람들이 찬성하는 의견이라도 받아들이기가 싫다",
-  "여행할 때는 미리 철저하게 준비하고 계획을 세워서 여행 도중에 실수하는 일이 없도록 한다",
-  "수업 중 모르는 것은 보통 적극적으로 질문한다",
-  "시간을 허비하지 않고 계획을 세워서 잘 사용한다",
-  "질문하는 것이 쑥스러워서 모르는 것이 있어도 혼자 해결하려고 한다",
-  "정해진 규칙대로 하지 않고 자유롭게 하라고 하면 오히려 어렵다",
-  "책상 정리가 잘 되어 있을 때 공부가 잘 된다고 생각한다",
-  "내 판단과 결정은 대부분 옳다고 생각한다",
-  "오래 집중하는 것을 잘 못한다",
-  "나에 대한 이야기 중에서 성실하다는 말을 가장 많이 듣는다",
-  "일을 할 때 과정보다 결과에 더 신경을 쓴다",
-  "차근차근 일을 하지 않고 한꺼번에 몰아서 하면 결과가 안 좋을 때가 많다",
-  "많은 사람들이 옳다고 생각하는 정정당당한 평가를 좋아한다",
-  "자주 먹어서 잘 알고 있는 음식이 좋다",
-  "나보다 잘난 사람을 보면 그 사람을 닮고 싶어서 노력하게 된다",
-  "칭찬은 나를 더욱 힘이 나게 하는 가장 큰 선물이다",
-  "시작한 일을 끝내지 못하고 새로운 일을 시작하는 경우가 많다",
-  "발표보다는 자료를 찾고 모아서 발표 자료를 만드는 일에 관심이 많다",
-  "새로운 친구를 사귀는 데 시간이 좀 오래 걸린다",
-  "한 일에 대해 다른 사람들의 칭찬을 받는 것도 좋지만 내가 만족스러운 것이 더 좋다",
-  "내가 바르고 정직하며 인성교육이 잘 되어 있다는 평가를 받는 것이 좋다",
-  "판단하고 결정할 때 항상 다른 사람들의 의견을 따른다",
-  "계획대로 여행하지 않고 그때 기분과 상황에 따라 여행 계획을 바꾸기도 한다",
-  "사람마다 성격과 취향이 다르기 마련이므로 다른 사람들의 방법을 따라하고 싶지는 않다",
+/**
+ * =========================================================
+ * 문항 데이터
+ * ---------------------------------------------------------
+ * 아래는 "형식 예시"야.
+ * 네 실제 채점표에 맞게 text / yesScores만 교체하면 바로 적용됨.
+ *
+ * 규칙:
+ * - 그렇다 => yesScores에 적힌 점수 반영
+ * - 아니다 => 0점
+ * =========================================================
+ */
+const QUESTIONS: Question[] = [
+  {
+    id: 1,
+    text: "새로운 내용을 배울 때, 먼저 원리와 구조를 이해해야 마음이 놓인다.",
+    subtitle: "이해 중심 학습 선호",
+    yesScores: { 분석탐구형: 3 },
+  },
+  {
+    id: 2,
+    text: "하루 분량을 정해 꾸준히 해나가는 방식이 가장 잘 맞는다.",
+    subtitle: "루틴과 반복에 강함",
+    yesScores: { 성실축적형: 3 },
+  },
+  {
+    id: 3,
+    text: "공부할 때 무엇을 먼저 해야 할지 우선순위를 빠르게 정하는 편이다.",
+    subtitle: "효율과 실행 중심",
+    yesScores: { 전략실행형: 3 },
+  },
+  {
+    id: 4,
+    text: "누군가와 함께 이야기하거나 설명할 때 더 잘 이해된다.",
+    subtitle: "상호작용형 학습 선호",
+    yesScores: { 관계소통형: 3 },
+  },
+  {
+    id: 5,
+    text: "아직 완전히 내 공부 스타일을 찾지는 못했지만, 잘 맞는 방법을 만나면 크게 성장할 것 같다.",
+    subtitle: "성장 가능성 중심",
+    yesScores: { 잠재성장형: 3 },
+  },
+  {
+    id: 6,
+    text: "문제를 틀리면 정답만 보는 것보다 왜 틀렸는지 분석하는 편이다.",
+    subtitle: "오답의 구조를 파악함",
+    yesScores: { 분석탐구형: 2, 전략실행형: 1 },
+  },
+  {
+    id: 7,
+    text: "정해진 계획을 크게 벗어나지 않고 차근차근 따라가는 것이 편하다.",
+    subtitle: "안정적 누적형 학습",
+    yesScores: { 성실축적형: 2 },
+  },
+  {
+    id: 8,
+    text: "중요한 것과 덜 중요한 것을 빨리 구분하는 편이다.",
+    subtitle: "핵심 파악 능력",
+    yesScores: { 전략실행형: 2 },
+  },
+  {
+    id: 9,
+    text: "질문하거나 대화하면서 공부하면 동기부여가 더 잘 된다.",
+    subtitle: "관계적 에너지",
+    yesScores: { 관계소통형: 2 },
+  },
+  {
+    id: 10,
+    text: "지금 당장은 조금 흔들려도, 방향만 잘 잡히면 금방 성장할 자신이 있다.",
+    subtitle: "잠재 역량과 확장성",
+    yesScores: { 잠재성장형: 2 },
+  },
+  {
+    id: 11,
+    text: "개념끼리 연결되는 흐름을 파악하면 오래 기억된다.",
+    subtitle: "개념 연결형 사고",
+    yesScores: { 분석탐구형: 2 },
+  },
+  {
+    id: 12,
+    text: "한 번에 몰아서 하기보다 정해진 패턴으로 반복하는 것이 효과적이다.",
+    subtitle: "지속형 습관 학습",
+    yesScores: { 성실축적형: 2 },
+  },
+  {
+    id: 13,
+    text: "시험이나 과제를 앞두면 목표를 세우고 효율적으로 움직이는 편이다.",
+    subtitle: "실전 대응력",
+    yesScores: { 전략실행형: 2 },
+  },
+  {
+    id: 14,
+    text: "친구나 선생님과의 피드백이 공부에 큰 도움이 된다.",
+    subtitle: "피드백 수용형",
+    yesScores: { 관계소통형: 2 },
+  },
+  {
+    id: 15,
+    text: "내게 맞는 방식이 정리되면 이전보다 훨씬 빠르게 발전할 수 있을 것 같다.",
+    subtitle: "가파른 성장 잠재력",
+    yesScores: { 잠재성장형: 2 },
+  },
 ];
 
-const SCORE_MAP: Record<string, number>[] = [
-  { O: 1 }, { O: 5 }, { E: 5 }, { S: 3 }, { C: 5 }, { M: 5 }, { F: 5 }, { F: 5 }, { E: 3 }, { C: 5 },
-  { S: 3 }, { F: 5 }, { E: 5 }, { P: 5 }, { C: 5 }, { R: 5 }, { R: 3 }, { S: 5 }, { R: 3 }, { R: 1 },
-  { O: 5 }, { O: 5 }, { S: 5 }, { R: 5 }, { R: 5 }, { C: 5 }, { C: 1 }, { M: 5 }, { P: 5 }, { C: 3 },
-  { O: 5 }, { E: 5 }, { O: 3 }, { C: 5 }, { C: 3 }, { M: 3 }, { M: 1 }, { M: 5 }, { P: 3 }, { R: 5 },
-
-  { C: 5 }, { M: 5 }, { M: 5 }, { S: 5 }, { P: 3 }, { R: 5 }, { M: 5 }, { M: 3 }, { M: 3 }, { O: 3 },
-  { O: 5 }, { F: 5 }, { F: 1 }, { E: 3 }, { R: 5 }, { C: 3 }, { M: 5 }, { O: 5 }, { E: 5 }, { E: 3 },
-  { P: 5 }, { O: 5 }, { O: 3 }, { E: 5 }, { P: 5 }, { S: 5 }, { R: 3 }, { S: 5 }, { E: 3 }, { O: 3 },
-  { S: 3 }, { S: 3 }, { F: 5 }, { P: 3 }, { P: 3 }, { F: 5 }, { F: 3 }, { P: 5 }, { M: 3 }, { F: 3 },
+const RESULT_ORDER: ResultType[] = [
+  "분석탐구형",
+  "성실축적형",
+  "전략실행형",
+  "관계소통형",
+  "잠재성장형",
 ];
 
-const CHOICES = [
-  { label: "그렇다", value: 1 },
-  { label: "아니다", value: 0 },
-];
-
-const RESULT_DB: Record<string, Report> = {
-  ERMS: {
-    title: "이과 창의적영재형",
-    subtitle: "1% 미만",
-    summary: "이과적 두뇌와 창의적 사고가 매우 뛰어나며, 상위권을 넘어 특출한 성취 가능성을 지닌 유형입니다.",
-    strategy: "자기주도성이 강하므로 학생의 의견을 중심으로 학습 방향을 설계하되, 내신·대회·전형 정보를 균형 있게 관리하는 것이 좋습니다. 선행·심화 학습과 결과물 중심 활동이 잘 맞습니다.",
-    parent: "통제보다 신뢰와 지원이 효과적입니다. 일반적인 학습 환경보다 수준이 맞는 집단에서 더 크게 성장할 가능성이 높습니다.",
-    path: "서울대, 카이스트, 포항공대, 의학·공학·자연과학 계열과 잘 맞습니다.",
-    danger: "개인적 특성이 강해 일반적인 학습 분위기와 맞지 않을 수 있으며, 맞지 않는 환경에서는 흥미가 크게 떨어질 수 있습니다.",
-    talk: "‘왜 그렇게 생각했는지 설명해볼래?’처럼 사고를 확장시키는 질문형 대화가 효과적입니다.",
-    color: "#2563eb",
-  },
-  ERMF: {
-    title: "이과 영재형",
-    subtitle: "3% 미만",
-    summary: "특정 과목에서 매우 높은 성취 가능성을 보이며, 관심 분야에서는 압도적 몰입을 보일 수 있는 유형입니다.",
-    strategy: "관심 과목의 강점을 유지하면서도 시작한 일을 성과물로 연결할 수 있도록 고른 학습과 마무리 습관을 함께 설계하는 것이 중요합니다.",
-    parent: "흥미 중심의 몰입이 강한 유형이므로 균형 잡힌 스펙 관리와 학습 리듬 유지에 도움을 주는 것이 좋습니다.",
-    path: "수학, 물리, 전자, 발명, IT·연구 계열과 잘 맞습니다.",
-    danger: "흥미가 넓고 시작이 빠른 만큼, 마무리와 꾸준함이 약해지면 성과가 불안정해질 수 있습니다.",
-    talk: "‘잘하는 걸 살리면서, 끝까지 연결되는 경험을 같이 만들어보자’는 접근이 효과적입니다.",
-    color: "#0f766e",
-  },
-  eROS: {
-    title: "이과모범형",
-    subtitle: "4%~10% 미만",
-    summary: "이과 성향과 자기관리 능력이 함께 강한 유형으로, 안정적인 상위권 전략이 잘 맞습니다.",
-    strategy: "내신과 모의고사를 고르게 관리하며, 시험 불안과 외부 활동으로 인한 리듬 흔들림만 잘 조절하면 강점을 꾸준히 유지할 수 있습니다.",
-    parent: "학생의 학습 방식을 존중해도 무난하지만, 친구 관계나 외부 활동이 학습 흐름을 방해하지 않도록 점검이 필요합니다.",
-    path: "SKY, 의·치·한의대, 자연과학, 공학, 수의학 계열과 잘 맞습니다.",
-    danger: "적극적인 성향 때문에 학습보다 관계와 활동에 에너지가 분산될 수 있습니다.",
-    talk: "‘지금의 리듬만 잘 지키면 충분히 좋은 결과로 이어질 수 있어’라는 식의 안정감 있는 대화가 좋습니다.",
-    color: "#0891b2",
-  },
-  pROS: {
-    title: "(수동적) 이과 모범형",
-    subtitle: "4%~10% 미만",
-    summary: "성실함과 인내심을 바탕으로 상위권을 안정적으로 유지하는 유형입니다.",
-    strategy: "개념 정리와 실수 관리, 시험 불안 조절이 중요하며, 보다 적극적인 활동 경험과 리더십 기회를 함께 쌓으면 성장 폭이 커집니다.",
-    parent: "실력은 충분하지만 자기표현과 존재감이 약할 수 있으므로, 안정감을 해치지 않는 선에서 경험의 폭을 넓혀주는 것이 좋습니다.",
-    path: "SKY, 지방의대, 자연과학, 공학, 수의학, 약학 계열과 잘 맞습니다.",
-    danger: "실수 하나에 흔들리면 멘탈 영향이 큰 편이라, 쉬운 부분에서의 실수 관리가 중요합니다.",
-    talk: "‘네가 차분히 쌓아온 힘이 크다, 이제 그 강점을 조금 더 드러내 보자’는 식의 대화가 좋습니다.",
-    color: "#0284c7",
-  },
-  PRMf: {
-    title: "이과 뺀질이형",
-    subtitle: "20% 미만",
-    summary: "수학·과학 등 특정 과목에서는 강점을 보이지만, 흥미 없는 과목은 쉽게 놓칠 수 있는 유형입니다.",
-    strategy: "절대 학습시간 확보, 감독이 있는 환경, 선호 과목의 성과를 전체 학습 동기로 연결하는 구조가 필요합니다.",
-    parent: "자유도가 큰 환경보다 책임감이 생기는 환경이 더 적합합니다. 결과물 중심 경험이 학습 전체를 끌어올리는 데 도움이 됩니다.",
-    path: "이공계열, 논술·정시 전략, IT 분야 사업·연구·CEO 계열과 연결될 수 있습니다.",
-    danger: "좋아하는 과목만 밀고 나가다 전체 성적의 균형이 무너질 수 있습니다.",
-    talk: "‘짧게라도 좋으니, 끝까지 가는 힘을 같이 만들어보자’는 식의 대화가 좋습니다.",
-    color: "#7c3aed",
-  },
-  EROF: {
-    title: "외향적 이과뺀질형",
-    subtitle: "20% 미만",
-    summary: "관심 있는 과목에서는 번뜩이는 성과를 보이지만, 주변 환경의 영향을 크게 받는 유형입니다.",
-    strategy: "통제적 환경, 선택과 집중, 소규모 팀 속 책임감 경험이 효과적이며, 관심 분야의 구체적 결과물이 전체 성적 향상에 시너지를 줄 수 있습니다.",
-    parent: "환경에 따라 결과 차이가 커질 수 있어, 학습 공간과 함께하는 집단을 신중히 선택하는 것이 중요합니다.",
-    path: "자유전공, 자연과학, 건축, IT 마케팅, 이공계 연구 계열과 잘 맞습니다.",
-    danger: "많은 일을 시작하지만 끝맺음이 약해 성과가 분산될 수 있습니다.",
-    talk: "‘환경을 잘 고르면 네 강점이 훨씬 크게 드러날 수 있어’라는 식의 코칭이 효과적입니다.",
-    color: "#9333ea",
-  },
-  PROS: {
-    title: "이과 잠재성장형",
-    subtitle: "70% 내외",
-    summary: "현재 강점이 선명하게 드러나지 않았더라도, 기초를 차분히 쌓을수록 성장 가능성이 커지는 유형입니다.",
-    strategy: "선행보다 내신 중심으로 접근하고, 한 과목씩 성취 경험을 만드는 방식이 효과적입니다. 절대 시간보다 집중 시간을 늘리는 전략이 중요합니다.",
-    parent: "비교보다 작은 성공 경험의 축적이 중요합니다. 선호 과목에서 자신감을 회복하게 하면 전체 학습에도 긍정적인 영향을 줄 수 있습니다.",
-    path: "간호, 사범, 이과대학, 교사·간호사·물리치료사·약사 계열과 잘 맞습니다.",
-    danger: "막연한 목표만 세우면 쉽게 지치거나 포기할 수 있어, 단계적 목표 설계가 필요합니다.",
-    talk: "‘이번에는 이 한 가지를 끝내보자’처럼 작고 분명한 목표를 제시하는 대화가 효과적입니다.",
-    color: "#ea580c",
-  },
-  ECMf: {
-    title: "문과 창의적영재형",
-    subtitle: "1% 미만",
-    summary: "문과 성향의 창의성과 표현력이 매우 강하며, 차별화된 결과물을 만들 가능성이 높은 유형입니다.",
-    strategy: "관심 분야의 심화 학습과 함께 특기·논술·대회·동아리 결과물을 꾸준히 쌓는 방식이 잘 맞습니다.",
-    parent: "다름을 교정하려 하기보다, 개성과 창의성이 실제 성과로 연결되도록 구조를 만들어주는 것이 중요합니다.",
-    path: "어문, 언론정보, 연극영화, 광고, 방송PD, 게임기획 계열과 잘 맞습니다.",
-    danger: "산만함과 엉뚱함이 강점이 되기도 하지만, 실행 리듬이 무너지면 결과가 불안정할 수 있습니다.",
-    talk: "‘네 생각을 결과물로 보여줄 방법을 같이 찾아보자’는 접근이 좋습니다.",
-    color: "#db2777",
-  },
-  ECMs: {
-    title: "문과 모범형 영재형",
-    subtitle: "2% 미만",
-    summary: "전교권 수준의 안정된 성과와 자기관리 능력을 함께 갖춘 이상적인 문과 영재형입니다.",
-    strategy: "학생 스스로도 잘 이끌어가는 편이므로 신뢰를 기반으로 하되, 선행·심화와 체력·멘탈 관리까지 함께 챙기면 완성도가 높아집니다.",
-    parent: "과한 개입보다 신뢰와 점검이 적합합니다. 우수한 멘토와의 간헐적 코칭이 효과적일 수 있습니다.",
-    path: "SKY, 한의대(문과), 경영·행정·신문방송·법조·외교관 계열과 잘 맞습니다.",
-    danger: "완벽주의와 부담감이 누적될 경우 번아웃 위험이 있습니다.",
-    talk: "‘지금도 충분히 잘 가고 있고, 네 속도를 믿는다’는 메시지가 중요합니다.",
-    color: "#2563eb",
-  },
-  ECoS: {
-    title: "내성적 문과영재형",
-    subtitle: "3% 미만",
-    summary: "언어·외국어 영역의 강점과 깊이 있는 사고를 함께 지닌 문과 상위권 유형입니다.",
-    strategy: "심화·선행 학습과 토론·발표 기회를 함께 주되, 계획을 실제 행동으로 연결하는 실천 습관을 보완하는 것이 중요합니다.",
-    parent: "조용하지만 수준이 높은 편입니다. 겉으로 드러나지 않는 실행 부족을 세심하게 관리해주면 크게 성장할 수 있습니다.",
-    path: "SKY, 어문, 정치외교, 신문방송, 법조, 언론, 외교관 계열과 잘 맞습니다.",
-    danger: "실력에 비해 실행력이 떨어지면 결과가 기대만큼 드러나지 않을 수 있습니다.",
-    talk: "‘생각의 깊이는 충분하니, 이제 그걸 실천으로 연결해보자’는 식의 대화가 효과적입니다.",
-    color: "#7c3aed",
-  },
-  pCOS: {
-    title: "(내성적) 문과 모범형",
-    subtitle: "4%~10% 미만",
-    summary: "자기주도성과 계획 실행의 균형이 좋은 내성적 상위권 문과형입니다.",
-    strategy: "내신 최상위권 유지, 시험 불안 관리, 개념 정리, 규칙적인 멘토링이 효과적입니다.",
-    parent: "지나친 간섭보다 정기적인 대화와 점검이 적합합니다. 차분한 성향을 해치지 않는 방식이 좋습니다.",
-    path: "SKY, 경영, 경제, 행정, 교대, 법조, 교수, 고위직 공무원 계열과 잘 맞습니다.",
-    danger: "내성적 성향 때문에 도움 요청 시점을 놓칠 수 있습니다.",
-    talk: "‘혼자 감당하지 말고, 막히는 지점을 같이 보자’는 태도가 좋습니다.",
-    color: "#0284c7",
-  },
-  eCOS: {
-    title: "문과모범형B",
-    subtitle: "4%~10% 미만",
-    summary: "상위권 성적을 안정적으로 유지하면서 리더십과 대외 활동 역량도 함께 갖춘 유형입니다.",
-    strategy: "내신 유지와 활동 경험을 균형 있게 관리하면 강점이 잘 살아납니다. 시험 불안 관리도 중요합니다.",
-    parent: "학습 방식은 비교적 안정적이므로, 멘탈과 리듬 유지에 집중해서 도와주는 것이 좋습니다.",
-    path: "SKY, 서·성·한, 정치외교, 경영, 신문방송, 기자, PD, 외교관, 정치인 계열과 잘 맞습니다.",
-    danger: "관계와 활동 에너지가 큰 만큼, 자신의 학습 리듬이 흐트러질 수 있습니다.",
-    talk: "‘리더십도 좋지만, 네 페이스를 먼저 지키는 게 중요해’라는 식의 대화가 효과적입니다.",
-    color: "#059669",
-  },
-  PCMs: {
-    title: "(외향적) 문과뺀질이형",
-    subtitle: "20% 미만",
-    summary: "관심 과목에서는 강점을 보이지만, 관계 에너지와 분위기의 영향을 크게 받는 유형입니다.",
-    strategy: "관심 과목 결과물을 만들어 동기로 삼고, 균형 잡힌 과목 관리와 절대 학습시간 확보가 필요합니다.",
-    parent: "분위기에 휩쓸리지 않도록 관리형 환경을 만들어 주는 것이 중요합니다. 말보다 행동 점검이 더 효과적입니다.",
-    path: "신문방송, 정치, 호텔경영, PD, 엔터테인먼트, 통역, 여행 관련 분야와 잘 맞습니다.",
-    danger: "자기통제가 약해질 경우 공부보다 관계와 분위기에 더 많은 에너지를 쓸 수 있습니다.",
-    talk: "‘얼마나 했는지 숫자와 결과로 같이 확인해보자’는 방식이 좋습니다.",
-    color: "#9333ea",
-  },
-  PCmF: {
-    title: "(내향적) 문과 뺀질이",
-    subtitle: "20% 미만",
-    summary: "조용하지만 관심 분야에는 강하게 몰입하며, 학습 균형과 마무리 능력이 핵심인 유형입니다.",
-    strategy: "통제적 환경, 절대 학습시간 확보, 관심 분야 성과물을 전체 성적 향상의 발판으로 활용하는 것이 중요합니다.",
-    parent: "겉으로 드러나지 않아 방심하기 쉽지만, 조용히 흐트러질 수 있어 세심한 관찰과 점검이 필요합니다.",
-    path: "자유전공, 철학, 애니메이션, 사학, 문헌정보, 방송·도서·창작 관련 분야와 잘 맞습니다.",
-    danger: "시작은 하지만 끝맺음이 약해 성과로 연결되지 못할 수 있습니다.",
-    talk: "‘조용히 잘하고 있는 것도 좋지만, 끝까지 간 걸 함께 확인하자’는 식의 대화가 좋습니다.",
-    color: "#a21caf",
-  },
-  PCOF: {
-    title: "문과 잠재성장형",
-    subtitle: "70% 내외",
-    summary: "현재 강점이 뚜렷하게 드러나지 않은 상태일 수 있지만, 차분한 기반 위에서 성장 가능성이 큰 유형입니다.",
-    strategy: "선행보다 내신 중심 학습이 적합하며, 선호 과목에서 먼저 성취감을 만들고 단계적 목표를 통해 자신감을 회복하는 것이 중요합니다.",
-    parent: "비교보다 성취 경험의 축적이 우선입니다. 작은 성공을 반복적으로 경험하게 해주는 것이 가장 효과적입니다.",
-    path: "아동, 심리, 사범, 사회복지, 유치원교사, 상담, 교육 관련 계열과 잘 맞습니다.",
-    danger: "구체적 목표 의식이 부족하면 막연한 계획만 세우고 쉽게 지칠 수 있습니다.",
-    talk: "‘이번엔 어디까지 해냈는지 같이 확인하자’처럼 작고 구체적인 성취를 짚어주는 대화가 좋습니다.",
-    color: "#ea580c",
-  },
-  ErMS: {
-    title: "문·이과 혼합 영재형",
-    subtitle: "4% 미만",
-    summary: "문·이과 전 영역을 두루 소화할 수 있는 융합형 상위권 영재입니다.",
-    strategy: "전 과목을 고르게 유지하면서도, 시작한 일을 결과물로 연결하는 훈련이 중요합니다.",
-    parent: "산만함과 독특함을 약점으로 보기보다, 강점으로 연결될 수 있도록 마무리와 집중만 잘 도와주는 것이 좋습니다.",
-    path: "자유전공, 국제통상, 통계, 건축, 행정, 외교, 한의학, 예술 융합 계열과 잘 맞습니다.",
-    danger: "관심사가 넓어 선택과 집중이 흐려질 수 있습니다.",
-    talk: "‘잘하는 게 많은 만큼, 우선순위를 같이 정해보자’는 식의 대화가 효과적입니다.",
-    color: "#0f766e",
-  },
-  erOS: {
-    title: "문·이과 혼합 모범형",
-    subtitle: "10% 미만",
-    summary: "문·이과를 모두 무난하게 해내며 실리적으로 성과를 쌓는 안정형 상위권입니다.",
-    strategy: "내신, 활동, 시험 리듬을 균형 있게 유지하면 가장 효율적으로 성장할 수 있습니다.",
-    parent: "적극적인 성향으로 인해 활동과 관계 에너지가 커질 수 있으니, 학습 리듬만 잘 잡아주면 좋습니다.",
-    path: "사회과학, 경제, 자연과학, 한의학, 수의학, 통계, 공무원, 교사, 변호사 계열과 잘 맞습니다.",
-    danger: "다 잘하려다 체력과 집중력이 먼저 떨어질 수 있습니다.",
-    talk: "‘잘하고 있는 것 중 꼭 챙길 것만 남기자’는 식의 정리형 대화가 좋습니다.",
-    color: "#0891b2",
-  },
-  PrmS: {
-    title: "문·이과 혼합 수동적모범형",
-    subtitle: "10% 미만",
-    summary: "성실성과 안정감으로 꾸준한 상위권을 지키는 혼합형 학생입니다.",
-    strategy: "개념 정리, 시험 불안 관리, 보다 적극적인 대외 활동 경험이 성장 포인트입니다.",
-    parent: "실력은 있으나 자기주장이 약할 수 있어, 리더십과 발표 경험을 조금씩 쌓게 해주는 것이 좋습니다.",
-    path: "경영, 경제, 응용통계, 회계, 간호, 교대, 약사, 공무원, 회계사, 작가 계열과 잘 맞습니다.",
-    danger: "실력에 비해 존재감이 약해 기회를 놓칠 수 있습니다.",
-    talk: "‘네가 해온 걸 드러내는 연습도 중요한 실력이다’라고 말해주는 것이 좋습니다.",
-    color: "#0284c7",
-  },
-  PrMF: {
-    title: "문·이과 혼합 뺀질이형",
-    subtitle: "20% 미만",
-    summary: "관심 과목만 잘하는 편차형이지만, 융합적 재능과 아이디어가 살아 있는 유형입니다.",
-    strategy: "균형 잡힌 과목 관리, 감독이 있는 환경, 관심 분야 결과물을 전체 성적으로 연결하는 전략이 중요합니다.",
-    parent: "통제적 환경과 마무리 점검이 필요합니다. 시작은 빠르지만 끝까지 가는 힘을 만들어주는 것이 핵심입니다.",
-    path: "자유전공, 건축, 자연과학, 철학, 어문, 방송 관련 직종, 프리랜서 계열과 잘 맞습니다.",
-    danger: "분야를 넘나드는 재능이 오히려 산만함으로 보일 수 있습니다.",
-    talk: "‘재능은 충분하니, 이제 끝까지 연결하는 힘을 같이 만들자’는 식의 대화가 효과적입니다.",
-    color: "#7c3aed",
-  },
-  PrOF: {
-    title: "융합 잠재성장형",
-    subtitle: "70% 내외",
-    summary: "현재 특별히 두드러진 과목이 없더라도, 생활 속 훈련과 경험에 따라 성장 폭이 크게 달라질 수 있는 유형입니다.",
-    strategy: "선행보다 내신 중심으로 접근하고, 선택과 집중을 통해 작은 성취 경험을 반복적으로 만드는 것이 중요합니다.",
-    parent: "막연한 기대보다 단계적 목표가 필요합니다. 선호 과목에서 자신감을 얻으면 다른 과목으로도 확장될 가능성이 높습니다.",
-    path: "심리, 사범, 사회복지, 건축, 간호, 식품영양, 의상, 상담·교육·영양 관련 분야와 잘 맞습니다.",
-    danger: "구체적 목표가 없으면 쉽게 무기력해질 수 있어, 구조화된 루틴이 필요합니다.",
-    talk: "‘오늘은 이 한 가지를 끝내보자’처럼 아주 작고 선명한 목표를 주는 대화가 효과적입니다.",
-    color: "#ea580c",
-  },
-  DEFAULT: {
-    title: "학습성향 분석 결과",
-    subtitle: "기본 리포트",
-    summary: "현재 입력된 응답을 바탕으로 가장 가까운 학습 성향으로 분류한 결과입니다.",
-    strategy: "기본 학습 루틴을 먼저 안정화하고, 강점 과목을 중심으로 성취 경험을 늘리는 것이 좋습니다.",
-    parent: "아이의 성향을 바꾸려 하기보다, 현재 방식에 맞는 환경과 전략을 함께 찾는 접근이 효과적입니다.",
-    path: "상세 결과 DB 확장에 따라 더 정밀한 추천으로 연결될 수 있습니다.",
-    danger: "강점이 선명하지 않을수록 비교의 영향을 더 크게 받을 수 있습니다.",
-    talk: "‘네 방식에 맞는 방법을 같이 찾아가자’는 접근이 좋습니다.",
-    color: "#475569",
-  },
+const INITIAL_SCORES: Record<ResultType, number> = {
+  분석탐구형: 0,
+  성실축적형: 0,
+  전략실행형: 0,
+  관계소통형: 0,
+  잠재성장형: 0,
 };
-
-const PROFILE_TARGETS: Record<string, AxisProfile> = {
-  ERMS: { social: 1.8, judgment: 1.6, track: 2.0, style: -0.5 },
-  ERMF: { social: 1.2, judgment: 1.2, track: 1.8, style: -1.2 },
-  eROS: { social: 1.0, judgment: 1.4, track: 1.5, style: 1.4 },
-  pROS: { social: -1.0, judgment: 1.3, track: 1.5, style: 1.7 },
-  PRMf: { social: -0.5, judgment: 1.2, track: 1.3, style: -1.5 },
-  EROF: { social: 1.7, judgment: 0.8, track: 1.2, style: -1.7 },
-  PROS: { social: -0.8, judgment: 0.8, track: 1.0, style: 1.0 },
-
-  ECMf: { social: 0.8, judgment: -1.2, track: -2.0, style: -1.0 },
-  ECMs: { social: 1.0, judgment: -0.5, track: -1.8, style: 1.8 },
-  ECoS: { social: -1.8, judgment: -0.8, track: -1.7, style: 1.0 },
-  pCOS: { social: -1.3, judgment: 0.2, track: -1.4, style: 1.6 },
-  eCOS: { social: 1.5, judgment: -0.2, track: -1.2, style: 1.3 },
-  PCMs: { social: 1.8, judgment: -0.8, track: -1.0, style: -1.7 },
-  PCmF: { social: -1.4, judgment: -0.5, track: -1.0, style: -1.7 },
-  PCOF: { social: -0.8, judgment: -0.8, track: -0.8, style: -0.8 },
-
-  ErMS: { social: 0.8, judgment: 0.5, track: 0.0, style: -0.4 },
-  erOS: { social: 0.6, judgment: 0.6, track: 0.0, style: 1.3 },
-  PrmS: { social: -0.8, judgment: 0.5, track: 0.0, style: 1.6 },
-  PrMF: { social: -0.2, judgment: 0.2, track: 0.0, style: -1.6 },
-  PrOF: { social: -0.5, judgment: -0.2, track: 0.0, style: -0.5 },
-
-  DEFAULT: { social: 0, judgment: 0, track: 0, style: 0 },
-};
-
-function makeScores(answers: number[]) {
-  const total: Record<string, number> = {
-    E: 0,
-    P: 0,
-    R: 0,
-    C: 0,
-    M: 0,
-    O: 0,
-    S: 0,
-    F: 0,
-  };
-
-  answers.forEach((answer, idx) => {
-    const map = SCORE_MAP[idx] || {};
-    Object.entries(map).forEach(([key, value]) => {
-      total[key] += Number(value) * answer;
-    });
-  });
-
-  return total;
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
-}
-
-function normalizeAxis(left: number, right: number) {
-  const total = left + right;
-  if (total === 0) return 0;
-  return clamp(((right - left) / total) * 2, -2, 2);
-}
-
-function getAxisProfile(scores: Record<string, number>): AxisProfile {
-  return {
-    social: normalizeAxis(scores.P, scores.E),
-    judgment: normalizeAxis(scores.R, scores.C),
-    track: normalizeAxis(scores.M, scores.O),
-    style: normalizeAxis(scores.F, scores.S),
-  };
-}
-
-function getProfileDistance(a: AxisProfile, b: AxisProfile) {
-  const social = a.social - b.social;
-  const judgment = a.judgment - b.judgment;
-  const track = a.track - b.track;
-  const style = a.style - b.style;
-
-  return (
-    social * social * 1.0 +
-    judgment * judgment * 1.0 +
-    track * track * 1.3 +
-    style * style * 1.15
-  );
-}
-
-function resolveResult(scores: Record<string, number>) {
-  const profile = getAxisProfile(scores);
-
-  let bestKey = "DEFAULT";
-  let bestDistance = Infinity;
-
-  Object.entries(PROFILE_TARGETS).forEach(([key, target]) => {
-    if (key === "DEFAULT") return;
-    const distance = getProfileDistance(profile, target);
-    if (distance < bestDistance) {
-      bestDistance = distance;
-      bestKey = key;
-    }
-  });
-
-  return { key: bestKey, code: bestKey };
-}
-
-function scoreLabel(value: number) {
-  if (value >= 4.5) return "매우 높음";
-  if (value >= 3.5) return "높음";
-  if (value >= 2.5) return "보통";
-  return "낮음";
-}
-
-function axisSummary(left: string, right: string, leftValue: number, rightValue: number) {
-  return `${left} ${scoreLabel(leftValue)} / ${right} ${scoreLabel(rightValue)}`;
-}
-
-function generatePrintableReport({
-  report,
-  resultCode,
-  axes,
-}: {
-  report: Report;
-  resultCode: string;
-  axes: {
-    name: string;
-    left: string;
-    right: string;
-    leftValue: number;
-    rightValue: number;
-  }[];
-}) {
-  const axisCards = axes
-    .map(
-      (axis) => `
-      <div class="axis-card">
-        <div class="axis-name">${axis.name}</div>
-        <div class="axis-desc">${axisSummary(axis.left, axis.right, axis.leftValue, axis.rightValue)}</div>
-      </div>
-    `
-    )
-    .join("");
-
-  const html = `
-    <html>
-      <head>
-        <meta charset="utf-8" />
-        <title>학습성향 리포트</title>
-        <style>
-          * { box-sizing: border-box; }
-          body {
-            margin: 0;
-            font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
-            color: #0f172a;
-            background: #f8fafc;
-          }
-          .page {
-            padding: 36px;
-          }
-          .hero {
-            background: linear-gradient(135deg, ${report.color} 0%, #0f172a 100%);
-            color: white;
-            border-radius: 28px;
-            padding: 32px;
-            margin-bottom: 24px;
-          }
-          .badge {
-            display: inline-block;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 7px 12px;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.14);
-            margin-bottom: 16px;
-          }
-          .hero h1 {
-            margin: 0 0 8px 0;
-            font-size: 32px;
-            line-height: 1.25;
-          }
-          .hero .sub {
-            font-size: 14px;
-            opacity: 0.92;
-            margin-bottom: 20px;
-          }
-          .hero .summary {
-            font-size: 16px;
-            line-height: 1.8;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.14);
-            border-radius: 18px;
-            padding: 18px 20px;
-          }
-          .axis-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            margin: 20px 0 26px;
-          }
-          .axis-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 18px;
-            padding: 16px 18px;
-          }
-          .axis-name {
-            font-size: 12px;
-            font-weight: 700;
-            color: #64748b;
-            margin-bottom: 8px;
-          }
-          .axis-desc {
-            font-size: 15px;
-            font-weight: 600;
-            color: #0f172a;
-            line-height: 1.6;
-          }
-          .section {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 22px;
-            padding: 22px 24px;
-            margin-bottom: 16px;
-          }
-          .section h2 {
-            margin: 0 0 12px 0;
-            font-size: 18px;
-            color: ${report.color};
-          }
-          .section p {
-            margin: 0;
-            font-size: 14px;
-            line-height: 1.9;
-            color: #334155;
-          }
-          .footer-note {
-            margin-top: 18px;
-            font-size: 12px;
-            color: #64748b;
-            text-align: right;
-          }
-          @media print {
-            body { background: white; }
-            .page { padding: 18px; }
-            .hero { break-inside: avoid; }
-            .section { break-inside: avoid; }
-            .axis-card { break-inside: avoid; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="page">
-          <div class="hero">
-            <div class="badge">학부모용 정밀 분석 리포트</div>
-            <h1>${report.title}</h1>
-            <div class="sub">결과 코드 ${resultCode} · ${report.subtitle}</div>
-            <div class="summary">${report.summary}</div>
-          </div>
-
-          <div class="axis-grid">
-            ${axisCards}
-          </div>
-
-          <div class="section">
-            <h2>학습 전략</h2>
-            <p>${report.strategy}</p>
-          </div>
-
-          <div class="section">
-            <h2>부모 코칭</h2>
-            <p>${report.parent}</p>
-          </div>
-
-          <div class="section">
-            <h2>진로 · 학교 방향</h2>
-            <p>${report.path}</p>
-          </div>
-
-          <div class="section">
-            <h2>주의 패턴</h2>
-            <p>${report.danger}</p>
-          </div>
-
-          <div class="section">
-            <h2>추천 대화 방식</h2>
-            <p>${report.talk}</p>
-          </div>
-
-          <div class="footer-note">본 리포트는 학습성향 진단 응답을 기반으로 생성되었습니다.</div>
-        </div>
-
-        <script>
-          window.onload = function() {
-            window.print();
-          };
-        </script>
-      </body>
-    </html>
-  `;
-
-  const printWindow = window.open("", "_blank");
-  if (!printWindow) return;
-
-  printWindow.document.open();
-  printWindow.document.write(html);
-  printWindow.document.close();
-}
-
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
-      <div className="h-full rounded-full bg-sky-600 transition-all" style={{ width: `${value}%` }} />
-    </div>
-  );
-}
-
-function SectionCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-      <div className="mt-3 text-sm leading-7 text-slate-600">{children}</div>
-    </div>
-  );
-}
-
-function LandingScreen({
-  onStart,
-  onPreview,
-}: {
-  onStart: () => void;
-  onPreview: () => void;
-}) {
-  return (
-    <section className="relative overflow-hidden border-b bg-white">
-      <div className="absolute inset-0 bg-gradient-to-br from-sky-50 via-white to-violet-50" />
-      <div className="relative mx-auto max-w-7xl px-6 py-20 lg:px-10">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <div className="mb-4 inline-flex rounded-full border border-sky-200 bg-sky-50 px-4 py-1 text-sm font-medium text-sky-700">
-              학부모 신뢰형 학습성향검사 서비스
-            </div>
-            <h1 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight lg:text-6xl">
-              우리 아이의 <span className="text-sky-700">공부 방식</span>을
-              <br />
-              결과 리포트로 정확하게 보여주는 서비스
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-              80문항 기반으로 아이의 학습 성향, 실행력, 사고방식, 진로 방향까지 한 번에 확인할 수 있습니다.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <button
-                onClick={onStart}
-                className="rounded-2xl bg-sky-700 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-sky-200 transition hover:-translate-y-0.5"
-              >
-                무료 검사 시작하기
-              </button>
-              <button
-                onClick={onPreview}
-                className="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-base font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                결과 예시 보기
-              </button>
-            </div>
-          </div>
-
-          <div className="rounded-[32px] bg-slate-900 p-4 shadow-2xl shadow-slate-200">
-            <div className="rounded-[24px] bg-white p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <div className="text-sm text-slate-500">검사 결과 미리보기</div>
-                  <div className="text-2xl font-bold">문과 모범형 영재형</div>
-                </div>
-                <div className="rounded-xl bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
-                  상위권 잠재력
-                </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <div className="text-sm text-slate-500">학습 성향</div>
-                  <div className="mt-2 text-lg font-semibold">문과 · 창의형</div>
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <div className="text-sm text-slate-500">행동 특성</div>
-                  <div className="mt-2 text-lg font-semibold">영재형</div>
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-4 sm:col-span-2">
-                  <div className="text-sm text-slate-500">부모 코칭 한 줄 제안</div>
-                  <div className="mt-2 text-lg font-semibold leading-7">
-                    통제보다 방향 제시가 효과적이며, 결과물로 연결되는 프로젝트형 학습이 잘 맞습니다.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TestScreen({
-  currentIndex,
-  progress,
-  onReset,
-  onAnswer,
-}: {
-  currentIndex: number;
-  progress: number;
-  onReset: () => void;
-  onAnswer: (value: number) => void;
-}) {
-  return (
-    <section className="mx-auto max-w-3xl px-6 py-10 lg:px-10">
-      <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <div className="text-sm font-medium text-sky-700">학습성향 정밀 검사</div>
-            <div className="mt-1 text-sm text-slate-500">
-              문항 {currentIndex + 1} / {QUESTIONS.length}
-            </div>
-          </div>
-          <button
-            onClick={onReset}
-            className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
-          >
-            처음으로
-          </button>
-        </div>
-
-        <div className="mt-5">
-          <ProgressBar value={progress} />
-        </div>
-
-        <div className="mt-8 rounded-3xl bg-slate-50 p-6 lg:p-8">
-          <div className="text-sm font-semibold text-slate-400">질문</div>
-          <h2 className="mt-3 text-2xl font-bold leading-10 tracking-tight lg:text-3xl">
-            {QUESTIONS[currentIndex]}
-          </h2>
-        </div>
-
-        <div className="mt-8 grid gap-3 sm:grid-cols-2">
-          {CHOICES.map((choice) => (
-            <button
-              key={choice.label}
-              onClick={() => onAnswer(choice.value)}
-              className="rounded-2xl border border-slate-200 bg-white px-5 py-5 text-center text-base font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50"
-            >
-              {choice.label}
-            </button>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ResultScreen({
-  report,
-  resolved,
-  axes,
-  onDownloadPdf,
-  onReset,
-}: {
-  report: Report;
-  resolved: { key: string; code: string };
-  axes: {
-    name: string;
-    left: string;
-    right: string;
-    leftValue: number;
-    rightValue: number;
-  }[];
-  onDownloadPdf: () => void;
-  onReset: () => void;
-}) {
-  return (
-    <section className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-      <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
-        <div className="space-y-6">
-          <div className="rounded-[32px] bg-white p-6 shadow-sm ring-1 ring-slate-200 lg:p-8">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <div className="text-sm font-semibold text-sky-700">무료 결과</div>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight" style={{ color: report.color }}>
-                  {report.title}
-                </h1>
-                <div className="mt-2 text-sm text-slate-500">
-                  결과 코드 {resolved.code} · {report.subtitle}
-                </div>
-              </div>
-              <div className="rounded-2xl bg-sky-50 px-3 py-2 text-sm font-semibold text-sky-700">
-                기본 결과 제공
-              </div>
-            </div>
-
-            <p className="mt-6 text-base leading-8 text-slate-600">{report.summary}</p>
-
-            <div className="mt-8 grid gap-3">
-              {axes.map((axis) => (
-                <div key={axis.name} className="rounded-2xl bg-slate-50 p-4">
-                  <div className="flex items-center justify-between text-sm font-medium text-slate-500">
-                    <span>{axis.left}</span>
-                    <span>{axis.name}</span>
-                    <span>{axis.right}</span>
-                  </div>
-                  <div className="mt-3 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl bg-white px-3 py-3 text-center text-sm font-semibold text-slate-700 ring-1 ring-slate-200">
-                      {scoreLabel(axis.leftValue)}
-                    </div>
-                    <div className="rounded-xl bg-white px-3 py-3 text-center text-sm font-semibold text-slate-700 ring-1 ring-slate-200">
-                      {scoreLabel(axis.rightValue)}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <button
-                onClick={onDownloadPdf}
-                className="rounded-2xl bg-sky-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-sky-800"
-              >
-                PDF 저장
-              </button>
-              <button
-                onClick={onReset}
-                className="rounded-2xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-              >
-                다시 검사하기
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <SectionCard title="학습 전략">{report.strategy}</SectionCard>
-          <SectionCard title="부모 코칭">{report.parent}</SectionCard>
-          <SectionCard title="진로 · 학교 방향">{report.path}</SectionCard>
-          <SectionCard title="주의 패턴">{report.danger}</SectionCard>
-          <SectionCard title="추천 대화 방식">{report.talk}</SectionCard>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 export default function Page() {
-  const [step, setStep] = useState<Step>("landing");
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
+  const [started, setStarted] = useState(false);
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, boolean | null>>({});
+  const [scores, setScores] = useState<Record<ResultType, number>>(INITIAL_SCORES);
+  const [finished, setFinished] = useState(false);
 
-  const progress = useMemo(() => (answers.length / QUESTIONS.length) * 100, [answers.length]);
-  const scores = useMemo(() => makeScores(answers), [answers]);
-  const resolved = useMemo(() => resolveResult(scores), [scores]);
-  const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
+  const totalQuestions = QUESTIONS.length;
+  const currentQuestion = QUESTIONS[step];
+  const progress = totalQuestions === 0 ? 0 : Math.round((step / totalQuestions) * 100);
 
-  const axes = useMemo(() => {
-    const profile = getAxisProfile(scores);
-
-    const axisPair = (value: number) => {
-      const magnitude = Math.abs(value);
-
-      const strong =
-        magnitude >= 1.2 ? 4.8 :
-        magnitude >= 0.6 ? 3.8 :
-        magnitude >= 0.2 ? 3.0 : 2.6;
-
-      const weak =
-        magnitude >= 1.2 ? 2.0 :
-        magnitude >= 0.6 ? 2.4 :
-        magnitude >= 0.2 ? 2.8 : 3.0;
-
-      return { strong, weak };
-    };
-
-    const socialPair = axisPair(profile.social);
-    const trackPair = axisPair(profile.track);
-    const judgmentPair = axisPair(profile.judgment);
-    const stylePair = axisPair(profile.style);
-
-    return [
-      {
-        name: "적극성",
-        left: "내향",
-        right: "외향",
-        leftValue: profile.social < 0 ? socialPair.strong : socialPair.weak,
-        rightValue: profile.social >= 0 ? socialPair.strong : socialPair.weak,
-      },
-      {
-        name: "학습 결",
-        left: "문과",
-        right: "이과",
-        leftValue: profile.track < 0 ? trackPair.strong : trackPair.weak,
-        rightValue: profile.track >= 0 ? trackPair.strong : trackPair.weak,
-      },
-      {
-        name: "판단 방식",
-        left: "감정",
-        right: "사고",
-        leftValue: profile.judgment < 0 ? judgmentPair.strong : judgmentPair.weak,
-        rightValue: profile.judgment >= 0 ? judgmentPair.strong : judgmentPair.weak,
-      },
-      {
-        name: "실행 스타일",
-        left: "자유",
-        right: "책임",
-        leftValue: profile.style < 0 ? stylePair.strong : stylePair.weak,
-        rightValue: profile.style >= 0 ? stylePair.strong : stylePair.weak,
-      },
-    ];
+  const sortedResults = useMemo(() => {
+    return RESULT_ORDER.map((type) => ({
+      type,
+      score: scores[type],
+      meta: RESULT_META[type],
+    })).sort((a, b) => b.score - a.score);
   }, [scores]);
 
-  const startTest = () => {
-    setStep("test");
-    setCurrentIndex(0);
-    setAnswers([]);
-  };
+  const topResult = sortedResults[0];
+  const secondResult = sortedResults[1];
 
-  const previewResult = () => {
-    setStep("result");
-    setCurrentIndex(QUESTIONS.length - 1);
+  const maxScore = useMemo(() => {
+    let totals = { ...INITIAL_SCORES };
+    QUESTIONS.forEach((q) => {
+      RESULT_ORDER.forEach((type) => {
+        totals[type] += q.yesScores[type] ?? 0;
+      });
+    });
+    return totals;
+  }, []);
 
-    setAnswers([
-      1, 1, 1, 0, 0, 1, 0, 0, 1, 0,
-      0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
-      1, 1, 1, 0, 0, 1, 1, 1, 0, 0,
-      0, 1, 1, 0, 0, 0, 1, 1, 1, 1,
-      1, 0, 0, 1, 0, 0, 1, 1, 1, 1,
-      0, 1, 1, 1, 0, 0, 0, 0, 1, 1,
-      0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-    ]);
-  };
+  const handleAnswer = (value: boolean) => {
+    if (!currentQuestion) return;
 
-  const handleAnswer = (value: number) => {
-    const next = [...answers, value];
-    setAnswers(next);
+    const prevAnswer = answers[currentQuestion.id];
+    const nextScores = { ...scores };
 
-    if (currentIndex === QUESTIONS.length - 1) {
-      setStep("result");
+    if (prevAnswer === true) {
+      RESULT_ORDER.forEach((type) => {
+        nextScores[type] -= currentQuestion.yesScores[type] ?? 0;
+      });
+    }
+
+    if (value === true) {
+      RESULT_ORDER.forEach((type) => {
+        nextScores[type] += currentQuestion.yesScores[type] ?? 0;
+      });
+    }
+
+    const nextAnswers = {
+      ...answers,
+      [currentQuestion.id]: value,
+    };
+
+    setAnswers(nextAnswers);
+    setScores(nextScores);
+
+    const isLast = step === totalQuestions - 1;
+    if (isLast) {
+      setFinished(true);
     } else {
-      setCurrentIndex((prev) => prev + 1);
+      setStep((prev) => prev + 1);
     }
   };
 
-  const resetAll = () => {
-    setStep("landing");
-    setCurrentIndex(0);
-    setAnswers([]);
+  const goPrev = () => {
+    if (step > 0) setStep((prev) => prev - 1);
   };
 
-  const handleDownloadPdf = () => {
-    generatePrintableReport({
-      report,
-      resultCode: resolved.code,
-      axes,
-    });
+  const restartTest = () => {
+    setStarted(false);
+    setStep(0);
+    setAnswers({});
+    setScores(INITIAL_SCORES);
+    setFinished(false);
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      {step === "landing" && <LandingScreen onStart={startTest} onPreview={previewResult} />}
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.14),_transparent_35%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_45%,#f8fafc_100%)] text-slate-900 print:bg-white">
+      <style jsx global>{`
+        @media print {
+          body {
+            background: white !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          .print-only {
+            display: block !important;
+          }
+          .print-page {
+            box-shadow: none !important;
+            border: 1px solid #e5e7eb !important;
+            margin: 0 !important;
+          }
+        }
+      `}</style>
 
-      {step === "test" && (
-        <TestScreen
-          currentIndex={currentIndex}
-          progress={progress}
-          onReset={resetAll}
-          onAnswer={handleAnswer}
-        />
-      )}
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-10">
+        {!started && !finished && (
+          <section className="no-print">
+            <div className="relative overflow-hidden rounded-[32px] border border-white/70 bg-white/85 p-6 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur md:p-10">
+              <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-violet-200/50 blur-3xl" />
+              <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-sky-200/50 blur-3xl" />
 
-      {step === "result" && (
-        <ResultScreen
-          report={report}
-          resolved={resolved}
-          axes={axes}
-          onDownloadPdf={handleDownloadPdf}
-          onReset={resetAll}
-        />
-      )}
-    </div>
-  );
-}
+              <div className="relative grid items-center gap-8 md:grid-cols-[1.2fr_0.8fr]">
+                <div>
+                  <div className="mb-4 inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-sm font-semibold text-violet-700">
+                    학습성향 유형진단
+                  </div>
+
+                  <h1 className="text-3xl font-black leading-tight tracking-tight text-slate-900 md:text-5xl">
+                    나에게 맞는 학습 방식,
+                    <br />
+                    <span className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-sky-600 bg-clip-text text-transparent">
+                      더 정교하게 발견해보세요
+                    </span>
+                  </h1>
+
+                  <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 md:text-lg">
+                    문항에 따라 <span className="font-semibold text-slate-900">그렇다</span>를
+                    선택했을 때만 점수가 반영되는 2지선다 검사입니다.
+                    <br />
+                    결과를 통해 현재의 학습 강점과 더 효과적인 성장 방향을 확인할 수 있습니다.
+                  </p>
+
+                  <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <p className="text-sm font-semibold text-slate-500">문항 수</p>
+                      <p className="mt-2 text-2xl font-black text-slate-900">
+                        {totalQuestions}문항
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <p className="text-sm font-semibold text-slate-500">응답 방식</p>
+                      <p className="mt-2 text-2xl font-black text-slate-900">그렇다 / 아니다</p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <p className="text-sm font-semibold text-slate-500">결과 제공</p>
+                      <p className="mt-2 text-2xl font-black text-slate-900">PDF 출력 가능</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    <button
+                      onClick={() => setStarted(true)}
+                      className="rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-4 text-base font-bold text-white shadow-lg shadow-violet-300/40 transition hover:scale-[1.02]"
+                    >
+                      검사 시작하기
+                    </button>
+                    <button
+                      onClick={() => {
+                        const el = document.getElementById("guide");
+                        el?.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className="rounded-2xl border border-slate-200 bg-white px-6 py-4 text-base font-bold text-slate-700 transition hover:bg-slate-50"
+                    >
+                      검사 안내 보기
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid gap-4">
+                  <div className="rounded-[28px] border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white shadow-2xl">
+                    <p className="text-sm font-semibold text-violet-200">대표 결과 예시</p>
+                    <h3 className="mt-3 text-2xl font-black">잠재성장형</h3>
+                    <p className="mt-3 leading-7 text-slate-200">
+                      지금의 모습보다 앞으로의 확장 가능성이 더 기대되는 유형.
+                      맞는 학습 전략을 만나면 성장 폭이 크게 달라질 수 있습니다.
+                    </p>
+                  </div>
+
+                  <div className="rounded-[28px] border border-white/80 bg-white p-6 shadow-lg">
+                    <p className="text-sm font-semibold text-slate-500">이런 분께 추천해요</p>
+                    <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-700">
+                      <li>• 아이에게 맞는 학습 방향을 구체적으로 알고 싶은 경우</li>
+                      <li>• 단순 점수보다 학습 성향과 성장 포인트를 보고 싶은 경우</li>
+                      <li>• 결과를 PDF로 저장해 상담 자료로 활용하고 싶은 경우</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <section id="guide" className="mt-8 grid gap-4 md:grid-cols-3">
+              <div className="rounded-[28px] border border-white/70 bg-white/85 p-6 shadow-[0_10px_40px_rgba(15,23,42,0.06)] backdrop-blur">
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-100 text-lg font-black text-violet-700">
+                  1
+                </div>
+                <h3 class
