@@ -461,7 +461,7 @@ function buildCode(scores: Record<string, number>) {
   const first = scores.E >= 12 ? "E" : "p";
   const second =
     scores.R >= scores.C ? "R" : scores.C > scores.R && scores.M > scores.F ? "C" : "r";
-  const third = scores.M >= scores.S ? "M" : "O";
+  const third = scores.M >= scores.C ? "M" : "O";
   const fourth = scores.F >= scores.P ? "F" : "S";
   return `${first}${second}${third}${fourth}`;
 }
@@ -470,7 +470,7 @@ function resolveResult(code: string, scores: Record<string, number>) {
   const aliasKey = CODE_ALIASES[code];
   if (aliasKey && RESULT_DB[aliasKey]) return { key: aliasKey, code };
 
-  const science = scores.S;
+  const science = scores.C;
   const creative = scores.M;
   const logic = scores.C;
   const empathy = scores.R;
@@ -888,7 +888,7 @@ function ResultScreen({
   );
 }
 
-export default function App() {
+export default function Page() {
   const [step, setStep] = useState<Step>("landing");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
@@ -914,7 +914,7 @@ export default function App() {
         left: "문과",
         right: "이과",
         leftValue: scores.M / answeredCount,
-        rightValue: scores.S / answeredCount,
+        rightValue: scores.C / answeredCount,
       },
       {
         name: "판단 방식",
