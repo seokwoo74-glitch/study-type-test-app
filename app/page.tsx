@@ -19,7 +19,7 @@ type Report = {
 type AxisProfile = {
   social: number;   // -2 내향 ~ +2 외향
   judgment: number; // -2 감정 ~ +2 사고
-  track: number;    // -2 문과/창의 ~ +2 이과/분석
+  track: number;    // -2 문과 ~ +2 이과
   style: number;    // -2 자유 ~ +2 책임
 };
 
@@ -107,22 +107,92 @@ const QUESTIONS: string[] = [
 ];
 
 const SCORE_MAP: Record<string, number>[] = [
-  { F: 1 }, { F: 5 }, { E: 5 }, { C: 3 }, { R: 5 }, { C: 5 }, { M: 5 }, { M: 5 }, { E: 3 }, { R: 5 },
-  { C: 3 }, { M: 5 }, { E: 5 }, { P: 5 }, { R: 5 }, { P: 5 }, { P: 3 }, { C: 5 }, { P: 3 }, { P: 1 },
-  { C: 5 }, { C: 5 }, { C: 5 }, { P: 5 }, { P: 5 }, { R: 5 }, { R: 1 }, { C: 5 }, { P: 5 }, { R: 3 },
-  { C: 5 }, { E: 5 }, { C: 3 }, { R: 5 }, { R: 3 }, { C: 3 }, { C: 1 }, { C: 5 }, { P: 3 }, { R: 5 },
-  { M: 5 }, { M: 5 }, { M: 5 }, { F: 5 }, { R: 3 }, { C: 5 }, { M: 5 }, { M: 3 }, { M: 3 }, { F: 3 },
-  { F: 5 }, { F: 5 }, { F: 1 }, { E: 3 }, { R: 5 }, { C: 5 }, { M: 3 }, { F: 5 }, { E: 5 }, { E: 3 },
-  { P: 5 }, { F: 5 }, { F: 3 }, { E: 5 }, { P: 5 }, { F: 5 }, { C: 3 }, { F: 5 }, { E: 3 }, { F: 3 },
-  { C: 3 }, { F: 3 }, { F: 5 }, { P: 3 }, { P: 3 }, { F: 5 }, { F: 3 }, { P: 5 }, { M: 3 }, { F: 3 },
+  { O: 1 },
+  { O: 5 },
+  { E: 5 },
+  { S: 3 },
+  { C: 5 },
+  { M: 5 },
+  { F: 5 },
+  { F: 5 },
+  { E: 3 },
+  { C: 5 },
+  { S: 3 },
+  { F: 5 },
+  { E: 5 },
+  { P: 5 },
+  { C: 5 },
+  { R: 5 },
+  { R: 3 },
+  { S: 5 },
+  { R: 3 },
+  { R: 1 },
+  { O: 5 },
+  { O: 5 },
+  { S: 5 },
+  { R: 5 },
+  { R: 5 },
+  { C: 5 },
+  { C: 1 },
+  { M: 5 },
+  { P: 5 },
+  { C: 3 },
+  { O: 5 },
+  { E: 5 },
+  { O: 3 },
+  { C: 5 },
+  { C: 3 },
+  { M: 3 },
+  { M: 1 },
+  { M: 5 },
+  { P: 3 },
+  { R: 5 },
+
+  { C: 5 },
+  { M: 5 },
+  { M: 5 },
+  { S: 5 },
+  { P: 3 },
+  { R: 5 },
+  { M: 5 },
+  { M: 3 },
+  { M: 3 },
+  { O: 3 },
+  { O: 5 },
+  { F: 5 },
+  { F: 1 },
+  { E: 3 },
+  { R: 5 },
+  { C: 3 },
+  { M: 5 },
+  { O: 5 },
+  { E: 5 },
+  { E: 3 },
+  { P: 5 },
+  { O: 5 },
+  { O: 3 },
+  { E: 5 },
+  { P: 5 },
+  { S: 5 },
+  { R: 3 },
+  { S: 5 },
+  { E: 3 },
+  { O: 3 },
+  { S: 3 },
+  { S: 3 },
+  { F: 5 },
+  { P: 3 },
+  { P: 3 },
+  { F: 5 },
+  { F: 3 },
+  { P: 5 },
+  { M: 3 },
+  { F: 3 },
 ];
 
 const CHOICES = [
-  { label: "매우 그렇다", value: 5 },
-  { label: "그렇다", value: 4 },
-  { label: "보통", value: 3 },
-  { label: "아니다", value: 2 },
-  { label: "전혀 아니다", value: 1 },
+  { label: "그렇다", value: 1 },
+  { label: "아니다", value: 0 },
 ];
 
 const RESULT_DB: Record<string, Report> = {
@@ -386,10 +456,6 @@ const PROFILE_TARGETS: Record<string, AxisProfile> = {
   DEFAULT: { social: 0, judgment: 0, track: 0, style: 0 },
 };
 
-function scoreAnswer(baseScore: number, answerValue: number) {
-  return (baseScore * answerValue) / 5;
-}
-
 function makeScores(answers: number[]) {
   const total: Record<string, number> = {
     E: 0,
@@ -405,7 +471,7 @@ function makeScores(answers: number[]) {
   answers.forEach((answer, idx) => {
     const map = SCORE_MAP[idx] || {};
     Object.entries(map).forEach(([key, value]) => {
-      total[key] += scoreAnswer(Number(value), answer);
+      total[key] += Number(value) * answer;
     });
   });
 
@@ -426,8 +492,8 @@ function getAxisProfile(scores: Record<string, number>): AxisProfile {
   return {
     social: normalizeAxis(scores.P, scores.E),
     judgment: normalizeAxis(scores.R, scores.C),
-    track: normalizeAxis(scores.M, scores.C),
-    style: normalizeAxis(scores.F, scores.P),
+    track: normalizeAxis(scores.M, scores.O),
+    style: normalizeAxis(scores.F, scores.S),
   };
 }
 
@@ -452,6 +518,8 @@ function resolveResult(scores: Record<string, number>) {
   let bestDistance = Infinity;
 
   Object.entries(PROFILE_TARGETS).forEach(([key, target]) => {
+    if (key === "DEFAULT") return;
+
     const distance = getProfileDistance(profile, target);
     if (distance < bestDistance) {
       bestDistance = distance;
@@ -498,6 +566,13 @@ function generatePrintableReport({
             padding: 24px;
             margin-bottom: 24px;
           }
+          .box {
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 18px;
+            background: #ffffff;
+            margin-top: 12px;
+          }
           .badge {
             display: inline-block;
             padding: 6px 10px;
@@ -507,13 +582,6 @@ function generatePrintableReport({
             font-size: 12px;
             font-weight: bold;
             margin-bottom: 10px;
-          }
-          .box {
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 18px;
-            background: #ffffff;
-            margin-top: 12px;
           }
           @media print {
             body { padding: 20px; }
@@ -700,12 +768,12 @@ function TestScreen({
           </h2>
         </div>
 
-        <div className="mt-8 grid gap-3">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2">
           {CHOICES.map((choice) => (
             <button
               key={choice.label}
               onClick={() => onAnswer(choice.value)}
-              className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left text-base font-medium text-slate-700 transition hover:border-sky-300 hover:bg-sky-50"
+              className="rounded-2xl border border-slate-200 bg-white px-5 py-5 text-center text-base font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50"
             >
               {choice.label}
             </button>
@@ -881,7 +949,17 @@ export default function Page() {
   const previewResult = () => {
     setStep("result");
     setCurrentIndex(QUESTIONS.length - 1);
-    setAnswers(new Array(QUESTIONS.length).fill(3));
+
+    setAnswers([
+      1, 1, 1, 0, 0, 1, 0, 0, 1, 0,
+      0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+      1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+      1, 1, 1, 0, 0, 1, 1, 1, 0, 0,
+      0, 1, 1, 0, 0, 0, 1, 1, 1, 1,
+      1, 0, 0, 1, 0, 0, 1, 1, 1, 1,
+      0, 1, 1, 1, 0, 0, 0, 0, 1, 1,
+      0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+    ]);
   };
 
   const handleAnswer = (value: number) => {
