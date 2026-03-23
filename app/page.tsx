@@ -445,20 +445,7 @@ function getProfileDistance(a: AxisProfile, b: AxisProfile) {
   );
 }
 
-function buildCodeFromProfile(profile: AxisProfile) {
-  const first = profile.social >= 0 ? "E" : "p";
-  const second = profile.judgment >= 0 ? "C" : "R";
-  const third = profile.track >= 0 ? "O" : "M";
-  const fourth = profile.style >= 0 ? "S" : "F";
-  return `${first}${second}${third}${fourth}`;
-}
-
-function buildCode(scores: Record<string, number>) {
-  const profile = getAxisProfile(scores);
-  return buildCodeFromProfile(profile);
-}
-
-function resolveResult(code: string, scores: Record<string, number>) {
+function resolveResult(scores: Record<string, number>) {
   const profile = getAxisProfile(scores);
 
   let bestKey = "DEFAULT";
@@ -472,7 +459,7 @@ function resolveResult(code: string, scores: Record<string, number>) {
     }
   });
 
-  return { key: bestKey, code };
+  return { key: bestKey, code: bestKey };
 }
 
 function scoreLabel(value: number) {
@@ -484,24 +471,11 @@ function scoreLabel(value: number) {
 
 function generatePrintableReport({
   report,
-  scores,
   resultCode,
 }: {
   report: Report;
-  scores: Record<string, number>;
   resultCode: string;
 }) {
-  const scoreHtml = Object.entries(scores)
-    .map(
-      ([key, value]) => `
-        <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#f8fafc;text-align:center;">
-          <div style="font-size:12px;color:#64748b;margin-bottom:6px;">${key}</div>
-          <div style="font-size:22px;font-weight:700;color:#0f172a;">${value.toFixed(1)}</div>
-        </div>
-      `
-    )
-    .join("");
-
   const html = `
     <html>
       <head>
@@ -541,12 +515,6 @@ function generatePrintableReport({
             background: #ffffff;
             margin-top: 12px;
           }
-          .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-          }
           @media print {
             body { padding: 20px; }
           }
@@ -576,9 +544,6 @@ function generatePrintableReport({
 
         <h2>추천 대화 방식</h2>
         <div class="box">${report.talk}</div>
-
-        <h2>성향 점수 요약</h2>
-        <div class="grid">${scoreHtml}</div>
 
         <script>
           window.onload = function() {
@@ -755,7 +720,6 @@ function ResultScreen({
   report,
   resolved,
   axes,
-  scores,
   onDownloadPdf,
   onReset,
 }: {
@@ -768,7 +732,6 @@ function ResultScreen({
     leftValue: number;
     rightValue: number;
   }[];
-  scores: Record<string, number>;
   onDownloadPdf: () => void;
   onReset: () => void;
 }) {
@@ -837,17 +800,6 @@ function ResultScreen({
           <SectionCard title="진로 · 학교 방향">{report.path}</SectionCard>
           <SectionCard title="주의 패턴">{report.danger}</SectionCard>
           <SectionCard title="추천 대화 방식">{report.talk}</SectionCard>
-
-          <SectionCard title="원점수 요약">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {Object.entries(scores).map(([key, value]) => (
-                <div key={key} className="rounded-2xl bg-slate-50 p-3 text-center">
-                  <div className="text-xs font-semibold text-slate-400">{key}</div>
-                  <div className="mt-1 text-lg font-bold text-slate-800">{value.toFixed(1)}</div>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
         </div>
       </div>
     </section>
@@ -861,49 +813,61 @@ export default function Page() {
 
   const progress = useMemo(() => (answers.length / QUESTIONS.length) * 100, [answers.length]);
   const scores = useMemo(() => makeScores(answers), [answers]);
-  const typeCode = useMemo(() => buildCode(scores), [scores]);
-  const resolved = useMemo(() => resolveResult(typeCode, scores), [typeCode, scores]);
+  const resolved = useMemo(() => resolveResult(scores), [scores]);
   const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
 
   const axes = useMemo(() => {
     const profile = getAxisProfile(scores);
 
-    const toLevel = (value: number, positive = true) => {
-      const adjusted = positive ? value : -value;
-      if (adjusted >= 1.2) return 4.8;
-      if (adjusted >= 0.4) return 3.8;
-      if (adjusted >= -0.4) return 3.0;
-      return 2.0;
+    const axisPair = (value: number) => {
+      const magnitude = Math.abs(value);
+
+      const strong =
+        magnitude >= 1.2 ? 4.8 :
+        magnitude >= 0.6 ? 3.8 :
+        magnitude >= 0.2 ? 3.0 : 2.6;
+
+      const weak =
+        magnitude >= 1.2 ? 2.0 :
+        magnitude >= 0.6 ? 2.4 :
+        magnitude >= 0.2 ? 2.8 : 3.0;
+
+      return { strong, weak };
     };
+
+    const socialPair = axisPair(profile.social);
+    const trackPair = axisPair(profile.track);
+    const judgmentPair = axisPair(profile.judgment);
+    const stylePair = axisPair(profile.style);
 
     return [
       {
         name: "적극성",
         left: "내향",
         right: "외향",
-        leftValue: toLevel(profile.social, false),
-        rightValue: toLevel(profile.social, true),
+        leftValue: profile.social < 0 ? socialPair.strong : socialPair.weak,
+        rightValue: profile.social >= 0 ? socialPair.strong : socialPair.weak,
       },
       {
         name: "학습 결",
         left: "문과",
         right: "이과",
-        leftValue: toLevel(profile.track, false),
-        rightValue: toLevel(profile.track, true),
+        leftValue: profile.track < 0 ? trackPair.strong : trackPair.weak,
+        rightValue: profile.track >= 0 ? trackPair.strong : trackPair.weak,
       },
       {
         name: "판단 방식",
         left: "감정",
         right: "사고",
-        leftValue: toLevel(profile.judgment, false),
-        rightValue: toLevel(profile.judgment, true),
+        leftValue: profile.judgment < 0 ? judgmentPair.strong : judgmentPair.weak,
+        rightValue: profile.judgment >= 0 ? judgmentPair.strong : judgmentPair.weak,
       },
       {
         name: "실행 스타일",
         left: "자유",
         right: "책임",
-        leftValue: toLevel(profile.style, false),
-        rightValue: toLevel(profile.style, true),
+        leftValue: profile.style < 0 ? stylePair.strong : stylePair.weak,
+        rightValue: profile.style >= 0 ? stylePair.strong : stylePair.weak,
       },
     ];
   }, [scores]);
@@ -940,7 +904,6 @@ export default function Page() {
   const handleDownloadPdf = () => {
     generatePrintableReport({
       report,
-      scores,
       resultCode: resolved.code,
     });
   };
@@ -963,7 +926,6 @@ export default function Page() {
           report={report}
           resolved={resolved}
           axes={axes}
-          scores={scores}
           onDownloadPdf={handleDownloadPdf}
           onReset={resetAll}
         />
