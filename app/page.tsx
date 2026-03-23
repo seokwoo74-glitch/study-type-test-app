@@ -16,6 +16,13 @@ type Report = {
   color: string;
 };
 
+type AxisProfile = {
+  social: number;   // -2 내향 ~ +2 외향
+  judgment: number; // -2 감정 ~ +2 사고
+  track: number;    // -2 문과/창의 ~ +2 이과/분석
+  style: number;    // -2 자유 ~ +2 책임
+};
+
 const QUESTIONS: string[] = [
   "정해진 규칙을 잘 지킨다는 소리를 듣는다",
   "시험 보기 일주일 전부터는 봉사활동 등 학교의 다른 활동에 참여하지 않는다",
@@ -352,83 +359,31 @@ const RESULT_DB: Record<string, Report> = {
   },
 };
 
-const CODE_ALIASES: Record<string, string> = {
-  ERMS: "ERMS",
-  ERMs: "ERMS",
-  ERMF: "ERMF",
-  ERMf: "ERMF",
-  EROS: "eROS",
-  ERoS: "eROS",
-  eROS: "eROS",
-  pROS: "pROS",
-  pRoS: "pROS",
-  PRMF: "PRMf",
-  PRMf: "PRMf",
-  pRMF: "PRMf",
-  pRMf: "PRMf",
-  EROF: "EROF",
-  ERoF: "EROF",
-  eROF: "EROF",
-  eRof: "EROF",
-  PROF: "PROS",
-  PROf: "PROS",
-  PROS: "PROS",
-  PRos: "PROS",
-  ECMF: "ECMf",
-  ECMf: "ECMf",
-  eCMF: "ECMf",
-  eCMf: "ECMf",
-  ECMS: "ECMs",
-  ECMs: "ECMs",
-  eCMS: "ECMs",
-  eCMs: "ECMs",
-  ECOS: "ECoS",
-  ECOs: "ECoS",
-  ECoS: "ECoS",
-  ECos: "ECoS",
-  pCOS: "pCOS",
-  pCoS: "pCOS",
-  eCOS: "eCOS",
-  eCos: "eCOS",
-  PCMS: "PCMs",
-  PCMs: "PCMs",
-  PCmF: "PCmF",
-  PCmf: "PCmF",
-  pCmF: "PCmF",
-  pCmf: "PCmF",
-  PCOS: "PCOF",
-  PCOs: "PCOF",
-  PCOF: "PCOF",
-  pCOF: "PCOF",
-  ErMS: "ErMS",
-  ErMs: "ErMS",
-  EcMS: "ErMS",
-  EcMs: "ErMS",
-  erMS: "ErMS",
-  ecMS: "ErMS",
-  erMF: "ErMS",
-  ecMF: "ErMS",
-  erOS: "erOS",
-  eroS: "erOS",
-  ecOS: "erOS",
-  ecoS: "erOS",
-  ErmS: "erOS",
-  EcmS: "erOS",
-  PrmS: "PrmS",
-  PcmS: "PrmS",
-  prMS: "PrmS",
-  pcmS: "PrmS",
-  PrMF: "PrMF",
-  PrMf: "PrMF",
-  PcmF: "PrMF",
-  pcoF: "PrMF",
-  erOF: "PrMF",
-  ecoF: "PrMF",
-  PrOF: "PrOF",
-  PrOf: "PrOF",
-  PcoF: "PrOF",
-  prOF: "PrOF",
-  pcOF: "PrOF",
+const PROFILE_TARGETS: Record<string, AxisProfile> = {
+  ERMS: { social: 1.8, judgment: 1.6, track: 2.0, style: -0.5 },
+  ERMF: { social: 1.2, judgment: 1.2, track: 1.8, style: -1.2 },
+  eROS: { social: 1.0, judgment: 1.4, track: 1.5, style: 1.4 },
+  pROS: { social: -1.0, judgment: 1.3, track: 1.5, style: 1.7 },
+  PRMf: { social: -0.5, judgment: 1.2, track: 1.3, style: -1.5 },
+  EROF: { social: 1.7, judgment: 0.8, track: 1.2, style: -1.7 },
+  PROS: { social: -0.8, judgment: 0.8, track: 1.0, style: 1.0 },
+
+  ECMf: { social: 0.8, judgment: -1.2, track: -2.0, style: -1.0 },
+  ECMs: { social: 1.0, judgment: -0.5, track: -1.8, style: 1.8 },
+  ECoS: { social: -1.8, judgment: -0.8, track: -1.7, style: 1.0 },
+  pCOS: { social: -1.3, judgment: 0.2, track: -1.4, style: 1.6 },
+  eCOS: { social: 1.5, judgment: -0.2, track: -1.2, style: 1.3 },
+  PCMs: { social: 1.8, judgment: -0.8, track: -1.0, style: -1.7 },
+  PCmF: { social: -1.4, judgment: -0.5, track: -1.0, style: -1.7 },
+  PCOF: { social: -0.8, judgment: -0.8, track: -0.8, style: -0.8 },
+
+  ErMS: { social: 0.8, judgment: 0.5, track: 0.0, style: -0.4 },
+  erOS: { social: 0.6, judgment: 0.6, track: 0.0, style: 1.3 },
+  PrmS: { social: -0.8, judgment: 0.5, track: 0.0, style: 1.6 },
+  PrMF: { social: -0.2, judgment: 0.2, track: 0.0, style: -1.6 },
+  PrOF: { social: -0.5, judgment: -0.2, track: 0.0, style: -0.5 },
+
+  DEFAULT: { social: 0, judgment: 0, track: 0, style: 0 },
 };
 
 function scoreAnswer(baseScore: number, answerValue: number) {
@@ -457,56 +412,67 @@ function makeScores(answers: number[]) {
   return total;
 }
 
-function buildCode(scores: Record<string, number>) {
-  const first = scores.E >= 12 ? "E" : "p";
-  const second =
-    scores.R >= scores.C ? "R" : scores.C > scores.R && scores.M > scores.F ? "C" : "r";
-  const third = scores.M >= scores.C ? "M" : "O";
-  const fourth = scores.F >= scores.P ? "F" : "S";
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function normalizeAxis(left: number, right: number) {
+  const total = left + right;
+  if (total === 0) return 0;
+  return clamp(((right - left) / total) * 2, -2, 2);
+}
+
+function getAxisProfile(scores: Record<string, number>): AxisProfile {
+  return {
+    social: normalizeAxis(scores.P, scores.E),
+    judgment: normalizeAxis(scores.R, scores.C),
+    track: normalizeAxis(scores.M, scores.C),
+    style: normalizeAxis(scores.F, scores.P),
+  };
+}
+
+function getProfileDistance(a: AxisProfile, b: AxisProfile) {
+  const social = a.social - b.social;
+  const judgment = a.judgment - b.judgment;
+  const track = a.track - b.track;
+  const style = a.style - b.style;
+
+  return (
+    social * social * 1.0 +
+    judgment * judgment * 1.0 +
+    track * track * 1.3 +
+    style * style * 1.15
+  );
+}
+
+function buildCodeFromProfile(profile: AxisProfile) {
+  const first = profile.social >= 0 ? "E" : "p";
+  const second = profile.judgment >= 0 ? "C" : "R";
+  const third = profile.track >= 0 ? "O" : "M";
+  const fourth = profile.style >= 0 ? "S" : "F";
   return `${first}${second}${third}${fourth}`;
 }
 
+function buildCode(scores: Record<string, number>) {
+  const profile = getAxisProfile(scores);
+  return buildCodeFromProfile(profile);
+}
+
 function resolveResult(code: string, scores: Record<string, number>) {
-  const aliasKey = CODE_ALIASES[code];
-  if (aliasKey && RESULT_DB[aliasKey]) return { key: aliasKey, code };
+  const profile = getAxisProfile(scores);
 
-  const science = scores.C;
-  const creative = scores.M;
-  const logic = scores.C;
-  const empathy = scores.R;
-  const structured = scores.P;
-  const free = scores.F;
-  const outward = scores.E;
+  let bestKey = "DEFAULT";
+  let bestDistance = Infinity;
 
-  const trackGap = Math.abs(science - creative);
-  const isOutgoing = outward >= 12;
-  const isStructured = structured >= free;
-  const isFeeling = empathy > logic;
+  Object.entries(PROFILE_TARGETS).forEach(([key, target]) => {
+    const distance = getProfileDistance(profile, target);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestKey = key;
+    }
+  });
 
-  if (trackGap <= 2) {
-    if (creative >= 11 && (isOutgoing || isFeeling)) return { key: "ErMS", code };
-    if (isStructured) return { key: "PrmS", code };
-    if (free >= structured + 1) return { key: "PrMF", code };
-    return { key: "PrOF", code };
-  }
-
-  if (science > creative) {
-    if (creative >= 11 && isStructured && isOutgoing) return { key: "ERMS", code };
-    if (creative >= 10 && free > structured) return { key: "ERMF", code };
-    if (structured >= free + 1.5) return { key: isOutgoing ? "eROS" : "pROS", code };
-    if (free >= structured + 1.5) return { key: isOutgoing ? "EROF" : "PRMf", code };
-    return { key: "PROS", code };
-  }
-
-  if (creative > science) {
-    if (creative >= 12 && empathy >= logic) return { key: "ECMf", code };
-    if (structured >= free + 1.5 && creative >= 10) return { key: isOutgoing ? "ECMs" : "pCOS", code };
-    if (creative >= 10) return { key: "ECoS", code };
-    if (free >= structured + 1.5) return { key: isOutgoing ? "PCMs" : "PCmF", code };
-    return { key: "PCOF", code };
-  }
-
-  return { key: "DEFAULT", code };
+  return { key: bestKey, code };
 }
 
 function scoreLabel(value: number) {
@@ -900,38 +866,47 @@ export default function Page() {
   const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
 
   const axes = useMemo(() => {
-    const answeredCount = Math.max(answers.length, 1);
+    const profile = getAxisProfile(scores);
+
+    const toLevel = (value: number, positive = true) => {
+      const adjusted = positive ? value : -value;
+      if (adjusted >= 1.2) return 4.8;
+      if (adjusted >= 0.4) return 3.8;
+      if (adjusted >= -0.4) return 3.0;
+      return 2.0;
+    };
+
     return [
       {
         name: "적극성",
-        left: "외향",
-        right: "내향",
-        leftValue: scores.E / answeredCount,
-        rightValue: scores.P / answeredCount,
+        left: "내향",
+        right: "외향",
+        leftValue: toLevel(profile.social, false),
+        rightValue: toLevel(profile.social, true),
       },
       {
         name: "학습 결",
         left: "문과",
         right: "이과",
-        leftValue: scores.M / answeredCount,
-        rightValue: scores.C / answeredCount,
+        leftValue: toLevel(profile.track, false),
+        rightValue: toLevel(profile.track, true),
       },
       {
         name: "판단 방식",
         left: "감정",
         right: "사고",
-        leftValue: scores.R / answeredCount,
-        rightValue: scores.C / answeredCount,
+        leftValue: toLevel(profile.judgment, false),
+        rightValue: toLevel(profile.judgment, true),
       },
       {
         name: "실행 스타일",
         left: "자유",
         right: "책임",
-        leftValue: scores.F / answeredCount,
-        rightValue: scores.P / answeredCount,
+        leftValue: toLevel(profile.style, false),
+        rightValue: toLevel(profile.style, true),
       },
     ];
-  }, [answers.length, scores]);
+  }, [scores]);
 
   const startTest = () => {
     setStep("test");
