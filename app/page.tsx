@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState, type ReactNode } from "react";
 
 type Step = "landing" | "test" | "result";
