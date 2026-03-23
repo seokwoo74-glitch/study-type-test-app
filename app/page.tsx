@@ -364,6 +364,201 @@ const RESULT_DB: Record<string, Report> = {
   },
 };
 
+const CODE_TO_RESULT_KEY: Record<string, string> = {
+  // 이과 창의적영재형
+  ERMs: "ERMS",
+  ERmS: "ERMS",
+  ERms: "ERMS",
+
+  // 이과 모범적영재형
+  ERMS: "ERMS",
+  eRMS: "ERMS",
+  eRmS: "ERMS",
+  eRms: "ERMS",
+
+  // 이과 영재형
+  eRMF: "ERMF",
+  eRMf: "ERMF",
+  ERMF: "ERMF",
+  ERMf: "ERMF",
+  ERmF: "ERMF",
+  ERmf: "ERMF",
+
+  // 이과모범형
+  eROS: "eROS",
+  eRoS: "eROS",
+  EROF: "eROS",
+  EROS: "eROS",
+  EROs: "eROS",
+  ERoS: "eROS",
+  ERos: "eROS",
+  eRMS: "eROS",
+  eRMs: "eROS",
+
+  // (수동적) 이과 모범형
+  eRmS: "pROS",
+  eRms: "pROS",
+  pRMS: "pROS",
+  pRmS: "pROS",
+  pROS: "pROS",
+  pRoS: "pROS",
+
+  // 이과 뺀질이형
+  PRMF: "PRMf",
+  PRMf: "PRMf",
+  PRmF: "PRMf",
+  PRmf: "PRMf",
+  PRMs: "PRMf",
+  pRMs: "PRMf",
+  pRMF: "PRMf",
+  pRMf: "PRMf",
+  pRmF: "PRMf",
+  pRmf: "PRMf",
+  pRoF: "PRMf",
+
+  // 외향적 이과뺀질형
+  ERoF: "EROF",
+  ERof: "EROF",
+  eROF: "EROF",
+  eROf: "EROF",
+  eRoF: "EROF",
+  eRof: "EROF",
+  eRmF: "EROF",
+  eRmf: "EROF",
+
+  // 이과 잠재성장형 (진주형 -> 잠재성장형)
+  PROF: "PROS",
+  PROf: "PROS",
+  pROF: "PROS",
+  pROf: "PROS",
+  eROs: "PROS",
+  eRos: "PROS",
+  PRoF: "PROS",
+  PRof: "PROS",
+  pRof: "PROS",
+  PROS: "PROS",
+  PROs: "PROS",
+  PRoS: "PROS",
+  PRos: "PROS",
+  PRmS: "PROS",
+  PRms: "PROS",
+  PRMS: "PROS",
+  pRms: "PROS",
+  pROs: "PROS",
+  pRos: "PROS",
+
+  // 문과 창의적영재형
+  ECMF: "ECMf",
+  ECMf: "ECMf",
+
+  // 문과 모범형 영재형
+  ECMS: "ECMs",
+  eCMS: "ECMs",
+
+  // 내성적 문과영재형
+  ECMs: "ECoS",
+  eCMs: "ECoS",
+  ECoF: "ECoS",
+  ECmf: "ECoS",
+  pCMS: "ECoS",
+
+  // (내성적) 문과 모범형
+  ECOS: "pCOS",
+  ECOs: "pCOS",
+  ECoS: "pCOS",
+  ECos: "pCOS",
+  ECmS: "pCOS",
+  ECms: "pCOS",
+  eCmS: "pCOS",
+  eCms: "pCOS",
+  pCOS: "pCOS",
+  pCoS: "pCOS",
+  pCmS: "pCOS",
+
+  // 문과모범형B
+  eCoS: "eCOS",
+  eCos: "eCOS",
+  eCOS: "eCOS",
+  ECOf: "eCOS",
+
+  // (외향적) 문과뺀질이형
+  PCMF: "PCMs",
+  PCMf: "PCMs",
+  pCMF: "PCMs",
+  pCMf: "PCMs",
+  pCMs: "PCMs",
+  ECmF: "PCMs",
+  ECOF: "PCMs",
+  ECof: "PCMs",
+  eCOF: "PCMs",
+  eCOf: "PCMs",
+  eCoF: "PCMs",
+  eCof: "PCMs",
+
+  // (내향적) 문과 뺀질이
+  PCMs: "PCmF",
+  PCmF: "PCmF",
+  PCmf: "PCmF",
+  pCmF: "PCmF",
+  pCmf: "PCmF",
+  PCoF: "PCmF",
+  PCof: "PCmF",
+  pCoF: "PCmF",
+
+  // 문과 잠재성장형 (진주형 -> 잠재성장형)
+  PCOS: "PCOF",
+  PCOs: "PCOF",
+  PCoS: "PCOF",
+  PCos: "PCOF",
+  PCOF: "PCOF",
+  PCOf: "PCOF",
+  eCOs: "PCOF",
+  pCof: "PCOF",
+  pCOF: "PCOF",
+  pCOf: "PCOF",
+  pCOs: "PCOF",
+  pCos: "PCOF",
+  pCms: "PCOF",
+  PCMS: "PCOF",
+  PCmS: "PCOF",
+  PCms: "PCOF",
+
+  // 문·이과 혼합 영재형
+  ErMS: "ErMS",
+  ErmS: "ErMS",
+  Erms: "ErMS",
+  erMS: "ErMS",
+
+  // 문·이과 혼합 모범형
+  erOS: "erOS",
+  erOs: "erOS",
+  e rOS: "erOS", // harmless fallback-like typo key
+  eRoS: "erOS",
+  eRos: "erOS",
+
+  // 문·이과 혼합 수동적모범형
+  PrMS: "PrmS",
+  PrmS: "PrmS",
+  Prms: "PrmS",
+  prMS: "PrmS",
+
+  // 문·이과 혼합 뺀질이형
+  PrMF: "PrMF",
+  PrMf: "PrMF",
+  PrmF: "PrMF",
+  Prmf: "PrMF",
+
+  // 융합 잠재성장형
+  PrOF: "PrOF",
+  PrOf: "PrOF",
+  ProF: "PrOF",
+  Prof: "PrOF",
+  prOF: "PrOF",
+  prOf: "PrOF",
+  proF: "PrOF",
+  prof: "PrOF",
+};
+
 function makeScores(answers: number[]) {
   const total: Record<string, number> = {
     E: 0,
@@ -442,138 +637,12 @@ function buildDisplayCode(scores: Record<string, number>) {
     code,
     diffText,
     full: `${code} ( ${diffText} )`,
-    socialWinner: socialLetter,
-    judgmentWinner: judgmentLetter,
-    trackWinner: trackLetter,
-    styleWinner: styleLetter,
-    socialDiff,
-    judgmentDiff,
-    trackDiff,
-    styleDiff,
   };
 }
 
 function resolveResult(scores: Record<string, number>): ResolvedResult {
   const display = buildDisplayCode(scores);
-
-  const {
-    socialWinner,
-    judgmentWinner,
-    trackWinner,
-    styleWinner,
-    socialDiff,
-    judgmentDiff,
-    trackDiff,
-    styleDiff,
-  } = display;
-
-  const isMajor = (n: number) => n > 2;
-  const isStrong = (n: number) => n >= 8;
-
-  const socialMajor = isMajor(socialDiff);
-  const judgmentMajor = isMajor(judgmentDiff);
-  const trackMajor = isMajor(trackDiff);
-  const styleMajor = isMajor(styleDiff);
-
-  let key = "DEFAULT";
-
-  if (!trackMajor) {
-    if (!styleMajor) {
-      key = "PrOF";
-    } else if (styleWinner === "S") {
-      key = socialWinner === "E" ? "erOS" : "PrmS";
-    } else {
-      key = socialWinner === "E" && judgmentWinner === "C" ? "ErMS" : "PrMF";
-    }
-  } else if (trackWinner === "O") {
-    if (styleWinner === "S" && styleMajor) {
-      if (socialWinner === "E" && socialMajor) {
-        key = "eROS";
-      } else if (socialWinner === "P" && socialMajor) {
-        key = "pROS";
-      } else {
-        key = "PROS";
-      }
-    } else if (styleWinner === "F" && styleMajor) {
-      if (
-        socialWinner === "E" &&
-        judgmentWinner === "C" &&
-        socialMajor &&
-        judgmentMajor &&
-        isStrong(trackDiff)
-      ) {
-        key = "ERMS";
-      } else if (
-        socialWinner === "P" &&
-        judgmentWinner === "C" &&
-        judgmentMajor &&
-        trackDiff >= 5
-      ) {
-        key = "ERMF";
-      } else if (socialWinner === "E" && socialMajor) {
-        key = "EROF";
-      } else {
-        key = "PRMf";
-      }
-    } else {
-      if (socialWinner === "E" && judgmentWinner === "C" && socialMajor) {
-        key = "ERMF";
-      } else if (socialWinner === "P") {
-        key = "PRMf";
-      } else {
-        key = "PROS";
-      }
-    }
-  } else {
-    if (styleWinner === "S" && styleMajor) {
-      if (
-        socialWinner === "E" &&
-        judgmentWinner === "R" &&
-        socialMajor &&
-        judgmentMajor &&
-        isStrong(trackDiff)
-      ) {
-        key = "ECMs";
-      } else if (
-        socialWinner === "P" &&
-        judgmentWinner === "R" &&
-        judgmentMajor &&
-        trackDiff >= 5
-      ) {
-        key = "ECoS";
-      } else if (socialWinner === "P") {
-        key = "pCOS";
-      } else if (socialWinner === "E") {
-        key = "eCOS";
-      } else {
-        key = "PCOF";
-      }
-    } else if (styleWinner === "F" && styleMajor) {
-      if (
-        socialWinner === "E" &&
-        judgmentWinner === "R" &&
-        socialMajor &&
-        judgmentMajor &&
-        isStrong(trackDiff)
-      ) {
-        key = "ECMf";
-      } else if (socialWinner === "E") {
-        key = "PCMs";
-      } else if (socialWinner === "P") {
-        key = "PCmF";
-      } else {
-        key = "ECMf";
-      }
-    } else {
-      if (socialWinner === "E" && judgmentWinner === "R") {
-        key = "ECMf";
-      } else if (socialWinner === "P") {
-        key = "PCmF";
-      } else {
-        key = "PCOF";
-      }
-    }
-  }
+  const key = CODE_TO_RESULT_KEY[display.code] || "DEFAULT";
 
   return {
     key,
