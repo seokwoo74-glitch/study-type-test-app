@@ -112,7 +112,7 @@ const SCORE_MAP: Record<string, number>[] = [
   { O: 5 }, { O: 5 }, { S: 5 }, { R: 5 }, { R: 5 }, { C: 5 }, { C: 1 }, { M: 5 }, { P: 5 }, { C: 3 },
   { O: 5 }, { E: 5 }, { O: 3 }, { C: 5 }, { C: 3 }, { M: 3 }, { M: 1 }, { M: 5 }, { P: 3 }, { R: 5 },
 
-  { C: 5 }, { M: 5 }, { M: 5 }, { S: 5 }, { P: 3 }, { R: 5 }, { M: 5 }, { M: 3 }, { M: 3 }, { O: 3 },
+  { C: 5 }, { M: 5 }, { M: 5 }, { O: 5 }, { P: 3 }, { R: 5 }, { M: 5 }, { M: 3 }, { M: 3 }, { O: 3 },
   { O: 5 }, { F: 5 }, { F: 1 }, { E: 3 }, { R: 5 }, { C: 3 }, { M: 5 }, { O: 5 }, { E: 5 }, { E: 3 },
   { P: 5 }, { O: 5 }, { O: 3 }, { E: 5 }, { P: 5 }, { S: 5 }, { R: 3 }, { S: 5 }, { E: 3 }, { O: 3 },
   { S: 3 }, { S: 3 }, { F: 5 }, { P: 3 }, { P: 3 }, { F: 5 }, { F: 3 }, { P: 5 }, { M: 3 }, { F: 3 },
@@ -127,31 +127,42 @@ const RESULT_DB: Record<string, Report> = {
   ERMS: {
     title: "이과 창의적영재형",
     subtitle: "1% 미만",
-    summary: "이과적 두뇌와 창의적 사고가 매우 뛰어나며, 상위권을 넘어 특출한 성취 가능성을 지닌 유형입니다.",
-    strategy: "자기주도성이 강하므로 학생의 의견을 중심으로 학습 방향을 설계하되, 내신·대회·전형 정보를 균형 있게 관리하는 것이 좋습니다. 선행·심화 학습과 결과물 중심 활동이 잘 맞습니다.",
-    parent: "통제보다 신뢰와 지원이 효과적입니다. 일반적인 학습 환경보다 수준이 맞는 집단에서 더 크게 성장할 가능성이 높습니다.",
+    summary:
+      "이과적 두뇌와 창의적 사고가 매우 뛰어나며, 상위권을 넘어 특출한 성취 가능성을 지닌 유형입니다.",
+    strategy:
+      "자기주도성이 강하므로 학생의 의견을 중심으로 학습 방향을 설계하되, 내신·대회·전형 정보를 균형 있게 관리하는 것이 좋습니다. 선행·심화 학습과 결과물 중심 활동이 잘 맞습니다.",
+    parent:
+      "통제보다 신뢰와 지원이 효과적입니다. 일반적인 학습 환경보다 수준이 맞는 집단에서 더 크게 성장할 가능성이 높습니다.",
     path: "서울대, 카이스트, 포항공대, 의학·공학·자연과학 계열과 잘 맞습니다.",
-    danger: "개인적 특성이 강해 일반적인 학습 분위기와 맞지 않을 수 있으며, 맞지 않는 환경에서는 흥미가 크게 떨어질 수 있습니다.",
+    danger:
+      "개인적 특성이 강해 일반적인 학습 분위기와 맞지 않을 수 있으며, 맞지 않는 환경에서는 흥미가 크게 떨어질 수 있습니다.",
     talk: "‘왜 그렇게 생각했는지 설명해볼래?’처럼 사고를 확장시키는 질문형 대화가 효과적입니다.",
     color: "#2563eb",
   },
   ERMF: {
     title: "이과 영재형",
     subtitle: "3% 미만",
-    summary: "특정 과목에서 매우 높은 성취 가능성을 보이며, 관심 분야에서는 압도적 몰입을 보일 수 있는 유형입니다.",
-    strategy: "관심 과목의 강점을 유지하면서도 시작한 일을 성과물로 연결할 수 있도록 고른 학습과 마무리 습관을 함께 설계하는 것이 중요합니다.",
-    parent: "흥미 중심의 몰입이 강한 유형이므로 균형 잡힌 스펙 관리와 학습 리듬 유지에 도움을 주는 것이 좋습니다.",
+    summary:
+      "특정 과목에서 매우 높은 성취 가능성을 보이며, 관심 분야에서는 압도적 몰입을 보일 수 있는 유형입니다.",
+    strategy:
+      "관심 과목의 강점을 유지하면서도 시작한 일을 성과물로 연결할 수 있도록 고른 학습과 마무리 습관을 함께 설계하는 것이 중요합니다.",
+    parent:
+      "흥미 중심의 몰입이 강한 유형이므로 균형 잡힌 스펙 관리와 학습 리듬 유지에 도움을 주는 것이 좋습니다.",
     path: "수학, 물리, 전자, 발명, IT·연구 계열과 잘 맞습니다.",
-    danger: "흥미가 넓고 시작이 빠른 만큼, 마무리와 꾸준함이 약해지면 성과가 불안정해질 수 있습니다.",
+    danger:
+      "흥미가 넓고 시작이 빠른 만큼, 마무리와 꾸준함이 약해지면 성과가 불안정해질 수 있습니다.",
     talk: "‘잘하는 걸 살리면서, 끝까지 연결되는 경험을 같이 만들어보자’는 접근이 효과적입니다.",
     color: "#0f766e",
   },
   eROS: {
     title: "이과모범형",
     subtitle: "4%~10% 미만",
-    summary: "이과 성향과 자기관리 능력이 함께 강한 유형으로, 안정적인 상위권 전략이 잘 맞습니다.",
-    strategy: "내신과 모의고사를 고르게 관리하며, 시험 불안과 외부 활동으로 인한 리듬 흔들림만 잘 조절하면 강점을 꾸준히 유지할 수 있습니다.",
-    parent: "학생의 학습 방식을 존중해도 무난하지만, 친구 관계나 외부 활동이 학습 흐름을 방해하지 않도록 점검이 필요합니다.",
+    summary:
+      "이과 성향과 자기관리 능력이 함께 강한 유형으로, 안정적인 상위권 전략이 잘 맞습니다.",
+    strategy:
+      "내신과 모의고사를 고르게 관리하며, 시험 불안과 외부 활동으로 인한 리듬 흔들림만 잘 조절하면 강점을 꾸준히 유지할 수 있습니다.",
+    parent:
+      "학생의 학습 방식을 존중해도 무난하지만, 친구 관계나 외부 활동이 학습 흐름을 방해하지 않도록 점검이 필요합니다.",
     path: "SKY, 의·치·한의대, 자연과학, 공학, 수의학 계열과 잘 맞습니다.",
     danger: "적극적인 성향 때문에 학습보다 관계와 활동에 에너지가 분산될 수 있습니다.",
     talk: "‘지금의 리듬만 잘 지키면 충분히 좋은 결과로 이어질 수 있어’라는 식의 안정감 있는 대화가 좋습니다.",
@@ -160,20 +171,27 @@ const RESULT_DB: Record<string, Report> = {
   pROS: {
     title: "(수동적) 이과 모범형",
     subtitle: "4%~10% 미만",
-    summary: "성실함과 인내심을 바탕으로 상위권을 안정적으로 유지하는 유형입니다.",
-    strategy: "개념 정리와 실수 관리, 시험 불안 조절이 중요하며, 보다 적극적인 활동 경험과 리더십 기회를 함께 쌓으면 성장 폭이 커집니다.",
-    parent: "실력은 충분하지만 자기표현과 존재감이 약할 수 있으므로, 안정감을 해치지 않는 선에서 경험의 폭을 넓혀주는 것이 좋습니다.",
+    summary:
+      "성실함과 인내심을 바탕으로 상위권을 안정적으로 유지하는 유형입니다.",
+    strategy:
+      "개념 정리와 실수 관리, 시험 불안 조절이 중요하며, 보다 적극적인 활동 경험과 리더십 기회를 함께 쌓으면 성장 폭이 커집니다.",
+    parent:
+      "실력은 충분하지만 자기표현과 존재감이 약할 수 있으므로, 안정감을 해치지 않는 선에서 경험의 폭을 넓혀주는 것이 좋습니다.",
     path: "SKY, 지방의대, 자연과학, 공학, 수의학, 약학 계열과 잘 맞습니다.",
-    danger: "실수 하나에 흔들리면 멘탈 영향이 큰 편이라, 쉬운 부분에서의 실수 관리가 중요합니다.",
+    danger:
+      "실수 하나에 흔들리면 멘탈 영향이 큰 편이라, 쉬운 부분에서의 실수 관리가 중요합니다.",
     talk: "‘네가 차분히 쌓아온 힘이 크다, 이제 그 강점을 조금 더 드러내 보자’는 식의 대화가 좋습니다.",
     color: "#0284c7",
   },
   PRMf: {
     title: "이과 뺀질이형",
     subtitle: "20% 미만",
-    summary: "수학·과학 등 특정 과목에서는 강점을 보이지만, 흥미 없는 과목은 쉽게 놓칠 수 있는 유형입니다.",
-    strategy: "절대 학습시간 확보, 감독이 있는 환경, 선호 과목의 성과를 전체 학습 동기로 연결하는 구조가 필요합니다.",
-    parent: "자유도가 큰 환경보다 책임감이 생기는 환경이 더 적합합니다. 결과물 중심 경험이 학습 전체를 끌어올리는 데 도움이 됩니다.",
+    summary:
+      "수학·과학 등 특정 과목에서는 강점을 보이지만, 흥미 없는 과목은 쉽게 놓칠 수 있는 유형입니다.",
+    strategy:
+      "절대 학습시간 확보, 감독이 있는 환경, 선호 과목의 성과를 전체 학습 동기로 연결하는 구조가 필요합니다.",
+    parent:
+      "자유도가 큰 환경보다 책임감이 생기는 환경이 더 적합합니다. 결과물 중심 경험이 학습 전체를 끌어올리는 데 도움이 됩니다.",
     path: "이공계열, 논술·정시 전략, IT 분야 사업·연구·CEO 계열과 연결될 수 있습니다.",
     danger: "좋아하는 과목만 밀고 나가다 전체 성적의 균형이 무너질 수 있습니다.",
     talk: "‘짧게라도 좋으니, 끝까지 가는 힘을 같이 만들어보자’는 식의 대화가 좋습니다.",
@@ -182,9 +200,12 @@ const RESULT_DB: Record<string, Report> = {
   EROF: {
     title: "외향적 이과뺀질형",
     subtitle: "20% 미만",
-    summary: "관심 있는 과목에서는 번뜩이는 성과를 보이지만, 주변 환경의 영향을 크게 받는 유형입니다.",
-    strategy: "통제적 환경, 선택과 집중, 소규모 팀 속 책임감 경험이 효과적이며, 관심 분야의 구체적 결과물이 전체 성적 향상에 시너지를 줄 수 있습니다.",
-    parent: "환경에 따라 결과 차이가 커질 수 있어, 학습 공간과 함께하는 집단을 신중히 선택하는 것이 중요합니다.",
+    summary:
+      "관심 있는 과목에서는 번뜩이는 성과를 보이지만, 주변 환경의 영향을 크게 받는 유형입니다.",
+    strategy:
+      "통제적 환경, 선택과 집중, 소규모 팀 속 책임감 경험이 효과적이며, 관심 분야의 구체적 결과물이 전체 성적 향상에 시너지를 줄 수 있습니다.",
+    parent:
+      "환경에 따라 결과 차이가 커질 수 있어, 학습 공간과 함께하는 집단을 신중히 선택하는 것이 중요합니다.",
     path: "자유전공, 자연과학, 건축, IT 마케팅, 이공계 연구 계열과 잘 맞습니다.",
     danger: "많은 일을 시작하지만 끝맺음이 약해 성과가 분산될 수 있습니다.",
     talk: "‘환경을 잘 고르면 네 강점이 훨씬 크게 드러날 수 있어’라는 식의 코칭이 효과적입니다.",
@@ -193,31 +214,42 @@ const RESULT_DB: Record<string, Report> = {
   PROS: {
     title: "이과 잠재성장형",
     subtitle: "70% 내외",
-    summary: "현재 강점이 선명하게 드러나지 않았더라도, 기초를 차분히 쌓을수록 성장 가능성이 커지는 유형입니다.",
-    strategy: "선행보다 내신 중심으로 접근하고, 한 과목씩 성취 경험을 만드는 방식이 효과적입니다. 절대 시간보다 집중 시간을 늘리는 전략이 중요합니다.",
-    parent: "비교보다 작은 성공 경험의 축적이 중요합니다. 선호 과목에서 자신감을 회복하게 하면 전체 학습에도 긍정적인 영향을 줄 수 있습니다.",
+    summary:
+      "현재 강점이 선명하게 드러나지 않았더라도, 기초를 차분히 쌓을수록 성장 가능성이 커지는 유형입니다.",
+    strategy:
+      "선행보다 내신 중심으로 접근하고, 한 과목씩 성취 경험을 만드는 방식이 효과적입니다. 절대 시간보다 집중 시간을 늘리는 전략이 중요합니다.",
+    parent:
+      "비교보다 작은 성공 경험의 축적이 중요합니다. 선호 과목에서 자신감을 회복하게 하면 전체 학습에도 긍정적인 영향을 줄 수 있습니다.",
     path: "간호, 사범, 이과대학, 교사·간호사·물리치료사·약사 계열과 잘 맞습니다.",
-    danger: "막연한 목표만 세우면 쉽게 지치거나 포기할 수 있어, 단계적 목표 설계가 필요합니다.",
+    danger:
+      "막연한 목표만 세우면 쉽게 지치거나 포기할 수 있어, 단계적 목표 설계가 필요합니다.",
     talk: "‘이번에는 이 한 가지를 끝내보자’처럼 작고 분명한 목표를 제시하는 대화가 효과적입니다.",
     color: "#ea580c",
   },
   ECMf: {
     title: "문과 창의적영재형",
     subtitle: "1% 미만",
-    summary: "문과 성향의 창의성과 표현력이 매우 강하며, 차별화된 결과물을 만들 가능성이 높은 유형입니다.",
-    strategy: "관심 분야의 심화 학습과 함께 특기·논술·대회·동아리 결과물을 꾸준히 쌓는 방식이 잘 맞습니다.",
-    parent: "다름을 교정하려 하기보다, 개성과 창의성이 실제 성과로 연결되도록 구조를 만들어주는 것이 중요합니다.",
+    summary:
+      "문과 성향의 창의성과 표현력이 매우 강하며, 차별화된 결과물을 만들 가능성이 높은 유형입니다.",
+    strategy:
+      "관심 분야의 심화 학습과 함께 특기·논술·대회·동아리 결과물을 꾸준히 쌓는 방식이 잘 맞습니다.",
+    parent:
+      "다름을 교정하려 하기보다, 개성과 창의성이 실제 성과로 연결되도록 구조를 만들어주는 것이 중요합니다.",
     path: "어문, 언론정보, 연극영화, 광고, 방송PD, 게임기획 계열과 잘 맞습니다.",
-    danger: "산만함과 엉뚱함이 강점이 되기도 하지만, 실행 리듬이 무너지면 결과가 불안정할 수 있습니다.",
+    danger:
+      "산만함과 엉뚱함이 강점이 되기도 하지만, 실행 리듬이 무너지면 결과가 불안정할 수 있습니다.",
     talk: "‘네 생각을 결과물로 보여줄 방법을 같이 찾아보자’는 접근이 좋습니다.",
     color: "#db2777",
   },
   ECMs: {
     title: "문과 모범형 영재형",
     subtitle: "2% 미만",
-    summary: "전교권 수준의 안정된 성과와 자기관리 능력을 함께 갖춘 이상적인 문과 영재형입니다.",
-    strategy: "학생 스스로도 잘 이끌어가는 편이므로 신뢰를 기반으로 하되, 선행·심화와 체력·멘탈 관리까지 함께 챙기면 완성도가 높아집니다.",
-    parent: "과한 개입보다 신뢰와 점검이 적합합니다. 우수한 멘토와의 간헐적 코칭이 효과적일 수 있습니다.",
+    summary:
+      "전교권 수준의 안정된 성과와 자기관리 능력을 함께 갖춘 이상적인 문과 영재형입니다.",
+    strategy:
+      "학생 스스로도 잘 이끌어가는 편이므로 신뢰를 기반으로 하되, 선행·심화와 체력·멘탈 관리까지 함께 챙기면 완성도가 높아집니다.",
+    parent:
+      "과한 개입보다 신뢰와 점검이 적합합니다. 우수한 멘토와의 간헐적 코칭이 효과적일 수 있습니다.",
     path: "SKY, 한의대(문과), 경영·행정·신문방송·법조·외교관 계열과 잘 맞습니다.",
     danger: "완벽주의와 부담감이 누적될 경우 번아웃 위험이 있습니다.",
     talk: "‘지금도 충분히 잘 가고 있고, 네 속도를 믿는다’는 메시지가 중요합니다.",
@@ -226,20 +258,27 @@ const RESULT_DB: Record<string, Report> = {
   ECoS: {
     title: "내성적 문과영재형",
     subtitle: "3% 미만",
-    summary: "언어·외국어 영역의 강점과 깊이 있는 사고를 함께 지닌 문과 상위권 유형입니다.",
-    strategy: "심화·선행 학습과 토론·발표 기회를 함께 주되, 계획을 실제 행동으로 연결하는 실천 습관을 보완하는 것이 중요합니다.",
-    parent: "조용하지만 수준이 높은 편입니다. 겉으로 드러나지 않는 실행 부족을 세심하게 관리해주면 크게 성장할 수 있습니다.",
+    summary:
+      "언어·외국어 영역의 강점과 깊이 있는 사고를 함께 지닌 문과 상위권 유형입니다.",
+    strategy:
+      "심화·선행 학습과 토론·발표 기회를 함께 주되, 계획을 실제 행동으로 연결하는 실천 습관을 보완하는 것이 중요합니다.",
+    parent:
+      "조용하지만 수준이 높은 편입니다. 겉으로 드러나지 않는 실행 부족을 세심하게 관리해주면 크게 성장할 수 있습니다.",
     path: "SKY, 어문, 정치외교, 신문방송, 법조, 언론, 외교관 계열과 잘 맞습니다.",
-    danger: "실력에 비해 실행력이 떨어지면 결과가 기대만큼 드러나지 않을 수 있습니다.",
+    danger:
+      "실력에 비해 실행력이 떨어지면 결과가 기대만큼 드러나지 않을 수 있습니다.",
     talk: "‘생각의 깊이는 충분하니, 이제 그걸 실천으로 연결해보자’는 식의 대화가 효과적입니다.",
     color: "#7c3aed",
   },
   pCOS: {
     title: "(내성적) 문과 모범형",
     subtitle: "4%~10% 미만",
-    summary: "자기주도성과 계획 실행의 균형이 좋은 내성적 상위권 문과형입니다.",
-    strategy: "내신 최상위권 유지, 시험 불안 관리, 개념 정리, 규칙적인 멘토링이 효과적입니다.",
-    parent: "지나친 간섭보다 정기적인 대화와 점검이 적합합니다. 차분한 성향을 해치지 않는 방식이 좋습니다.",
+    summary:
+      "자기주도성과 계획 실행의 균형이 좋은 내성적 상위권 문과형입니다.",
+    strategy:
+      "내신 최상위권 유지, 시험 불안 관리, 개념 정리, 규칙적인 멘토링이 효과적입니다.",
+    parent:
+      "지나친 간섭보다 정기적인 대화와 점검이 적합합니다. 차분한 성향을 해치지 않는 방식이 좋습니다.",
     path: "SKY, 경영, 경제, 행정, 교대, 법조, 교수, 고위직 공무원 계열과 잘 맞습니다.",
     danger: "내성적 성향 때문에 도움 요청 시점을 놓칠 수 있습니다.",
     talk: "‘혼자 감당하지 말고, 막히는 지점을 같이 보자’는 태도가 좋습니다.",
@@ -248,53 +287,72 @@ const RESULT_DB: Record<string, Report> = {
   eCOS: {
     title: "문과모범형B",
     subtitle: "4%~10% 미만",
-    summary: "상위권 성적을 안정적으로 유지하면서 리더십과 대외 활동 역량도 함께 갖춘 유형입니다.",
-    strategy: "내신 유지와 활동 경험을 균형 있게 관리하면 강점이 잘 살아납니다. 시험 불안 관리도 중요합니다.",
-    parent: "학습 방식은 비교적 안정적이므로, 멘탈과 리듬 유지에 집중해서 도와주는 것이 좋습니다.",
+    summary:
+      "상위권 성적을 안정적으로 유지하면서 리더십과 대외 활동 역량도 함께 갖춘 유형입니다.",
+    strategy:
+      "내신 유지와 활동 경험을 균형 있게 관리하면 강점이 잘 살아납니다. 시험 불안 관리도 중요합니다.",
+    parent:
+      "학습 방식은 비교적 안정적이므로, 멘탈과 리듬 유지에 집중해서 도와주는 것이 좋습니다.",
     path: "SKY, 서·성·한, 정치외교, 경영, 신문방송, 기자, PD, 외교관, 정치인 계열과 잘 맞습니다.",
-    danger: "관계와 활동 에너지가 큰 만큼, 자신의 학습 리듬이 흐트러질 수 있습니다.",
+    danger:
+      "관계와 활동 에너지가 큰 만큼, 자신의 학습 리듬이 흐트러질 수 있습니다.",
     talk: "‘리더십도 좋지만, 네 페이스를 먼저 지키는 게 중요해’라는 식의 대화가 효과적입니다.",
     color: "#059669",
   },
   PCMs: {
     title: "(외향적) 문과뺀질이형",
     subtitle: "20% 미만",
-    summary: "관심 과목에서는 강점을 보이지만, 관계 에너지와 분위기의 영향을 크게 받는 유형입니다.",
-    strategy: "관심 과목 결과물을 만들어 동기로 삼고, 균형 잡힌 과목 관리와 절대 학습시간 확보가 필요합니다.",
-    parent: "분위기에 휩쓸리지 않도록 관리형 환경을 만들어 주는 것이 중요합니다. 말보다 행동 점검이 더 효과적입니다.",
+    summary:
+      "관심 과목에서는 강점을 보이지만, 관계 에너지와 분위기의 영향을 크게 받는 유형입니다.",
+    strategy:
+      "관심 과목 결과물을 만들어 동기로 삼고, 균형 잡힌 과목 관리와 절대 학습시간 확보가 필요합니다.",
+    parent:
+      "분위기에 휩쓸리지 않도록 관리형 환경을 만들어 주는 것이 중요합니다. 말보다 행동 점검이 더 효과적입니다.",
     path: "신문방송, 정치, 호텔경영, PD, 엔터테인먼트, 통역, 여행 관련 분야와 잘 맞습니다.",
-    danger: "자기통제가 약해질 경우 공부보다 관계와 분위기에 더 많은 에너지를 쓸 수 있습니다.",
+    danger:
+      "자기통제가 약해질 경우 공부보다 관계와 분위기에 더 많은 에너지를 쓸 수 있습니다.",
     talk: "‘얼마나 했는지 숫자와 결과로 같이 확인해보자’는 방식이 좋습니다.",
     color: "#9333ea",
   },
   PCmF: {
     title: "(내향적) 문과 뺀질이",
     subtitle: "20% 미만",
-    summary: "조용하지만 관심 분야에는 강하게 몰입하며, 학습 균형과 마무리 능력이 핵심인 유형입니다.",
-    strategy: "통제적 환경, 절대 학습시간 확보, 관심 분야 성과물을 전체 성적 향상의 발판으로 활용하는 것이 중요합니다.",
-    parent: "겉으로 드러나지 않아 방심하기 쉽지만, 조용히 흐트러질 수 있어 세심한 관찰과 점검이 필요합니다.",
+    summary:
+      "조용하지만 관심 분야에는 강하게 몰입하며, 학습 균형과 마무리 능력이 핵심인 유형입니다.",
+    strategy:
+      "통제적 환경, 절대 학습시간 확보, 관심 분야 성과물을 전체 성적 향상의 발판으로 활용하는 것이 중요합니다.",
+    parent:
+      "겉으로 드러나지 않아 방심하기 쉽지만, 조용히 흐트러질 수 있어 세심한 관찰과 점검이 필요합니다.",
     path: "자유전공, 철학, 애니메이션, 사학, 문헌정보, 방송·도서·창작 관련 분야와 잘 맞습니다.",
-    danger: "시작은 하지만 끝맺음이 약해 성과로 연결되지 못할 수 있습니다.",
+    danger:
+      "시작은 하지만 끝맺음이 약해 성과로 연결되지 못할 수 있습니다.",
     talk: "‘조용히 잘하고 있는 것도 좋지만, 끝까지 간 걸 함께 확인하자’는 식의 대화가 좋습니다.",
     color: "#a21caf",
   },
   PCOF: {
     title: "문과 잠재성장형",
     subtitle: "70% 내외",
-    summary: "현재 강점이 뚜렷하게 드러나지 않은 상태일 수 있지만, 차분한 기반 위에서 성장 가능성이 큰 유형입니다.",
-    strategy: "선행보다 내신 중심 학습이 적합하며, 선호 과목에서 먼저 성취감을 만들고 단계적 목표를 통해 자신감을 회복하는 것이 중요합니다.",
-    parent: "비교보다 성취 경험의 축적이 우선입니다. 작은 성공을 반복적으로 경험하게 해주는 것이 가장 효과적입니다.",
+    summary:
+      "현재 강점이 뚜렷하게 드러나지 않은 상태일 수 있지만, 차분한 기반 위에서 성장 가능성이 큰 유형입니다.",
+    strategy:
+      "선행보다 내신 중심 학습이 적합하며, 선호 과목에서 먼저 성취감을 만들고 단계적 목표를 통해 자신감을 회복하는 것이 중요합니다.",
+    parent:
+      "비교보다 성취 경험의 축적이 우선입니다. 작은 성공을 반복적으로 경험하게 해주는 것이 가장 효과적입니다.",
     path: "아동, 심리, 사범, 사회복지, 유치원교사, 상담, 교육 관련 계열과 잘 맞습니다.",
-    danger: "구체적 목표 의식이 부족하면 막연한 계획만 세우고 쉽게 지칠 수 있습니다.",
+    danger:
+      "구체적 목표 의식이 부족하면 막연한 계획만 세우고 쉽게 지칠 수 있습니다.",
     talk: "‘이번엔 어디까지 해냈는지 같이 확인하자’처럼 작고 구체적인 성취를 짚어주는 대화가 좋습니다.",
     color: "#ea580c",
   },
   ErMS: {
     title: "문·이과 혼합 영재형",
     subtitle: "4% 미만",
-    summary: "문·이과 전 영역을 두루 소화할 수 있는 융합형 상위권 영재입니다.",
-    strategy: "전 과목을 고르게 유지하면서도, 시작한 일을 결과물로 연결하는 훈련이 중요합니다.",
-    parent: "산만함과 독특함을 약점으로 보기보다, 강점으로 연결될 수 있도록 마무리와 집중만 잘 도와주는 것이 좋습니다.",
+    summary:
+      "문·이과 전 영역을 두루 소화할 수 있는 융합형 상위권 영재입니다.",
+    strategy:
+      "전 과목을 고르게 유지하면서도, 시작한 일을 결과물로 연결하는 훈련이 중요합니다.",
+    parent:
+      "산만함과 독특함을 약점으로 보기보다, 강점으로 연결될 수 있도록 마무리와 집중만 잘 도와주는 것이 좋습니다.",
     path: "자유전공, 국제통상, 통계, 건축, 행정, 외교, 한의학, 예술 융합 계열과 잘 맞습니다.",
     danger: "관심사가 넓어 선택과 집중이 흐려질 수 있습니다.",
     talk: "‘잘하는 게 많은 만큼, 우선순위를 같이 정해보자’는 식의 대화가 효과적입니다.",
@@ -303,9 +361,12 @@ const RESULT_DB: Record<string, Report> = {
   erOS: {
     title: "문·이과 혼합 모범형",
     subtitle: "10% 미만",
-    summary: "문·이과를 모두 무난하게 해내며 실리적으로 성과를 쌓는 안정형 상위권입니다.",
-    strategy: "내신, 활동, 시험 리듬을 균형 있게 유지하면 가장 효율적으로 성장할 수 있습니다.",
-    parent: "적극적인 성향으로 인해 활동과 관계 에너지가 커질 수 있으니, 학습 리듬만 잘 잡아주면 좋습니다.",
+    summary:
+      "문·이과를 모두 무난하게 해내며 실리적으로 성과를 쌓는 안정형 상위권입니다.",
+    strategy:
+      "내신, 활동, 시험 리듬을 균형 있게 유지하면 가장 효율적으로 성장할 수 있습니다.",
+    parent:
+      "적극적인 성향으로 인해 활동과 관계 에너지가 커질 수 있으니, 학습 리듬만 잘 잡아주면 좋습니다.",
     path: "사회과학, 경제, 자연과학, 한의학, 수의학, 통계, 공무원, 교사, 변호사 계열과 잘 맞습니다.",
     danger: "다 잘하려다 체력과 집중력이 먼저 떨어질 수 있습니다.",
     talk: "‘잘하고 있는 것 중 꼭 챙길 것만 남기자’는 식의 정리형 대화가 좋습니다.",
@@ -314,9 +375,12 @@ const RESULT_DB: Record<string, Report> = {
   PrmS: {
     title: "문·이과 혼합 수동적모범형",
     subtitle: "10% 미만",
-    summary: "성실성과 안정감으로 꾸준한 상위권을 지키는 혼합형 학생입니다.",
-    strategy: "개념 정리, 시험 불안 관리, 보다 적극적인 대외 활동 경험이 성장 포인트입니다.",
-    parent: "실력은 있으나 자기주장이 약할 수 있어, 리더십과 발표 경험을 조금씩 쌓게 해주는 것이 좋습니다.",
+    summary:
+      "성실성과 안정감으로 꾸준한 상위권을 지키는 혼합형 학생입니다.",
+    strategy:
+      "개념 정리, 시험 불안 관리, 보다 적극적인 대외 활동 경험이 성장 포인트입니다.",
+    parent:
+      "실력은 있으나 자기주장이 약할 수 있어, 리더십과 발표 경험을 조금씩 쌓게 해주는 것이 좋습니다.",
     path: "경영, 경제, 응용통계, 회계, 간호, 교대, 약사, 공무원, 회계사, 작가 계열과 잘 맞습니다.",
     danger: "실력에 비해 존재감이 약해 기회를 놓칠 수 있습니다.",
     talk: "‘네가 해온 걸 드러내는 연습도 중요한 실력이다’라고 말해주는 것이 좋습니다.",
@@ -325,9 +389,12 @@ const RESULT_DB: Record<string, Report> = {
   PrMF: {
     title: "문·이과 혼합 뺀질이형",
     subtitle: "20% 미만",
-    summary: "관심 과목만 잘하는 편차형이지만, 융합적 재능과 아이디어가 살아 있는 유형입니다.",
-    strategy: "균형 잡힌 과목 관리, 감독이 있는 환경, 관심 분야 결과물을 전체 성적으로 연결하는 전략이 중요합니다.",
-    parent: "통제적 환경과 마무리 점검이 필요합니다. 시작은 빠르지만 끝까지 가는 힘을 만들어주는 것이 핵심입니다.",
+    summary:
+      "관심 과목만 잘하는 편차형이지만, 융합적 재능과 아이디어가 살아 있는 유형입니다.",
+    strategy:
+      "균형 잡힌 과목 관리, 감독이 있는 환경, 관심 분야 결과물을 전체 성적으로 연결하는 전략이 중요합니다.",
+    parent:
+      "통제적 환경과 마무리 점검이 필요합니다. 시작은 빠르지만 끝까지 가는 힘을 만들어주는 것이 핵심입니다.",
     path: "자유전공, 건축, 자연과학, 철학, 어문, 방송 관련 직종, 프리랜서 계열과 잘 맞습니다.",
     danger: "분야를 넘나드는 재능이 오히려 산만함으로 보일 수 있습니다.",
     talk: "‘재능은 충분하니, 이제 끝까지 연결하는 힘을 같이 만들자’는 식의 대화가 효과적입니다.",
@@ -336,20 +403,27 @@ const RESULT_DB: Record<string, Report> = {
   PrOF: {
     title: "융합 잠재성장형",
     subtitle: "70% 내외",
-    summary: "현재 특별히 두드러진 과목이 없더라도, 생활 속 훈련과 경험에 따라 성장 폭이 크게 달라질 수 있는 유형입니다.",
-    strategy: "선행보다 내신 중심으로 접근하고, 선택과 집중을 통해 작은 성취 경험을 반복적으로 만드는 것이 중요합니다.",
-    parent: "막연한 기대보다 단계적 목표가 필요합니다. 선호 과목에서 자신감을 얻으면 다른 과목으로도 확장될 가능성이 높습니다.",
+    summary:
+      "현재 특별히 두드러진 과목이 없더라도, 생활 속 훈련과 경험에 따라 성장 폭이 크게 달라질 수 있는 유형입니다.",
+    strategy:
+      "선행보다 내신 중심으로 접근하고, 선택과 집중을 통해 작은 성취 경험을 반복적으로 만드는 것이 중요합니다.",
+    parent:
+      "막연한 기대보다 단계적 목표가 필요합니다. 선호 과목에서 자신감을 얻으면 다른 과목으로도 확장될 가능성이 높습니다.",
     path: "심리, 사범, 사회복지, 건축, 간호, 식품영양, 의상, 상담·교육·영양 관련 분야와 잘 맞습니다.",
-    danger: "구체적 목표가 없으면 쉽게 무기력해질 수 있어, 구조화된 루틴이 필요합니다.",
+    danger:
+      "구체적 목표가 없으면 쉽게 무기력해질 수 있어, 구조화된 루틴이 필요합니다.",
     talk: "‘오늘은 이 한 가지를 끝내보자’처럼 아주 작고 선명한 목표를 주는 대화가 효과적입니다.",
     color: "#ea580c",
   },
   DEFAULT: {
     title: "학습성향 분석 결과",
     subtitle: "기본 리포트",
-    summary: "현재 입력된 응답을 바탕으로 가장 가까운 학습 성향으로 분류한 결과입니다.",
-    strategy: "기본 학습 루틴을 먼저 안정화하고, 강점 과목을 중심으로 성취 경험을 늘리는 것이 좋습니다.",
-    parent: "아이의 성향을 바꾸려 하기보다, 현재 방식에 맞는 환경과 전략을 함께 찾는 접근이 효과적입니다.",
+    summary:
+      "현재 입력된 응답을 바탕으로 가장 가까운 학습 성향으로 분류한 결과입니다.",
+    strategy:
+      "기본 학습 루틴을 먼저 안정화하고, 강점 과목을 중심으로 성취 경험을 늘리는 것이 좋습니다.",
+    parent:
+      "아이의 성향을 바꾸려 하기보다, 현재 방식에 맞는 환경과 전략을 함께 찾는 접근이 효과적입니다.",
     path: "상세 결과 DB 확장에 따라 더 정밀한 추천으로 연결될 수 있습니다.",
     danger: "강점이 선명하지 않을수록 비교의 영향을 더 크게 받을 수 있습니다.",
     talk: "‘네 방식에 맞는 방법을 같이 찾아가자’는 접근이 좋습니다.",
@@ -442,59 +516,193 @@ function getProfileDistance(a: AxisProfile, b: AxisProfile) {
 function resolveResult(scores: Record<string, number>) {
   const profile = getAxisProfile(scores);
 
+  const diffs = {
+    social: scores.E - scores.P,
+    judgment: scores.C - scores.R,
+    track: scores.O - scores.M,
+    style: scores.S - scores.F,
+  };
+
+  const abs = {
+    social: Math.abs(diffs.social),
+    judgment: Math.abs(diffs.judgment),
+    track: Math.abs(diffs.track),
+    style: Math.abs(diffs.style),
+  };
+
+  const isBalanced =
+    abs.social <= 4 &&
+    abs.judgment <= 4 &&
+    abs.track <= 4 &&
+    abs.style <= 4;
+
+  const isTrackBalanced = abs.track <= 6;
+  const isScience = diffs.track > 6;
+  const isLiberal = diffs.track < -6;
+
+  const isExtro = diffs.social > 4;
+  const isIntro = diffs.social < -4;
+
+  const isThinking = diffs.judgment > 4;
+  const isFeeling = diffs.judgment < -4;
+
+  const isStructured = diffs.style > 4;
+  const isFree = diffs.style < -4;
+
+  const candidateKeys: string[] = [];
+
+  if (isBalanced) {
+    candidateKeys.push("PrOF");
+  }
+
+  if (isScience) {
+    if (isStructured) {
+      if (isExtro && isThinking) candidateKeys.push("eROS");
+      if (isIntro && isThinking) candidateKeys.push("pROS");
+      candidateKeys.push("PROS");
+    }
+
+    if (isFree) {
+      if (isExtro && isThinking && abs.track >= 12 && abs.judgment >= 8) {
+        candidateKeys.push("ERMS");
+      }
+      if (isIntro && isThinking && abs.track >= 10) {
+        candidateKeys.push("ERMF");
+      }
+      if (isExtro) candidateKeys.push("EROF");
+      candidateKeys.push("PRMf");
+      candidateKeys.push("ERMF");
+    }
+
+    if (!isStructured && !isFree) {
+      if (isExtro && isThinking) candidateKeys.push("ERMF");
+      if (isIntro && isThinking) candidateKeys.push("PRMf");
+      candidateKeys.push("PROS");
+    }
+  }
+
+  if (isLiberal) {
+    if (isStructured) {
+      if (isExtro && isFeeling && abs.style >= 8) candidateKeys.push("ECMs");
+      if (isIntro && isFeeling && abs.track >= 10) candidateKeys.push("ECoS");
+      if (isIntro) candidateKeys.push("pCOS");
+      if (isExtro) candidateKeys.push("eCOS");
+      candidateKeys.push("PCOF");
+    }
+
+    if (isFree) {
+      if (isExtro && isFeeling && abs.track >= 12) candidateKeys.push("ECMf");
+      if (isExtro) candidateKeys.push("PCMs");
+      if (isIntro) candidateKeys.push("PCmF");
+      candidateKeys.push("ECMf");
+    }
+
+    if (!isStructured && !isFree) {
+      if (isExtro && isFeeling) candidateKeys.push("ECMf");
+      if (isIntro && isFeeling) candidateKeys.push("PCmF");
+      candidateKeys.push("PCOF");
+    }
+  }
+
+  if (isTrackBalanced) {
+    if (isStructured) {
+      if (isExtro) candidateKeys.push("erOS");
+      if (isIntro) candidateKeys.push("PrmS");
+      candidateKeys.push("PrmS", "erOS");
+    }
+
+    if (isFree) {
+      if (isExtro && isThinking) candidateKeys.push("ErMS");
+      candidateKeys.push("PrMF");
+      candidateKeys.push("ErMS");
+    }
+
+    if (!isStructured && !isFree) {
+      candidateKeys.push("PrOF", "PrMF", "erOS");
+    }
+  }
+
+  candidateKeys.push("DEFAULT");
+
+  const uniqueCandidates = Array.from(new Set(candidateKeys));
+
   let bestKey = "DEFAULT";
   let bestScore = -Infinity;
 
-  Object.entries(PROFILE_TARGETS).forEach(([key, target]) => {
-    if (key === "DEFAULT") return;
+  for (const key of uniqueCandidates) {
+    const target = PROFILE_TARGETS[key] || PROFILE_TARGETS.DEFAULT;
+    const axisDistance = getProfileDistance(profile, target);
 
-    const socialDiff = Math.abs(profile.social - target.social);
-    const judgmentDiff = Math.abs(profile.judgment - target.judgment);
-    const trackDiff = Math.abs(profile.track - target.track);
-    const styleDiff = Math.abs(profile.style - target.style);
-
-    let score =
-      100 -
-      socialDiff * 18 -
-      judgmentDiff * 18 -
-      trackDiff * 24 -
-      styleDiff * 22;
+    let score = 100 - axisDistance * 12;
 
     if (Math.sign(profile.social) === Math.sign(target.social)) score += 6;
     if (Math.sign(profile.judgment) === Math.sign(target.judgment)) score += 6;
-    if (Math.sign(profile.track) === Math.sign(target.track)) score += 8;
+    if (Math.sign(profile.track) === Math.sign(target.track)) score += 10;
     if (Math.sign(profile.style) === Math.sign(target.style)) score += 8;
 
-    if (Math.abs(profile.social) > 1.0 && Math.abs(target.social) > 1.0) score += 3;
-    if (Math.abs(profile.judgment) > 1.0 && Math.abs(target.judgment) > 1.0) score += 3;
-    if (Math.abs(profile.track) > 1.0 && Math.abs(target.track) > 1.0) score += 4;
-    if (Math.abs(profile.style) > 1.0 && Math.abs(target.style) > 1.0) score += 4;
+    if (
+      key.startsWith("ER") ||
+      key.startsWith("eR") ||
+      key === "PROS" ||
+      key === "PRMf" ||
+      key === "EROF"
+    ) {
+      score += diffs.track > 0 ? Math.min(abs.track, 18) : -10;
+    }
 
-    const scienceBias = scores.O - scores.M;
-    const extroBias = scores.E - scores.P;
-    const thinkBias = scores.C - scores.R;
-    const structureBias = scores.S - scores.F;
+    if (
+      key.startsWith("EC") ||
+      key.startsWith("pC") ||
+      key.startsWith("eC") ||
+      key === "PCMs" ||
+      key === "PCmF" ||
+      key === "PCOF"
+    ) {
+      score += diffs.track < 0 ? Math.min(abs.track, 18) : -10;
+    }
 
-    if (scienceBias > 8 && target.track > 0) score += 4;
-    if (scienceBias < -8 && target.track < 0) score += 4;
+    if (key.startsWith("Pr") || key.startsWith("er") || key.startsWith("Er")) {
+      score += isTrackBalanced ? 10 : -6;
+    }
 
-    if (extroBias > 8 && target.social > 0) score += 3;
-    if (extroBias < -8 && target.social < 0) score += 3;
+    if (["ERMS", "eROS", "EROF", "ECMs", "eCOS", "PCMs", "ErMS", "erOS"].includes(key)) {
+      score += diffs.social > 0 ? Math.min(abs.social, 12) : -6;
+    }
 
-    if (thinkBias > 8 && target.judgment > 0) score += 3;
-    if (thinkBias < -8 && target.judgment < 0) score += 3;
+    if (["ERMF", "pROS", "PRMf", "PROS", "ECoS", "pCOS", "PCmF", "PCOF", "PrmS", "PrOF"].includes(key)) {
+      score += diffs.social < 0 ? Math.min(abs.social, 12) : -4;
+    }
 
-    if (structureBias > 8 && target.style > 0) score += 3;
-    if (structureBias < -8 && target.style < 0) score += 3;
+    if (["ERMS", "ERMF", "eROS", "pROS", "PRMf", "EROF"].includes(key)) {
+      score += diffs.judgment > 0 ? Math.min(abs.judgment, 10) : -5;
+    }
 
-    const distancePenalty = getProfileDistance(profile, target) * 2.2;
-    score -= distancePenalty;
+    if (["ECMf", "ECMs", "ECoS", "eCOS", "PCMs", "PCmF", "PCOF"].includes(key)) {
+      score += diffs.judgment < 0 ? Math.min(abs.judgment, 10) : -5;
+    }
+
+    if (["eROS", "pROS", "ECMs", "ECoS", "pCOS", "eCOS", "PrmS", "erOS", "PROS"].includes(key)) {
+      score += diffs.style > 0 ? Math.min(abs.style, 10) : -5;
+    }
+
+    if (["ERMS", "ERMF", "PRMf", "EROF", "ECMf", "PCMs", "PCmF", "PrMF", "ErMS", "PrOF", "PCOF"].includes(key)) {
+      score += diffs.style < 0 ? Math.min(abs.style, 10) : -5;
+    }
+
+    if (["PROS", "PCOF", "PrOF"].includes(key)) {
+      const balanceBonus =
+        (8 - Math.min(abs.social, 8)) +
+        (8 - Math.min(abs.judgment, 8)) +
+        (8 - Math.min(abs.track, 8)) +
+        (8 - Math.min(abs.style, 8));
+      score += balanceBonus * 0.9;
+    }
 
     if (score > bestScore) {
       bestScore = score;
       bestKey = key;
     }
-  });
+  }
 
   return { key: bestKey, code: bestKey };
 }
@@ -552,8 +760,8 @@ function generatePrintableReport({
   };
 
   const rgb = hexToRgb(report.color);
-  const softTint = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10)`;
-  const softBorder = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.20)`;
+  const softTint = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`;
+  const softBorder = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
 
   const axisBar = (leftValue: number, rightValue: number) => {
     const leftPercent = Math.max(0, Math.min(100, (leftValue / 5) * 100));
@@ -626,7 +834,6 @@ function generatePrintableReport({
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-
           html, body {
             margin: 0;
             padding: 0;
@@ -634,18 +841,15 @@ function generatePrintableReport({
             color: #0f172a;
             font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
           }
-
           body {
             line-height: 1.7;
           }
-
           .page {
             width: 100%;
             max-width: 1120px;
             margin: 0 auto;
             padding: 28px;
           }
-
           .shell {
             background:
               radial-gradient(circle at top left, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10), transparent 28%),
@@ -656,7 +860,6 @@ function generatePrintableReport({
             overflow: hidden;
             box-shadow: 0 24px 80px rgba(15, 23, 42, 0.10);
           }
-
           .hero {
             position: relative;
             overflow: hidden;
@@ -664,7 +867,6 @@ function generatePrintableReport({
             background: linear-gradient(135deg, ${report.color} 0%, #0f172a 100%);
             color: #ffffff;
           }
-
           .hero:before {
             content: "";
             position: absolute;
@@ -676,7 +878,6 @@ function generatePrintableReport({
             background: rgba(255, 255, 255, 0.10);
             filter: blur(6px);
           }
-
           .hero:after {
             content: "";
             position: absolute;
@@ -687,19 +888,16 @@ function generatePrintableReport({
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.07);
           }
-
           .hero-inner {
             position: relative;
             z-index: 1;
           }
-
           .badge-row {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 18px;
           }
-
           .badge {
             display: inline-flex;
             align-items: center;
@@ -711,7 +909,6 @@ function generatePrintableReport({
             background: rgba(255,255,255,0.12);
             border: 1px solid rgba(255,255,255,0.16);
           }
-
           .hero h1 {
             margin: 0;
             font-size: 34px;
@@ -719,14 +916,12 @@ function generatePrintableReport({
             font-weight: 900;
             letter-spacing: -0.03em;
           }
-
           .hero-sub {
             margin-top: 10px;
             font-size: 14px;
             font-weight: 600;
             color: rgba(255,255,255,0.82);
           }
-
           .hero-summary {
             margin-top: 22px;
             padding: 18px 20px;
@@ -737,25 +932,21 @@ function generatePrintableReport({
             line-height: 1.9;
             color: rgba(255,255,255,0.94);
           }
-
           .content {
             padding: 26px;
           }
-
           .meta-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 14px;
             margin-bottom: 18px;
           }
-
           .meta-card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 22px;
             padding: 18px;
           }
-
           .meta-label {
             font-size: 11px;
             font-weight: 800;
@@ -763,14 +954,12 @@ function generatePrintableReport({
             color: #64748b;
             margin-bottom: 10px;
           }
-
           .meta-value {
             font-size: 18px;
             font-weight: 900;
             color: #0f172a;
             line-height: 1.45;
           }
-
           .result-emphasis {
             background: ${softTint};
             border: 1px solid ${softBorder};
@@ -783,12 +972,10 @@ function generatePrintableReport({
             align-items: center;
             gap: 8px;
           }
-
           .axis-wrap {
             margin-top: 22px;
             margin-bottom: 22px;
           }
-
           .block-title {
             display: flex;
             align-items: center;
@@ -796,7 +983,6 @@ function generatePrintableReport({
             gap: 12px;
             margin-bottom: 14px;
           }
-
           .block-title h2 {
             margin: 0;
             font-size: 22px;
@@ -804,19 +990,16 @@ function generatePrintableReport({
             letter-spacing: -0.02em;
             color: #0f172a;
           }
-
           .block-title .desc {
             font-size: 13px;
             color: #64748b;
             font-weight: 600;
           }
-
           .axis-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 14px;
           }
-
           .axis-card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -824,20 +1007,17 @@ function generatePrintableReport({
             padding: 18px;
             box-shadow: 0 8px 26px rgba(15, 23, 42, 0.04);
           }
-
           .axis-top {
             display: flex;
             flex-direction: column;
             gap: 8px;
             margin-bottom: 14px;
           }
-
           .axis-name {
             font-size: 16px;
             font-weight: 900;
             color: #0f172a;
           }
-
           .axis-chip {
             display: inline-flex;
             align-self: flex-start;
@@ -849,7 +1029,6 @@ function generatePrintableReport({
             background: #f8fafc;
             border: 1px solid #e2e8f0;
           }
-
           .axis-label-row {
             display: flex;
             justify-content: space-between;
@@ -859,7 +1038,6 @@ function generatePrintableReport({
             font-weight: 700;
             color: #64748b;
           }
-
           .axis-track {
             position: relative;
             display: grid;
@@ -868,7 +1046,6 @@ function generatePrintableReport({
             gap: 0;
             margin-bottom: 14px;
           }
-
           .axis-half {
             height: 12px;
             border-radius: 999px;
@@ -876,17 +1053,14 @@ function generatePrintableReport({
             overflow: hidden;
             position: relative;
           }
-
           .axis-half:first-child .axis-fill {
             margin-left: auto;
           }
-
           .axis-divider {
             width: 10px;
             height: 12px;
             position: relative;
           }
-
           .axis-divider:before {
             content: "";
             position: absolute;
@@ -898,26 +1072,21 @@ function generatePrintableReport({
             border-radius: 999px;
             background: #cbd5e1;
           }
-
           .axis-fill {
             height: 100%;
             border-radius: 999px;
           }
-
           .axis-fill.left {
             background: linear-gradient(90deg, #cbd5e1 0%, ${report.color} 100%);
           }
-
           .axis-fill.right {
             background: linear-gradient(90deg, ${report.color} 0%, #0f172a 100%);
           }
-
           .axis-score-row {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
           }
-
           .axis-score-box {
             border-radius: 18px;
             background: #f8fafc;
@@ -925,26 +1094,22 @@ function generatePrintableReport({
             padding: 12px 14px;
             text-align: center;
           }
-
           .axis-score-title {
             font-size: 11px;
             letter-spacing: 0.14em;
             font-weight: 800;
             color: #94a3b8;
           }
-
           .axis-score-value {
             margin-top: 6px;
             font-size: 15px;
             font-weight: 900;
             color: #0f172a;
           }
-
           .sections {
             display: grid;
             gap: 14px;
           }
-
           .section-card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -952,14 +1117,12 @@ function generatePrintableReport({
             padding: 22px 22px 20px;
             box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
           }
-
           .section-head {
             display: flex;
             align-items: center;
             gap: 12px;
             margin-bottom: 12px;
           }
-
           .section-index {
             width: 34px;
             height: 34px;
@@ -974,7 +1137,6 @@ function generatePrintableReport({
             border: 1px solid ${softBorder};
             flex-shrink: 0;
           }
-
           .section-card h2 {
             margin: 0;
             font-size: 19px;
@@ -982,7 +1144,6 @@ function generatePrintableReport({
             color: #0f172a;
             letter-spacing: -0.02em;
           }
-
           .section-card p {
             margin: 0;
             font-size: 14px;
@@ -990,7 +1151,6 @@ function generatePrintableReport({
             color: #334155;
             white-space: pre-wrap;
           }
-
           .footer {
             margin-top: 18px;
             display: flex;
@@ -1003,32 +1163,26 @@ function generatePrintableReport({
             font-size: 12px;
             font-weight: 600;
           }
-
           .footer strong {
             color: #0f172a;
           }
-
           @page {
             size: A4;
             margin: 14mm;
           }
-
           @media print {
             html, body {
               background: #ffffff;
             }
-
             .page {
               max-width: none;
               padding: 0;
             }
-
             .shell {
               border: none;
               box-shadow: none;
               border-radius: 0;
             }
-
             .hero,
             .axis-card,
             .section-card,
