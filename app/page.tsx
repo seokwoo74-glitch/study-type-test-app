@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState, type ReactNode } from "react";
 
 type Step = "landing" | "test" | "result";
@@ -888,7 +886,7 @@ function ResultScreen({
   );
 }
 
-export default function Page() {
+export default function App() {
   const [step, setStep] = useState<Step>("landing");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
@@ -941,6 +939,7 @@ export default function Page() {
 
   const previewResult = () => {
     setStep("result");
+    setCurrentIndex(QUESTIONS.length - 1);
     setAnswers(new Array(QUESTIONS.length).fill(3));
   };
 
