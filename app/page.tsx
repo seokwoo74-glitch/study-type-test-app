@@ -1227,144 +1227,197 @@ function ChoiceButton({
 }
 
 function LandingScreen({ onStart }: { onStart: () => void }) {
+  const highlights = [
+    { label: "검사 문항", value: `${QUESTIONS.length}문항` },
+    { label: "예상 소요", value: "약 5~7분" },
+    { label: "결과 제공", value: "학부모 신뢰형 리포트" },
+  ];
+
+  const trustPoints = [
+    "학생의 응답을 바탕으로 학습 성향과 실행 패턴을 분석합니다.",
+    "결과 해석뿐 아니라 학습 전략과 부모 코칭 포인트까지 함께 제공합니다.",
+    "직관적인 2지선다 방식으로 부담 없이 시작할 수 있습니다.",
+  ];
+
+  const process = [
+    {
+      step: "01",
+      title: "응답 진행",
+      desc: "학생이 문항에 따라 직관적으로 응답합니다.",
+    },
+    {
+      step: "02",
+      title: "성향 분석",
+      desc: "응답 데이터를 바탕으로 학습 태도와 행동 패턴을 정리합니다.",
+    },
+    {
+      step: "03",
+      title: "결과 리포트",
+      desc: "유형 해석, 학습 전략, 부모 코칭 방향을 한 번에 제공합니다.",
+    },
+  ];
+
   return (
     <Shell>
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="overflow-hidden rounded-[36px] bg-gradient-to-br from-slate-900 via-sky-900 to-cyan-700 p-7 text-white shadow-[0_24px_80px_rgba(2,6,23,0.24)] sm:p-10">
-          <div className="flex flex-wrap gap-3">
-            <HeroBadge>STUDY TYPE TEST</HeroBadge>
-            <HeroBadge>학부모 신뢰형 리포트</HeroBadge>
+      <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
+        <div className="relative overflow-hidden rounded-[36px] border border-slate-200 bg-white px-7 py-8 shadow-[0_28px_90px_rgba(15,23,42,0.08)] sm:px-10 sm:py-10">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.12),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.08),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,250,252,0.94))]" />
+
+          <div className="relative">
+            <div className="flex flex-wrap gap-3">
+              <span className="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-[11px] font-extrabold tracking-[0.16em] text-sky-700">
+                STUDY TYPE ANALYSIS
+              </span>
+              <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-[11px] font-extrabold tracking-[0.16em] text-slate-600">
+                학부모 신뢰형 리포트
+              </span>
+            </div>
+
+            <div className="mt-7 max-w-3xl">
+              <p className="text-sm font-extrabold tracking-[0.18em] text-slate-400">
+                LEARNING PROFILE TEST
+              </p>
+
+              <h1 className="mt-3 text-4xl font-black leading-[1.12] tracking-[-0.03em] text-slate-950 sm:text-5xl">
+                학습성향
+                <br />
+                정밀 진단 검사
+              </h1>
+
+              <p className="mt-5 max-w-2xl text-[16px] leading-8 text-slate-600 sm:text-[17px]">
+                학생의 응답을 바탕으로 학습 방식, 판단 습관, 실행 패턴,
+                성장 가능성을 분석하고
+                <span className="font-bold text-slate-900">
+                  {" "}
+                  결과 해석 · 학습 전략 · 부모 코칭 포인트
+                </span>
+                를 한눈에 정리한 리포트로 제공합니다.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {highlights.map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-[24px] border border-slate-200 bg-white/90 p-4 shadow-[0_10px_30px_rgba(15,23,42,0.04)]"
+                >
+                  <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">
+                    {item.label}
+                  </div>
+                  <div className="mt-2 text-lg font-black tracking-tight text-slate-900">
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 rounded-[28px] border border-slate-200 bg-slate-50/90 p-5">
+              <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">
+                WHY THIS TEST
+              </div>
+
+              <div className="mt-4 grid gap-3">
+                {trustPoints.map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-start gap-3 rounded-[18px] bg-white px-4 py-3 shadow-[0_8px_24px_rgba(15,23,42,0.04)]"
+                  >
+                    <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-900 text-[11px] font-black text-white">
+                      ✓
+                    </div>
+                    <p className="text-sm font-semibold leading-6 text-slate-700">
+                      {item}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={onStart}
+                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-7 py-3.5 text-sm font-black text-white shadow-[0_16px_40px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800"
+              >
+                검사 시작하기
+              </button>
+
+              <div className="text-sm font-semibold text-slate-500">
+                빠르게 시작하고 결과는 바로 확인할 수 있습니다.
+              </div>
+            </div>
           </div>
-
-          <h1 className="mt-6 text-4xl font-black leading-tight tracking-tight sm:text-5xl">
-            학습성향
-            <br />
-            정밀 진단 검사
-          </h1>
-
-          <p className="mt-5 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">
-            학생의 응답을 바탕으로 학습 방식, 판단 습관, 실행 패턴, 성장 가능성을 분석해 결과 리포트로 정리합니다.
-          </p>
-
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
-              <div className="text-xs font-extrabold tracking-[0.18em] text-white/60">QUESTIONS</div>
-              <div className="mt-2 text-3xl font-black">{QUESTIONS.length}</div>
-              <div className="mt-1 text-sm text-white/70">문항</div>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
-              <div className="text-xs font-extrabold tracking-[0.18em] text-white/60">REPORT</div>
-              <div className="mt-2 text-3xl font-black">PDF</div>
-              <div className="mt-1 text-sm text-white/70">출력 가능</div>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
-              <div className="text-xs font-extrabold tracking-[0.18em] text-white/60">STYLE</div>
-              <div className="mt-2 text-3xl font-black">B</div>
-              <div className="mt-1 text-sm text-white/70">간단 체험형</div>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={onStart}
-            className="mt-8 inline-flex items-center rounded-full bg-white px-7 py-4 text-base font-black text-slate-900 shadow-lg transition hover:-translate-y-0.5"
-          >
-            검사 시작하기
-          </button>
         </div>
 
         <div className="grid gap-6">
-          <SectionCard title="검사 안내" desc="엑셀 채점표 기준으로 결과가 나오도록 정리한 버전이에요.">
-            <div className="grid gap-4">
-              <InfoItem title="응답 방식" value="각 문항에 대해 ‘그렇다 / 아니다’ 중 하나를 선택" />
-              <InfoItem title="진행 구조" value="한 번에 한 문항씩 보여 렉을 줄이고 집중도를 높임" />
-              <InfoItem title="결과 제공" value="유형명, 요약, 학습 전략, 부모 코칭, 진로 방향, PDF 출력, 캐릭터 프롬프트" />
+          <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-900 p-7 text-white shadow-[0_24px_80px_rgba(2,6,23,0.18)]">
+            <div className="text-xs font-extrabold tracking-[0.18em] text-white/55">
+              REPORT PREVIEW
             </div>
-          </SectionCard>
 
-          <SectionCard title="이런 분께 추천" desc="학생·학부모 상담용 체험판으로 사용하기 좋아요.">
-            <div className="space-y-3 text-sm leading-7 text-slate-600">
-              <p>• 아이의 성향을 단순 성격이 아니라 학습 방향으로 보고 싶은 경우</p>
-              <p>• 부모 상담용으로 정리된 결과 문구가 필요한 경우</p>
-              <p>• PDF로 저장해서 활용하고 싶은 경우</p>
-            </div>
-          </SectionCard>
-        </div>
-      </div>
-    </Shell>
-  );
-}
+            <h2 className="mt-3 text-[28px] font-black leading-[1.25] tracking-[-0.03em]">
+              결과는 단순한 유형명이 아니라
+              <br />
+              해석 중심 리포트입니다
+            </h2>
 
-function InfoItem({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
-      <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">{title}</div>
-      <div className="mt-2 text-sm font-semibold leading-6 text-slate-700">{value}</div>
-    </div>
-  );
-}
+            <p className="mt-4 text-sm leading-7 text-white/75">
+              학생의 성향을 이해하기 쉽게 정리하고, 실제 학습 상황에서
+              적용할 수 있는 방향까지 함께 제안합니다.
+            </p>
 
-function TestScreen({
-  currentIndex,
-  answers,
-  onAnswer,
-  onPrev,
-}: {
-  currentIndex: number;
-  answers: number[];
-  onAnswer: (value: number) => void;
-  onPrev: () => void;
-}) {
-  const progress = Math.round((currentIndex / QUESTIONS.length) * 100);
-  const selected = answers[currentIndex] ?? null;
+            <div className="mt-6 space-y-3">
+              <div className="rounded-[22px] border border-white/10 bg-white/10 p-4 backdrop-blur">
+                <div className="text-[11px] font-extrabold tracking-[0.16em] text-white/55">
+                  INCLUDED
+                </div>
+                <div className="mt-2 text-sm font-bold leading-6 text-white/90">
+                  유형 해석 · 학습 전략 · 부모 코칭 · 진로 방향 · 주의 패턴
+                </div>
+              </div>
 
-  return (
-    <Shell>
-      <div className="mx-auto max-w-3xl">
-        <div className="rounded-[34px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:p-7">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div className="text-xs font-extrabold tracking-[0.18em] text-slate-400">QUESTION</div>
-              <div className="mt-2 text-lg font-black text-slate-900">
-                {currentIndex + 1} / {QUESTIONS.length}
+              <div className="rounded-[22px] border border-white/10 bg-white/10 p-4 backdrop-blur">
+                <div className="text-[11px] font-extrabold tracking-[0.16em] text-white/55">
+                  RECOMMENDED FOR
+                </div>
+                <div className="mt-2 text-sm font-bold leading-6 text-white/90">
+                  학생 성향을 더 정확히 이해하고, 상담형 결과 리포트를 함께
+                  보고 싶은 학부모와 학생
+                </div>
               </div>
             </div>
-            <div className="min-w-[180px] flex-1 sm:max-w-xs">
-              <ProgressBar value={progress} />
-              <div className="mt-2 text-right text-xs font-bold text-slate-500">{progress}% 진행</div>
+          </div>
+
+          <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+            <div className="mb-5">
+              <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
+                HOW IT WORKS
+              </div>
+              <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-900">
+                진행 방식
+              </h3>
             </div>
-          </div>
 
-          <div className="mt-8 rounded-[30px] bg-gradient-to-br from-slate-50 to-sky-50 p-6 sm:p-8">
-            <div className="text-sm font-bold uppercase tracking-[0.2em] text-sky-600">문항</div>
-            <p className="mt-4 text-2xl font-black leading-[1.55] tracking-tight text-slate-900 sm:text-[30px]">
-              {QUESTIONS[currentIndex]}
-            </p>
-          </div>
+            <div className="grid gap-3">
+              {process.map((item) => (
+                <div
+                  key={item.step}
+                  className="flex items-start gap-4 rounded-[24px] border border-slate-200 bg-slate-50/80 p-4"
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-sm font-black text-white">
+                    {item.step}
+                  </div>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {CHOICES.map((choice) => (
-              <ChoiceButton
-                key={choice.label}
-                active={selected === choice.value}
-                label={choice.label}
-                onClick={() => onAnswer(choice.value)}
-              />
-            ))}
-          </div>
-
-          <div className="mt-7 flex items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={onPrev}
-              disabled={currentIndex === 0}
-              className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              이전 문항
-            </button>
-
-            <div className="text-sm font-semibold text-slate-500">
-              {selected === null ? "답변을 선택하면 다음으로 이동해요." : "응답 저장됨"}
+                  <div>
+                    <div className="text-base font-black tracking-tight text-slate-900">
+                      {item.title}
+                    </div>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
