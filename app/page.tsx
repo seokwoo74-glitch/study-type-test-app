@@ -114,15 +114,87 @@ const QUESTIONS: string[] = [
 ];
 
 const SCORE_MAP: Record<string, number>[] = [
-  { O: 1 }, { O: 5 }, { E: 5 }, { S: 3 }, { C: 5 }, { M: 5 }, { F: 5 }, { F: 5 }, { E: 3 }, { C: 5 },
-  { S: 3 }, { F: 5 }, { E: 5 }, { P: 5 }, { C: 5 }, { R: 5 }, { R: 3 }, { S: 5 }, { R: 3 }, { R: 1 },
-  { O: 5 }, { O: 5 }, { S: 5 }, { R: 5 }, { R: 5 }, { C: 5 }, { C: 1 }, { M: 5 }, { P: 5 }, { C: 3 },
-  { O: 5 }, { E: 5 }, { O: 3 }, { C: 5 }, { C: 3 }, { M: 3 }, { M: 1 }, { M: 5 }, { P: 3 }, { R: 5 },
+  { O: 1 },
+  { O: 5 },
+  { E: 5 },
+  { S: 3 },
+  { C: 5 },
+  { M: 5 },
+  { F: 5 },
+  { F: 5 },
+  { E: 3 },
+  { C: 5 },
+  { S: 3 },
+  { F: 5 },
+  { E: 5 },
+  { P: 5 },
+  { C: 5 },
+  { R: 5 },
+  { R: 3 },
+  { S: 5 },
+  { R: 3 },
+  { R: 1 },
+  { O: 5 },
+  { O: 5 },
+  { S: 5 },
+  { R: 5 },
+  { R: 5 },
+  { C: 5 },
+  { C: 1 },
+  { M: 5 },
+  { P: 5 },
+  { C: 3 },
+  { O: 5 },
+  { E: 5 },
+  { O: 3 },
+  { C: 5 },
+  { C: 3 },
+  { M: 3 },
+  { M: 1 },
+  { M: 5 },
+  { P: 3 },
+  { R: 5 },
 
-  { C: 5 }, { M: 5 }, { M: 5 }, { O: 5 }, { P: 3 }, { R: 5 }, { M: 5 }, { M: 3 }, { M: 3 }, { O: 3 },
-  { O: 5 }, { F: 5 }, { F: 1 }, { E: 3 }, { R: 5 }, { C: 3 }, { M: 5 }, { O: 5 }, { E: 5 }, { E: 3 },
-  { P: 5 }, { O: 5 }, { O: 3 }, { E: 5 }, { P: 5 }, { S: 5 }, { R: 3 }, { S: 5 }, { E: 3 }, { O: 3 },
-  { S: 3 }, { S: 3 }, { F: 5 }, { P: 3 }, { P: 3 }, { F: 5 }, { F: 3 }, { P: 5 }, { M: 3 }, { F: 3 },
+  { C: 5 },
+  { M: 5 },
+  { M: 5 },
+  { O: 5 },
+  { P: 3 },
+  { R: 5 },
+  { M: 5 },
+  { M: 3 },
+  { M: 3 },
+  { O: 3 },
+  { O: 5 },
+  { F: 5 },
+  { F: 1 },
+  { E: 3 },
+  { R: 5 },
+  { C: 3 },
+  { M: 5 },
+  { O: 5 },
+  { E: 5 },
+  { E: 3 },
+  { P: 5 },
+  { O: 5 },
+  { O: 3 },
+  { E: 5 },
+  { P: 5 },
+  { S: 5 },
+  { R: 3 },
+  { S: 5 },
+  { E: 3 },
+  { O: 3 },
+  { S: 3 },
+  { S: 3 },
+  { F: 5 },
+  { P: 3 },
+  { P: 3 },
+  { F: 5 },
+  { F: 3 },
+  { P: 5 },
+  { M: 3 },
+  { F: 3 },
 ];
 
 const CHOICES = [
@@ -134,20 +206,27 @@ const RESULT_DB: Record<string, Report> = {
   ERMS: {
     title: "이과 창의적영재형",
     subtitle: "1% 미만",
-    summary: "이과적 두뇌와 창의적 사고가 매우 뛰어나며, 상위권을 넘어 특출한 성취 가능성을 지닌 유형입니다.",
-    strategy: "자기주도성이 강하므로 학생의 의견을 중심으로 학습 방향을 설계하되, 내신·대회·전형 정보를 균형 있게 관리하는 것이 좋습니다. 선행·심화 학습과 결과물 중심 활동이 잘 맞습니다.",
-    parent: "통제보다 신뢰와 지원이 효과적입니다. 일반적인 학습 환경보다 수준이 맞는 집단에서 더 크게 성장할 가능성이 높습니다.",
+    summary:
+      "이과적 두뇌와 창의적 사고가 매우 뛰어나며, 상위권을 넘어 특출한 성취 가능성을 지닌 유형입니다.",
+    strategy:
+      "자기주도성이 강하므로 학생의 의견을 중심으로 학습 방향을 설계하되, 내신·대회·전형 정보를 균형 있게 관리하는 것이 좋습니다. 선행·심화 학습과 결과물 중심 활동이 잘 맞습니다.",
+    parent:
+      "통제보다 신뢰와 지원이 효과적입니다. 일반적인 학습 환경보다 수준이 맞는 집단에서 더 크게 성장할 가능성이 높습니다.",
     path: "서울대, 카이스트, 포항공대, 의학·공학·자연과학 계열과 잘 맞습니다.",
-    danger: "개인적 특성이 강해 일반적인 학습 분위기와 맞지 않을 수 있으며, 맞지 않는 환경에서는 흥미가 크게 떨어질 수 있습니다.",
+    danger:
+      "개인적 특성이 강해 일반적인 학습 분위기와 맞지 않을 수 있으며, 맞지 않는 환경에서는 흥미가 크게 떨어질 수 있습니다.",
     talk: "‘왜 그렇게 생각했는지 설명해볼래?’처럼 사고를 확장시키는 질문형 대화가 효과적입니다.",
     color: "#2563eb",
   },
   ERMF: {
     title: "이과 영재형",
     subtitle: "3% 미만",
-    summary: "특정 과목에서 매우 높은 성취 가능성을 보이며, 관심 분야에서는 압도적 몰입을 보일 수 있는 유형입니다.",
-    strategy: "관심 과목의 강점을 유지하면서도 시작한 일을 성과물로 연결할 수 있도록 고른 학습과 마무리 습관을 함께 설계하는 것이 중요합니다.",
-    parent: "흥미 중심의 몰입이 강한 유형이므로 균형 잡힌 스펙 관리와 학습 리듬 유지에 도움을 주는 것이 좋습니다.",
+    summary:
+      "특정 과목에서 매우 높은 성취 가능성을 보이며, 관심 분야에서는 압도적 몰입을 보일 수 있는 유형입니다.",
+    strategy:
+      "관심 과목의 강점을 유지하면서도 시작한 일을 성과물로 연결할 수 있도록 고른 학습과 마무리 습관을 함께 설계하는 것이 중요합니다.",
+    parent:
+      "흥미 중심의 몰입이 강한 유형이므로 균형 잡힌 스펙 관리와 학습 리듬 유지에 도움을 주는 것이 좋습니다.",
     path: "수학, 물리, 전자, 발명, IT·연구 계열과 잘 맞습니다.",
     danger: "흥미가 넓고 시작이 빠른 만큼, 마무리와 꾸준함이 약해지면 성과가 불안정해질 수 있습니다.",
     talk: "‘잘하는 걸 살리면서, 끝까지 연결되는 경험을 같이 만들어보자’는 접근이 효과적입니다.",
@@ -157,19 +236,24 @@ const RESULT_DB: Record<string, Report> = {
     title: "이과모범형",
     subtitle: "4%~10% 미만",
     summary: "이과 성향과 자기관리 능력이 함께 강한 유형으로, 안정적인 상위권 전략이 잘 맞습니다.",
-    strategy: "내신과 모의고사를 고르게 관리하며, 시험 불안과 외부 활동으로 인한 리듬 흔들림만 잘 조절하면 강점을 꾸준히 유지할 수 있습니다.",
-    parent: "학생의 학습 방식을 존중해도 무난하지만, 친구 관계나 외부 활동이 학습 흐름을 방해하지 않도록 점검이 필요합니다.",
+    strategy:
+      "내신과 모의고사를 고르게 관리하며, 시험 불안과 외부 활동으로 인한 리듬 흔들림만 잘 조절하면 강점을 꾸준히 유지할 수 있습니다.",
+    parent:
+      "학생의 학습 방식을 존중해도 무난하지만, 친구 관계나 외부 활동이 학습 흐름을 방해하지 않도록 점검이 필요합니다.",
     path: "SKY, 의·치·한의대, 자연과학, 공학, 수의학 계열과 잘 맞습니다.",
     danger: "적극적인 성향 때문에 학습보다 관계와 활동에 에너지가 분산될 수 있습니다.",
-    talk: "‘지금의 리듬만 잘 지키면 충분히 좋은 결과로 이어질 수 있어’라는 식의 안정감 있는 대화가 좋습니다.",
+    talk:
+      "‘지금의 리듬만 잘 지키면 충분히 좋은 결과로 이어질 수 있어’라는 식의 안정감 있는 대화가 좋습니다.",
     color: "#0891b2",
   },
   pROS: {
     title: "(수동적) 이과 모범형",
     subtitle: "4%~10% 미만",
     summary: "성실함과 인내심을 바탕으로 상위권을 안정적으로 유지하는 유형입니다.",
-    strategy: "개념 정리와 실수 관리, 시험 불안 조절이 중요하며, 보다 적극적인 활동 경험과 리더십 기회를 함께 쌓으면 성장 폭이 커집니다.",
-    parent: "실력은 충분하지만 자기표현과 존재감이 약할 수 있으므로, 안정감을 해치지 않는 선에서 경험의 폭을 넓혀주는 것이 좋습니다.",
+    strategy:
+      "개념 정리와 실수 관리, 시험 불안 조절이 중요하며, 보다 적극적인 활동 경험과 리더십 기회를 함께 쌓으면 성장 폭이 커집니다.",
+    parent:
+      "실력은 충분하지만 자기표현과 존재감이 약할 수 있으므로, 안정감을 해치지 않는 선에서 경험의 폭을 넓혀주는 것이 좋습니다.",
     path: "SKY, 지방의대, 자연과학, 공학, 수의학, 약학 계열과 잘 맞습니다.",
     danger: "실수 하나에 흔들리면 멘탈 영향이 큰 편이라, 쉬운 부분에서의 실수 관리가 중요합니다.",
     talk: "‘네가 차분히 쌓아온 힘이 크다, 이제 그 강점을 조금 더 드러내 보자’는 식의 대화가 좋습니다.",
@@ -178,9 +262,12 @@ const RESULT_DB: Record<string, Report> = {
   PRMf: {
     title: "이과 뺀질이형",
     subtitle: "20% 미만",
-    summary: "수학·과학 등 특정 과목에서는 강점을 보이지만, 흥미 없는 과목은 쉽게 놓칠 수 있는 유형입니다.",
-    strategy: "절대 학습시간 확보, 감독이 있는 환경, 선호 과목의 성과를 전체 학습 동기로 연결하는 구조가 필요합니다.",
-    parent: "자유도가 큰 환경보다 책임감이 생기는 환경이 더 적합합니다. 결과물 중심 경험이 학습 전체를 끌어올리는 데 도움이 됩니다.",
+    summary:
+      "수학·과학 등 특정 과목에서는 강점을 보이지만, 흥미 없는 과목은 쉽게 놓칠 수 있는 유형입니다.",
+    strategy:
+      "절대 학습시간 확보, 감독이 있는 환경, 선호 과목의 성과를 전체 학습 동기로 연결하는 구조가 필요합니다.",
+    parent:
+      "자유도가 큰 환경보다 책임감이 생기는 환경이 더 적합합니다. 결과물 중심 경험이 학습 전체를 끌어올리는 데 도움이 됩니다.",
     path: "이공계열, 논술·정시 전략, IT 분야 사업·연구·CEO 계열과 연결될 수 있습니다.",
     danger: "좋아하는 과목만 밀고 나가다 전체 성적의 균형이 무너질 수 있습니다.",
     talk: "‘짧게라도 좋으니, 끝까지 가는 힘을 같이 만들어보자’는 식의 대화가 좋습니다.",
@@ -189,9 +276,12 @@ const RESULT_DB: Record<string, Report> = {
   EROF: {
     title: "외향적 이과뺀질형",
     subtitle: "20% 미만",
-    summary: "관심 있는 과목에서는 번뜩이는 성과를 보이지만, 주변 환경의 영향을 크게 받는 유형입니다.",
-    strategy: "통제적 환경, 선택과 집중, 소규모 팀 속 책임감 경험이 효과적이며, 관심 분야의 구체적 결과물이 전체 성적 향상에 시너지를 줄 수 있습니다.",
-    parent: "환경에 따라 결과 차이가 커질 수 있어, 학습 공간과 함께하는 집단을 신중히 선택하는 것이 중요합니다.",
+    summary:
+      "관심 있는 과목에서는 번뜩이는 성과를 보이지만, 주변 환경의 영향을 크게 받는 유형입니다.",
+    strategy:
+      "통제적 환경, 선택과 집중, 소규모 팀 속 책임감 경험이 효과적이며, 관심 분야의 구체적 결과물이 전체 성적 향상에 시너지를 줄 수 있습니다.",
+    parent:
+      "환경에 따라 결과 차이가 커질 수 있어, 학습 공간과 함께하는 집단을 신중히 선택하는 것이 중요합니다.",
     path: "자유전공, 자연과학, 건축, IT 마케팅, 이공계 연구 계열과 잘 맞습니다.",
     danger: "많은 일을 시작하지만 끝맺음이 약해 성과가 분산될 수 있습니다.",
     talk: "‘환경을 잘 고르면 네 강점이 훨씬 크게 드러날 수 있어’라는 식의 코칭이 효과적입니다.",
@@ -200,9 +290,12 @@ const RESULT_DB: Record<string, Report> = {
   PROS: {
     title: "이과 잠재성장형",
     subtitle: "70% 내외",
-    summary: "현재 강점이 선명하게 드러나지 않았더라도, 기초를 차분히 쌓을수록 성장 가능성이 커지는 유형입니다.",
-    strategy: "선행보다 내신 중심으로 접근하고, 한 과목씩 성취 경험을 만드는 방식이 효과적입니다. 절대 시간보다 집중 시간을 늘리는 전략이 중요합니다.",
-    parent: "비교보다 작은 성공 경험의 축적이 중요합니다. 선호 과목에서 자신감을 회복하게 하면 전체 학습에도 긍정적인 영향을 줄 수 있습니다.",
+    summary:
+      "현재 강점이 선명하게 드러나지 않았더라도, 기초를 차분히 쌓을수록 성장 가능성이 커지는 유형입니다.",
+    strategy:
+      "선행보다 내신 중심으로 접근하고, 한 과목씩 성취 경험을 만드는 방식이 효과적입니다. 절대 시간보다 집중 시간을 늘리는 전략이 중요합니다.",
+    parent:
+      "비교보다 작은 성공 경험의 축적이 중요합니다. 선호 과목에서 자신감을 회복하게 하면 전체 학습에도 긍정적인 영향을 줄 수 있습니다.",
     path: "간호, 사범, 이과대학, 교사·간호사·물리치료사·약사 계열과 잘 맞습니다.",
     danger: "막연한 목표만 세우면 쉽게 지치거나 포기할 수 있어, 단계적 목표 설계가 필요합니다.",
     talk: "‘이번에는 이 한 가지를 끝내보자’처럼 작고 분명한 목표를 제시하는 대화가 효과적입니다.",
@@ -211,20 +304,26 @@ const RESULT_DB: Record<string, Report> = {
   ECMf: {
     title: "문과 창의적영재형",
     subtitle: "1% 미만",
-    summary: "문과 성향의 창의성과 표현력이 매우 강하며, 차별화된 결과물을 만들 가능성이 높은 유형입니다.",
-    strategy: "관심 분야의 심화 학습과 함께 특기·논술·대회·동아리 결과물을 꾸준히 쌓는 방식이 잘 맞습니다.",
-    parent: "다름을 교정하려 하기보다, 개성과 창의성이 실제 성과로 연결되도록 구조를 만들어주는 것이 중요합니다.",
+    summary:
+      "문과 성향의 창의성과 표현력이 매우 강하며, 차별화된 결과물을 만들 가능성이 높은 유형입니다.",
+    strategy:
+      "관심 분야의 심화 학습과 함께 특기·논술·대회·동아리 결과물을 꾸준히 쌓는 방식이 잘 맞습니다.",
+    parent:
+      "다름을 교정하려 하기보다, 개성과 창의성이 실제 성과로 연결되도록 구조를 만들어주는 것이 중요합니다.",
     path: "어문, 언론정보, 연극영화, 광고, 방송PD, 게임기획 계열과 잘 맞습니다.",
-    danger: "산만함과 엉뚱함이 강점이 되기도 하지만, 실행 리듬이 무너지면 결과가 불안정할 수 있습니다.",
+    danger: "산만함과 엉뚱함이 강점이 되기도 하지만, 실행 리듬이 무너지면 결과가 불안정해질 수 있습니다.",
     talk: "‘네 생각을 결과물로 보여줄 방법을 같이 찾아보자’는 접근이 좋습니다.",
     color: "#db2777",
   },
   ECMs: {
     title: "문과 모범형 영재형",
     subtitle: "2% 미만",
-    summary: "전교권 수준의 안정된 성과와 자기관리 능력을 함께 갖춘 이상적인 문과 영재형입니다.",
-    strategy: "학생 스스로도 잘 이끌어가는 편이므로 신뢰를 기반으로 하되, 선행·심화와 체력·멘탈 관리까지 함께 챙기면 완성도가 높아집니다.",
-    parent: "과한 개입보다 신뢰와 점검이 적합합니다. 우수한 멘토와의 간헐적 코칭이 효과적일 수 있습니다.",
+    summary:
+      "전교권 수준의 안정된 성과와 자기관리 능력을 함께 갖춘 이상적인 문과 영재형입니다.",
+    strategy:
+      "학생 스스로도 잘 이끌어가는 편이므로 신뢰를 기반으로 하되, 선행·심화와 체력·멘탈 관리까지 함께 챙기면 완성도가 높아집니다.",
+    parent:
+      "과한 개입보다 신뢰와 점검이 적합합니다. 우수한 멘토와의 간헐적 코칭이 효과적일 수 있습니다.",
     path: "SKY, 한의대(문과), 경영·행정·신문방송·법조·외교관 계열과 잘 맞습니다.",
     danger: "완벽주의와 부담감이 누적될 경우 번아웃 위험이 있습니다.",
     talk: "‘지금도 충분히 잘 가고 있고, 네 속도를 믿는다’는 메시지가 중요합니다.",
@@ -234,8 +333,10 @@ const RESULT_DB: Record<string, Report> = {
     title: "내성적 문과영재형",
     subtitle: "3% 미만",
     summary: "언어·외국어 영역의 강점과 깊이 있는 사고를 함께 지닌 문과 상위권 유형입니다.",
-    strategy: "심화·선행 학습과 토론·발표 기회를 함께 주되, 계획을 실제 행동으로 연결하는 실천 습관을 보완하는 것이 중요합니다.",
-    parent: "조용하지만 수준이 높은 편입니다. 겉으로 드러나지 않는 실행 부족을 세심하게 관리해주면 크게 성장할 수 있습니다.",
+    strategy:
+      "심화·선행 학습과 토론·발표 기회를 함께 주되, 계획을 실제 행동으로 연결하는 실천 습관을 보완하는 것이 중요합니다.",
+    parent:
+      "조용하지만 수준이 높은 편입니다. 겉으로 드러나지 않는 실행 부족을 세심하게 관리해주면 크게 성장할 수 있습니다.",
     path: "SKY, 어문, 정치외교, 신문방송, 법조, 언론, 외교관 계열과 잘 맞습니다.",
     danger: "실력에 비해 실행력이 떨어지면 결과가 기대만큼 드러나지 않을 수 있습니다.",
     talk: "‘생각의 깊이는 충분하니, 이제 그걸 실천으로 연결해보자’는 식의 대화가 효과적입니다.",
@@ -278,8 +379,10 @@ const RESULT_DB: Record<string, Report> = {
     title: "(내향적) 문과 뺀질이",
     subtitle: "20% 미만",
     summary: "조용하지만 관심 분야에는 강하게 몰입하며, 학습 균형과 마무리 능력이 핵심인 유형입니다.",
-    strategy: "통제적 환경, 절대 학습시간 확보, 관심 분야 성과물을 전체 성적 향상의 발판으로 활용하는 것이 중요합니다.",
-    parent: "겉으로 드러나지 않아 방심하기 쉽지만, 조용히 흐트러질 수 있어 세심한 관찰과 점검이 필요합니다.",
+    strategy:
+      "통제적 환경, 절대 학습시간 확보, 관심 분야 성과물을 전체 성적 향상의 발판으로 활용하는 것이 중요합니다.",
+    parent:
+      "겉으로 드러나지 않아 방심하기 쉽지만, 조용히 흐트러질 수 있어 세심한 관찰과 점검이 필요합니다.",
     path: "자유전공, 철학, 애니메이션, 사학, 문헌정보, 방송·도서·창작 관련 분야와 잘 맞습니다.",
     danger: "시작은 하지만 끝맺음이 약해 성과로 연결되지 못할 수 있습니다.",
     talk: "‘조용히 잘하고 있는 것도 좋지만, 끝까지 간 걸 함께 확인하자’는 식의 대화가 좋습니다.",
@@ -288,9 +391,12 @@ const RESULT_DB: Record<string, Report> = {
   PCOF: {
     title: "문과 잠재성장형",
     subtitle: "70% 내외",
-    summary: "현재 강점이 뚜렷하게 드러나지 않은 상태일 수 있지만, 차분한 기반 위에서 성장 가능성이 큰 유형입니다.",
-    strategy: "선행보다 내신 중심 학습이 적합하며, 선호 과목에서 먼저 성취감을 만들고 단계적 목표를 통해 자신감을 회복하는 것이 중요합니다.",
-    parent: "비교보다 성취 경험의 축적이 우선입니다. 작은 성공을 반복적으로 경험하게 해주는 것이 가장 효과적입니다.",
+    summary:
+      "현재 강점이 뚜렷하게 드러나지 않은 상태일 수 있지만, 차분한 기반 위에서 성장 가능성이 큰 유형입니다.",
+    strategy:
+      "선행보다 내신 중심 학습이 적합하며, 선호 과목에서 먼저 성취감을 만들고 단계적 목표를 통해 자신감을 회복하는 것이 중요합니다.",
+    parent:
+      "비교보다 성취 경험의 축적이 우선입니다. 작은 성공을 반복적으로 경험하게 해주는 것이 가장 효과적입니다.",
     path: "아동, 심리, 사범, 사회복지, 유치원교사, 상담, 교육 관련 계열과 잘 맞습니다.",
     danger: "구체적 목표 의식이 부족하면 막연한 계획만 세우고 쉽게 지칠 수 있습니다.",
     talk: "‘이번엔 어디까지 해냈는지 같이 확인하자’처럼 작고 구체적인 성취를 짚어주는 대화가 좋습니다.",
@@ -301,7 +407,8 @@ const RESULT_DB: Record<string, Report> = {
     subtitle: "4% 미만",
     summary: "문·이과 전 영역을 두루 소화할 수 있는 융합형 상위권 영재입니다.",
     strategy: "전 과목을 고르게 유지하면서도, 시작한 일을 결과물로 연결하는 훈련이 중요합니다.",
-    parent: "산만함과 독특함을 약점으로 보기보다, 강점으로 연결될 수 있도록 마무리와 집중만 잘 도와주는 것이 좋습니다.",
+    parent:
+      "산만함과 독특함을 약점으로 보기보다, 강점으로 연결될 수 있도록 마무리와 집중만 잘 도와주는 것이 좋습니다.",
     path: "자유전공, 국제통상, 통계, 건축, 행정, 외교, 한의학, 예술 융합 계열과 잘 맞습니다.",
     danger: "관심사가 넓어 선택과 집중이 흐려질 수 있습니다.",
     talk: "‘잘하는 게 많은 만큼, 우선순위를 같이 정해보자’는 식의 대화가 효과적입니다.",
@@ -333,8 +440,10 @@ const RESULT_DB: Record<string, Report> = {
     title: "문·이과 혼합 뺀질이형",
     subtitle: "20% 미만",
     summary: "관심 과목만 잘하는 편차형이지만, 융합적 재능과 아이디어가 살아 있는 유형입니다.",
-    strategy: "균형 잡힌 과목 관리, 감독이 있는 환경, 관심 분야 결과물을 전체 성적으로 연결하는 전략이 중요합니다.",
-    parent: "통제적 환경과 마무리 점검이 필요합니다. 시작은 빠르지만 끝까지 가는 힘을 만들어주는 것이 핵심입니다.",
+    strategy:
+      "균형 잡힌 과목 관리, 감독이 있는 환경, 관심 분야 결과물을 전체 성적으로 연결하는 전략이 중요합니다.",
+    parent:
+      "통제적 환경과 마무리 점검이 필요합니다. 시작은 빠르지만 끝까지 가는 힘을 만들어주는 것이 핵심입니다.",
     path: "자유전공, 건축, 자연과학, 철학, 어문, 방송 관련 직종, 프리랜서 계열과 잘 맞습니다.",
     danger: "분야를 넘나드는 재능이 오히려 산만함으로 보일 수 있습니다.",
     talk: "‘재능은 충분하니, 이제 끝까지 연결하는 힘을 같이 만들자’는 식의 대화가 효과적입니다.",
@@ -343,9 +452,12 @@ const RESULT_DB: Record<string, Report> = {
   PrOF: {
     title: "융합 잠재성장형",
     subtitle: "70% 내외",
-    summary: "현재 특별히 두드러진 과목이 없더라도, 생활 속 훈련과 경험에 따라 성장 폭이 크게 달라질 수 있는 유형입니다.",
-    strategy: "선행보다 내신 중심으로 접근하고, 선택과 집중을 통해 작은 성취 경험을 반복적으로 만드는 것이 중요합니다.",
-    parent: "막연한 기대보다 단계적 목표가 필요합니다. 선호 과목에서 자신감을 얻으면 다른 과목으로도 확장될 가능성이 높습니다.",
+    summary:
+      "현재 특별히 두드러진 과목이 없더라도, 생활 속 훈련과 경험에 따라 성장 폭이 크게 달라질 수 있는 유형입니다.",
+    strategy:
+      "선행보다 내신 중심으로 접근하고, 선택과 집중을 통해 작은 성취 경험을 반복적으로 만드는 것이 중요합니다.",
+    parent:
+      "막연한 기대보다 단계적 목표가 필요합니다. 선호 과목에서 자신감을 얻으면 다른 과목으로도 확장될 가능성이 높습니다.",
     path: "심리, 사범, 사회복지, 건축, 간호, 식품영양, 의상, 상담·교육·영양 관련 분야와 잘 맞습니다.",
     danger: "구체적 목표가 없으면 쉽게 무기력해질 수 있어, 구조화된 루틴이 필요합니다.",
     talk: "‘오늘은 이 한 가지를 끝내보자’처럼 아주 작고 선명한 목표를 주는 대화가 효과적입니다.",
@@ -365,34 +477,33 @@ const RESULT_DB: Record<string, Report> = {
 };
 
 const CODE_TO_RESULT_KEY: Record<string, string> = {
+  ERMS: "ERMS",
   ERMs: "ERMS",
   ERmS: "ERMS",
   ERms: "ERMS",
-  ERMS: "ERMS",
   eRMS: "ERMS",
   eRmS: "ERMS",
   eRms: "ERMS",
 
-  eRMF: "ERMF",
-  eRMf: "ERMF",
   ERMF: "ERMF",
   ERMf: "ERMF",
   ERmF: "ERMF",
   ERmf: "ERMF",
+  eRMF: "ERMF",
+  eRMf: "ERMF",
 
   eROS: "eROS",
   eRoS: "eROS",
-  EROF: "eROS",
   EROS: "eROS",
   EROs: "eROS",
   ERoS: "eROS",
   ERos: "eROS",
   eRMs: "eROS",
 
-  pRMS: "pROS",
-  pRmS: "pROS",
   pROS: "pROS",
   pRoS: "pROS",
+  pRMS: "pROS",
+  pRmS: "pROS",
 
   PRMF: "PRMf",
   PRMf: "PRMf",
@@ -406,6 +517,7 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pRmf: "PRMf",
   pRoF: "PRMf",
 
+  EROF: "EROF",
   ERoF: "EROF",
   ERof: "EROF",
   eROF: "EROF",
@@ -416,23 +528,23 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
 
   PROF: "PROS",
   PROf: "PROS",
-  pROF: "PROS",
-  pROf: "PROS",
-  eROs: "PROS",
-  eRos: "PROS",
-  PRoF: "PROS",
-  PRof: "PROS",
-  pRof: "PROS",
   PROS: "PROS",
   PROs: "PROS",
+  PRoF: "PROS",
+  PRof: "PROS",
   PRoS: "PROS",
   PRos: "PROS",
+  PRMS: "PROS",
   PRmS: "PROS",
   PRms: "PROS",
-  PRMS: "PROS",
-  pRms: "PROS",
+  pROF: "PROS",
+  pROf: "PROS",
   pROs: "PROS",
   pRos: "PROS",
+  pRof: "PROS",
+  pRms: "PROS",
+  eROs: "PROS",
+  eRos: "PROS",
 
   ECMF: "ECMf",
   ECMf: "ECMf",
@@ -458,9 +570,9 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pCoS: "pCOS",
   pCmS: "pCOS",
 
+  eCOS: "eCOS",
   eCoS: "eCOS",
   eCos: "eCOS",
-  eCOS: "eCOS",
   ECOf: "eCOS",
 
   PCMF: "PCMs",
@@ -477,29 +589,29 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eCof: "PCMs",
 
   PCmF: "PCmF",
-  PCms: "PCmF",
   PCmf: "PCmF",
+  PCms: "PCmF",
   pCmF: "PCmF",
   pCmf: "PCmF",
   PCoF: "PCmF",
   PCof: "PCmF",
   pCoF: "PCmF",
 
+  PCOF: "PCOF",
+  PCOf: "PCOF",
   PCOS: "PCOF",
   PCOs: "PCOF",
   PCoS: "PCOF",
   PCos: "PCOF",
-  PCOF: "PCOF",
-  PCOf: "PCOF",
-  eCOs: "PCOF",
-  pCof: "PCOF",
+  PCMS: "PCOF",
+  PCmS: "PCOF",
   pCOF: "PCOF",
   pCOf: "PCOF",
   pCOs: "PCOF",
   pCos: "PCOF",
   pCms: "PCOF",
-  PCMS: "PCOF",
-  PCmS: "PCOF",
+  pCof: "PCOF",
+  eCOs: "PCOF",
 
   ErMS: "ErMS",
   ErmS: "ErMS",
@@ -527,6 +639,10 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   prOf: "PrOF",
   proF: "PrOF",
   prof: "PrOF",
+  erOF: "PrOF",
+  erOf: "PrOF",
+  eroF: "PrOF",
+  erof: "PrOF",
 };
 
 function makeScores(answers: number[]) {
@@ -1283,8 +1399,7 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
           </h1>
 
           <p className="mt-5 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">
-            학생의 응답을 바탕으로 학습 방식, 판단 습관, 실행 패턴, 성장 가능성을 분석해
-            결과 리포트로 정리합니다.
+            학생의 응답을 바탕으로 학습 방식, 판단 습관, 실행 패턴, 성장 가능성을 분석해 결과 리포트로 정리합니다.
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -1411,6 +1526,80 @@ function TestScreen({
         </div>
       </div>
     </Shell>
+  );
+}
+
+function ResultParagraph({ children }: { children: ReactNode }) {
+  return <p className="text-[15px] leading-8 text-slate-700">{children}</p>;
+}
+
+function AxisCard({
+  name,
+  left,
+  right,
+  leftValue,
+  rightValue,
+  color,
+}: {
+  name: string;
+  left: string;
+  right: string;
+  leftValue: number;
+  rightValue: number;
+  color: string;
+}) {
+  const leftPercent = `${(leftValue / 5) * 100}%`;
+  const rightPercent = `${(rightValue / 5) * 100}%`;
+
+  return (
+    <div className="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="text-base font-black text-slate-900">{name}</div>
+        <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-extrabold text-slate-500">
+          {axisSummary(left, right, leftValue, rightValue)}
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-sm font-bold text-slate-500">
+        <span>{left}</span>
+        <span>{right}</span>
+      </div>
+
+      <div className="mt-3 grid grid-cols-[1fr_10px_1fr] items-center">
+        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="ml-auto h-full rounded-full"
+            style={{
+              width: leftPercent,
+              background: `linear-gradient(90deg, #cbd5e1 0%, ${color} 100%)`,
+            }}
+          />
+        </div>
+        <div className="relative h-3">
+          <div className="absolute left-1/2 top-[-2px] h-4 w-[2px] -translate-x-1/2 rounded-full bg-slate-300" />
+        </div>
+        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="h-full rounded-full"
+            style={{
+              width: rightPercent,
+              background: `linear-gradient(90deg, ${color} 0%, #0f172a 100%)`,
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
+          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">LEFT</div>
+          <div className="mt-1 text-sm font-black text-slate-900">{scoreLabel(leftValue)}</div>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
+          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">RIGHT</div>
+          <div className="mt-1 text-sm font-black text-slate-900">{scoreLabel(rightValue)}</div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -1566,89 +1755,13 @@ function ResultScreen({
   );
 }
 
-function ResultParagraph({ children }: { children: ReactNode }) {
-  return <p className="text-[15px] leading-8 text-slate-700">{children}</p>;
-}
-
-function AxisCard({
-  name,
-  left,
-  right,
-  leftValue,
-  rightValue,
-  color,
-}: {
-  name: string;
-  left: string;
-  right: string;
-  leftValue: number;
-  rightValue: number;
-  color: string;
-}) {
-  const leftPercent = `${(leftValue / 5) * 100}%`;
-  const rightPercent = `${(rightValue / 5) * 100}%`;
-
-  return (
-    <div className="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-base font-black text-slate-900">{name}</div>
-        <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-extrabold text-slate-500">
-          {axisSummary(left, right, leftValue, rightValue)}
-        </div>
-      </div>
-
-      <div className="mt-4 flex items-center justify-between text-sm font-bold text-slate-500">
-        <span>{left}</span>
-        <span>{right}</span>
-      </div>
-
-      <div className="mt-3 grid grid-cols-[1fr_10px_1fr] items-center">
-        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="ml-auto h-full rounded-full"
-            style={{
-              width: leftPercent,
-              background: `linear-gradient(90deg, #cbd5e1 0%, ${color} 100%)`,
-            }}
-          />
-        </div>
-        <div className="relative h-3">
-          <div className="absolute left-1/2 top-[-2px] h-4 w-[2px] -translate-x-1/2 rounded-full bg-slate-300" />
-        </div>
-        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: rightPercent,
-              background: `linear-gradient(90deg, ${color} 0%, #0f172a 100%)`,
-            }}
-          />
-        </div>
-      </div>
-
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
-          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">LEFT</div>
-          <div className="mt-1 text-sm font-black text-slate-900">{scoreLabel(leftValue)}</div>
-        </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
-          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">RIGHT</div>
-          <div className="mt-1 text-sm font-black text-slate-900">{scoreLabel(rightValue)}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Page() {
   const [step, setStep] = useState<Step>("landing");
   const [answers, setAnswers] = useState<number[]>(Array(QUESTIONS.length).fill(-1));
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const answeredCount = useMemo(
-    () => answers.filter((value) => value !== -1).length,
-    [answers]
-  );
+  const answeredCount = useMemo(() => answers.filter((value) => value !== -1).length, [answers]);
+  const isComplete = answeredCount === QUESTIONS.length;
 
   const startTest = () => {
     setStep("test");
@@ -1684,7 +1797,7 @@ export default function Page() {
     return <LandingScreen onStart={startTest} />;
   }
 
-  if (step === "test") {
+  if (step === "test" || !isComplete) {
     return (
       <TestScreen
         currentIndex={currentIndex}
@@ -1693,11 +1806,6 @@ export default function Page() {
         onPrev={handlePrev}
       />
     );
-  }
-
-  if (answeredCount !== QUESTIONS.length) {
-    setStep("test");
-    return null;
   }
 
   return <ResultScreen answers={answers} onRestart={restartTest} />;
