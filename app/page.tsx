@@ -852,6 +852,24 @@ function resolveResult(scores: Record<string, number>): ResolvedResult {
   };
 }
 
+function hexToRgba(hex: string, alpha: number) {
+  const normalized = hex.replace("#", "");
+  const full =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : normalized;
+
+  const num = parseInt(full, 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function toFiveScalePair(left: number, right: number) {
   const total = left + right;
   if (total === 0) {
