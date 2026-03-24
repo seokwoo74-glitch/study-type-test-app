@@ -38,6 +38,11 @@ type CharacterMeta = {
   aura: string;
 };
 
+type PromptMeta = {
+  base: string;
+  detail: string;
+};
+
 const QUESTIONS: string[] = [
   "정해진 규칙을 잘 지킨다는 소리를 듣는다",
   "시험 보기 일주일 전부터는 봉사활동 등 학교의 다른 활동에 참여하지 않는다",
@@ -634,6 +639,114 @@ const CHARACTER_META: Record<string, CharacterMeta> = {
   },
 };
 
+const CHARACTER_PROMPTS: Record<string, PromptMeta> = {
+  ERMS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "genius young scientist student, slightly messy hair, holding glowing formula hologram, confident eyes, blue tone, futuristic lab vibe",
+  },
+  ERMF: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "focused student deeply immersed in experiment, sparks of light around, intense eyes, teal color theme, innovation energy",
+  },
+  eROS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "organized top student with neat uniform, holding planner and books, calm smile, sky blue theme, clean and reliable mood",
+  },
+  pROS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "quiet diligent student, tidy desk, slightly shy expression, soft blue tone, calm and stable personality",
+  },
+  PRMf: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "smart but relaxed student, hoodie style, holding math notebook casually, playful confident smile, purple tone",
+  },
+  EROF: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "energetic outgoing student, dynamic pose, pointing forward, bright purple pink gradient, charismatic vibe",
+  },
+  PROS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "young student with small glowing seed in hands, hopeful expression, warm orange light, growth concept",
+  },
+  ECMf: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "artistic student holding notebook and pen, dreamy expression, pink tone, creative aura around",
+  },
+  ECMs: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "elegant top student, confident posture, holding book, royal blue tone, intelligent and composed",
+  },
+  ECoS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "quiet deep thinker student reading book, soft purple tone, calm and intellectual mood",
+  },
+  pCOS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "organized quiet student writing notes carefully, gentle blue tone, precise and thoughtful",
+  },
+  eCOS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "bright and confident student leader, smiling, slightly extroverted, green tone, balanced personality",
+  },
+  PCMs: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "expressive student speaking or presenting, lively expression, pink-purple tone, social energy",
+  },
+  PCmF: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "quiet creative student with headphones, relaxed pose, violet tone, introverted but unique vibe",
+  },
+  PCOF: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "warm and kind student, soft sunlight glow, yellow tone, gentle growth concept",
+  },
+  ErMS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "balanced genius student, half science half art elements around, teal tone, dual intelligence",
+  },
+  erOS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "balanced and practical student, holding books and tablet, calm expression, blue green tone",
+  },
+  PrmS: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "steady hardworking student, holding notebook tightly, humble smile, soft blue tone",
+  },
+  PrMF: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "creative flexible student with light bulb idea, relaxed posture, purple blue tone, clever vibe",
+  },
+  PrOF: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "student looking at rainbow light, curious expression, soft orange pink gradient, growth and exploration",
+  },
+  DEFAULT: {
+    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
+    detail:
+      "smart Korean student character, warm smile, clean white gradient background, premium educational app mascot",
+  },
+};
+
 const CODE_TO_RESULT_KEY: Record<string, string> = {
   ERMS: "ERMS",
   ERMs: "ERMS",
@@ -927,6 +1040,20 @@ function hexToRgba(hex: string, alpha: number) {
   const b = num & 255;
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function getCharacterPrompt(resultKey: string) {
+  const prompt = CHARACTER_PROMPTS[resultKey] || CHARACTER_PROMPTS.DEFAULT;
+  return `${prompt.base}, ${prompt.detail}`;
+}
+
+async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    window.alert("프롬프트가 복사됐어요.");
+  } catch {
+    window.alert("복사에 실패했어요. 직접 선택해서 복사해 주세요.");
+  }
 }
 
 function generatePrintableReport({
@@ -1620,7 +1747,7 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
             <div className="grid gap-4">
               <InfoItem title="응답 방식" value="각 문항에 대해 ‘그렇다 / 아니다’ 중 하나를 선택" />
               <InfoItem title="진행 구조" value="한 번에 한 문항씩 보여 렉을 줄이고 집중도를 높임" />
-              <InfoItem title="결과 제공" value="유형명, 요약, 학습 전략, 부모 코칭, 진로 방향, PDF 출력" />
+              <InfoItem title="결과 제공" value="유형명, 요약, 학습 전략, 부모 코칭, 진로 방향, PDF 출력, 캐릭터 프롬프트" />
             </div>
           </SectionCard>
 
@@ -1891,6 +2018,86 @@ function CharacterSpotlight({
   );
 }
 
+function CharacterPromptCard({
+  resultKey,
+  reportColor,
+}: {
+  resultKey: string;
+  reportColor: string;
+}) {
+  const prompt = getCharacterPrompt(resultKey);
+  const mjPrompt = `${prompt} --ar 1:1 --v 6 --style raw`;
+
+  return (
+    <SectionCard
+      title="캐릭터 이미지 생성 프롬프트"
+      desc="이 유형에 맞는 캐릭터 일러스트를 바로 생성할 수 있어요."
+      accentColor={reportColor}
+    >
+      <div className="grid gap-4">
+        <div
+          className="rounded-[22px] border p-4"
+          style={{
+            background: hexToRgba(reportColor, 0.05),
+            borderColor: hexToRgba(reportColor, 0.14),
+          }}
+        >
+          <div className="mb-2 text-xs font-extrabold tracking-[0.16em] text-slate-500">
+            기본 생성 프롬프트
+          </div>
+          <p className="break-words text-[14px] leading-7 text-slate-700">{prompt}</p>
+        </div>
+
+        <div
+          className="rounded-[22px] border p-4"
+          style={{
+            background: "rgba(15,23,42,0.03)",
+            borderColor: "rgba(15,23,42,0.08)",
+          }}
+        >
+          <div className="mb-2 text-xs font-extrabold tracking-[0.16em] text-slate-500">
+            Midjourney 추천 버전
+          </div>
+          <p className="break-words text-[14px] leading-7 text-slate-700">{mjPrompt}</p>
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => copyText(prompt)}
+            className="rounded-full px-4 py-2 text-sm font-black text-white transition hover:-translate-y-0.5"
+            style={{
+              background: `linear-gradient(135deg, ${reportColor} 0%, #0f172a 100%)`,
+            }}
+          >
+            기본 프롬프트 복사
+          </button>
+
+          <button
+            type="button"
+            onClick={() => copyText(mjPrompt)}
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+          >
+            Midjourney 버전 복사
+          </button>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-600">
+          <div className="font-black text-slate-800">추천 사용법</div>
+          <div className="mt-2">
+            • DALL·E: 기본 프롬프트 사용
+            <br />
+            • Midjourney: Midjourney 추천 버전 사용
+            <br />
+            • 배경 제거용 캐릭터를 만들고 싶으면 마지막에 <span className="font-bold">plain background</span> 또는{" "}
+            <span className="font-bold">transparent background style</span> 문구를 덧붙이면 좋아요.
+          </div>
+        </div>
+      </div>
+    </SectionCard>
+  );
+}
+
 function ResultScreen({
   answers,
   onRestart,
@@ -1988,12 +2195,7 @@ function ResultScreen({
 
             <SectionCard title="결과 키워드" desc="이 유형을 한눈에 이해할 수 있는 핵심 인상이에요." accentColor={report.color}>
               <div className="flex flex-wrap gap-3">
-                {[
-                  report.title,
-                  characterMeta.label,
-                  characterMeta.tagline,
-                  `결과 코드 ${resolved.code}`,
-                ].map((item) => (
+                {[report.title, characterMeta.label, characterMeta.tagline, `결과 코드 ${resolved.code}`].map((item) => (
                   <span
                     key={item}
                     className="inline-flex rounded-full border px-4 py-2 text-sm font-bold text-slate-700"
@@ -2029,6 +2231,8 @@ function ResultScreen({
             <SectionCard title="추천 대화 방식" accentColor={report.color}>
               <ResultParagraph>{report.talk}</ResultParagraph>
             </SectionCard>
+
+            <CharacterPromptCard resultKey={resolved.key} reportColor={report.color} />
           </div>
         </div>
 
