@@ -30,6 +30,14 @@ type ResolvedResult = {
   fullCode: string;
 };
 
+type CharacterMeta = {
+  label: string;
+  tagline: string;
+  emoji: string;
+  image?: string;
+  aura: string;
+};
+
 const QUESTIONS: string[] = [
   "정해진 규칙을 잘 지킨다는 소리를 듣는다",
   "시험 보기 일주일 전부터는 봉사활동 등 학교의 다른 활동에 참여하지 않는다",
@@ -476,6 +484,156 @@ const RESULT_DB: Record<string, Report> = {
   },
 };
 
+const CHARACTER_META: Record<string, CharacterMeta> = {
+  ERMS: {
+    label: "창의 연구자",
+    tagline: "깊이 있는 탐구와 독창성이 빛나는 최상위 이과형",
+    emoji: "🧠",
+    image: "/characters/ERMS.png",
+    aura: "from-blue-500/25 via-sky-400/10 to-cyan-300/20",
+  },
+  ERMF: {
+    label: "몰입 발명가",
+    tagline: "좋아하는 분야에 압도적으로 빠져드는 영재형",
+    emoji: "⚡",
+    image: "/characters/ERMF.png",
+    aura: "from-teal-500/25 via-emerald-400/10 to-cyan-300/20",
+  },
+  eROS: {
+    label: "엘리트 플래너",
+    tagline: "성실함과 자기관리가 돋보이는 안정형 상위권",
+    emoji: "📘",
+    image: "/characters/eROS.png",
+    aura: "from-sky-500/25 via-cyan-400/10 to-blue-300/20",
+  },
+  pROS: {
+    label: "차분한 성취가",
+    tagline: "묵직하게 쌓아 올리는 실속형 상위권",
+    emoji: "🛡️",
+    image: "/characters/pROS.png",
+    aura: "from-cyan-500/25 via-sky-400/10 to-indigo-300/20",
+  },
+  PRMf: {
+    label: "자유로운 문제해결사",
+    tagline: "관심 분야에서 번뜩이는 재능을 터뜨리는 편차형",
+    emoji: "🎯",
+    image: "/characters/PRMf.png",
+    aura: "from-violet-500/25 via-fuchsia-400/10 to-purple-300/20",
+  },
+  EROF: {
+    label: "에너지 크리에이터",
+    tagline: "사람과 환경 속에서 아이디어가 살아나는 활동형",
+    emoji: "🚀",
+    image: "/characters/EROF.png",
+    aura: "from-purple-500/25 via-fuchsia-400/10 to-pink-300/20",
+  },
+  PROS: {
+    label: "성장 새싹",
+    tagline: "작은 성취를 쌓을수록 크게 성장하는 잠재형",
+    emoji: "🌱",
+    image: "/characters/PROS.png",
+    aura: "from-orange-500/25 via-amber-400/10 to-yellow-300/20",
+  },
+  ECMf: {
+    label: "감각 스토리텔러",
+    tagline: "표현력과 창의성이 돋보이는 문과 창의형",
+    emoji: "🎨",
+    image: "/characters/ECMf.png",
+    aura: "from-pink-500/25 via-rose-400/10 to-fuchsia-300/20",
+  },
+  ECMs: {
+    label: "품격 있는 우등생",
+    tagline: "안정성과 완성도를 동시에 갖춘 문과 영재형",
+    emoji: "👑",
+    image: "/characters/ECMs.png",
+    aura: "from-blue-500/25 via-indigo-400/10 to-sky-300/20",
+  },
+  ECoS: {
+    label: "깊이형 사색가",
+    tagline: "조용하지만 강한 사고력과 언어 감각을 지닌 유형",
+    emoji: "📚",
+    image: "/characters/ECoS.png",
+    aura: "from-violet-500/25 via-indigo-400/10 to-purple-300/20",
+  },
+  pCOS: {
+    label: "정교한 실천가",
+    tagline: "차분하고 정교하게 계획을 현실로 만드는 유형",
+    emoji: "🧩",
+    image: "/characters/pCOS.png",
+    aura: "from-cyan-500/25 via-blue-400/10 to-slate-300/20",
+  },
+  eCOS: {
+    label: "리더형 모범생",
+    tagline: "성적과 대외 역량을 균형 있게 이끄는 유형",
+    emoji: "🌟",
+    image: "/characters/eCOS.png",
+    aura: "from-emerald-500/25 via-teal-400/10 to-green-300/20",
+  },
+  PCMs: {
+    label: "무드 드라이버",
+    tagline: "분위기와 관계 에너지 속에서 움직이는 외향형",
+    emoji: "🎤",
+    image: "/characters/PCMs.png",
+    aura: "from-purple-500/25 via-pink-400/10 to-fuchsia-300/20",
+  },
+  PCmF: {
+    label: "조용한 몰입러",
+    tagline: "겉은 조용하지만 좋아하는 일엔 강하게 빠지는 유형",
+    emoji: "🌙",
+    image: "/characters/PCmF.png",
+    aura: "from-fuchsia-500/25 via-purple-400/10 to-violet-300/20",
+  },
+  PCOF: {
+    label: "따뜻한 성장형",
+    tagline: "작은 성공을 발판 삼아 천천히 커지는 문과 잠재형",
+    emoji: "☀️",
+    image: "/characters/PCOF.png",
+    aura: "from-orange-500/25 via-yellow-400/10 to-amber-300/20",
+  },
+  ErMS: {
+    label: "융합 설계자",
+    tagline: "문·이과를 넘나드는 통합적 사고를 가진 융합형",
+    emoji: "🧭",
+    image: "/characters/ErMS.png",
+    aura: "from-teal-500/25 via-sky-400/10 to-indigo-300/20",
+  },
+  erOS: {
+    label: "균형 운영자",
+    tagline: "실리와 균형을 바탕으로 안정적으로 성장하는 유형",
+    emoji: "⚖️",
+    image: "/characters/erOS.png",
+    aura: "from-sky-500/25 via-teal-400/10 to-cyan-300/20",
+  },
+  PrmS: {
+    label: "차곡차곡 성과형",
+    tagline: "꾸준함으로 결과를 만들어내는 혼합 모범형",
+    emoji: "🏅",
+    image: "/characters/PrmS.png",
+    aura: "from-blue-500/25 via-cyan-400/10 to-slate-300/20",
+  },
+  PrMF: {
+    label: "융합 아이디어러",
+    tagline: "재능은 넓고, 마무리 훈련이 중요한 융합 편차형",
+    emoji: "💡",
+    image: "/characters/PrMF.png",
+    aura: "from-violet-500/25 via-indigo-400/10 to-fuchsia-300/20",
+  },
+  PrOF: {
+    label: "가능성 탐험가",
+    tagline: "생활 속 경험이 쌓일수록 잠재력이 열리는 성장형",
+    emoji: "🌈",
+    image: "/characters/PrOF.png",
+    aura: "from-orange-500/25 via-amber-400/10 to-rose-300/20",
+  },
+  DEFAULT: {
+    label: "성향 분석 캐릭터",
+    tagline: "현재 응답을 바탕으로 가장 가까운 성향을 분석했어요.",
+    emoji: "✨",
+    image: "/characters/default.png",
+    aura: "from-slate-500/25 via-slate-300/10 to-sky-300/20",
+  },
+};
+
 const CODE_TO_RESULT_KEY: Record<string, string> = {
   ERMS: "ERMS",
   ERMs: "ERMS",
@@ -751,6 +909,24 @@ function toFiveScalePair(left: number, right: number) {
     leftValue: Number(leftValue.toFixed(1)),
     rightValue: Number(rightValue.toFixed(1)),
   };
+}
+
+function hexToRgba(hex: string, alpha: number) {
+  const normalized = hex.replace("#", "");
+  const full =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : normalized;
+
+  const num = parseInt(full, 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function generatePrintableReport({
@@ -1333,13 +1509,23 @@ function SectionCard({
   title,
   desc,
   children,
+  accentColor,
 }: {
   title: string;
   desc?: string;
   children: ReactNode;
+  accentColor?: string;
 }) {
   return (
-    <div className="rounded-[28px] border border-white/80 bg-white/85 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur">
+    <div
+      className="rounded-[28px] border bg-white/85 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur"
+      style={{
+        borderColor: accentColor ? hexToRgba(accentColor, 0.18) : "rgba(255,255,255,0.8)",
+        boxShadow: accentColor
+          ? `0 18px 60px ${hexToRgba(accentColor, 0.10)}`
+          : "0 18px 60px rgba(15,23,42,0.08)",
+      }}
+    >
       <div className="mb-5">
         <h2 className="text-xl font-black tracking-tight text-slate-900">{title}</h2>
         {desc ? <p className="mt-1 text-sm text-slate-500">{desc}</p> : null}
@@ -1552,7 +1738,13 @@ function AxisCard({
   const rightPercent = `${(rightValue / 5) * 100}%`;
 
   return (
-    <div className="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+    <div
+      className="rounded-[24px] border bg-white/80 p-4"
+      style={{
+        borderColor: hexToRgba(color, 0.14),
+        boxShadow: `0 14px 36px ${hexToRgba(color, 0.06)}`,
+      }}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="text-base font-black text-slate-900">{name}</div>
         <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-extrabold text-slate-500">
@@ -1603,6 +1795,102 @@ function AxisCard({
   );
 }
 
+function CharacterSpotlight({
+  report,
+  meta,
+  code,
+}: {
+  report: Report;
+  meta: CharacterMeta;
+  code: string;
+}) {
+  const hasImage = Boolean(meta.image);
+
+  return (
+    <div
+      className="relative overflow-hidden rounded-[32px] border p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.16)]"
+      style={{
+        background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 88%)`,
+        borderColor: "rgba(255,255,255,0.12)",
+      }}
+    >
+      <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${meta.aura}`} />
+      <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
+      <div className="pointer-events-none absolute -bottom-16 -left-8 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+
+      <div className="relative z-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div>
+          <div className="flex flex-wrap gap-3">
+            <HeroBadge>RESULT TYPE</HeroBadge>
+            <HeroBadge>코드 {code}</HeroBadge>
+            <HeroBadge>{meta.label}</HeroBadge>
+          </div>
+
+          <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-5xl">{report.title}</h1>
+          <p className="mt-3 text-lg font-bold text-white/80">{report.subtitle}</p>
+
+          <div className="mt-5 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-bold text-white/90">
+            {meta.tagline}
+          </div>
+
+          <p className="mt-6 max-w-3xl text-base leading-8 text-white/88 sm:text-lg">{report.summary}</p>
+        </div>
+
+        <div className="relative">
+          <div className="mx-auto flex max-w-[360px] items-center justify-center rounded-[30px] border border-white/15 bg-white/10 p-5 backdrop-blur">
+            <div className="w-full rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.20),rgba(255,255,255,0.06))] p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="rounded-full bg-white/12 px-3 py-1 text-[11px] font-extrabold tracking-[0.18em] text-white/80">
+                  CHARACTER
+                </span>
+                <span className="text-xs font-bold text-white/70">{meta.label}</span>
+              </div>
+
+              {hasImage ? (
+                <div className="overflow-hidden rounded-[24px] border border-white/10 bg-white/10">
+                  <img
+                    src={meta.image}
+                    alt={meta.label}
+                    className="h-[280px] w-full object-cover"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      target.style.display = "none";
+                      const fallback = target.nextElementSibling as HTMLElement | null;
+                      if (fallback) fallback.style.display = "flex";
+                    }}
+                  />
+                  <div
+                    style={{ display: "none" }}
+                    className="h-[280px] w-full items-center justify-center rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.10),rgba(255,255,255,0.04))]"
+                  >
+                    <div className="text-center">
+                      <div className="text-7xl">{meta.emoji}</div>
+                      <div className="mt-4 text-base font-black text-white">{meta.label}</div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex h-[280px] items-center justify-center rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.10),rgba(255,255,255,0.04))]">
+                  <div className="text-center">
+                    <div className="text-7xl drop-shadow-[0_10px_30px_rgba(0,0,0,0.15)]">{meta.emoji}</div>
+                    <div className="mt-4 text-base font-black text-white">{meta.label}</div>
+                    <div className="mt-2 text-sm leading-6 text-white/70">유형별 캐릭터 일러스트 자리</div>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-4 rounded-2xl border border-white/10 bg-black/10 p-4">
+                <div className="text-xs font-extrabold tracking-[0.16em] text-white/60">FIRST IMPRESSION</div>
+                <div className="mt-2 text-sm font-semibold leading-6 text-white/90">{meta.tagline}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ResultScreen({
   answers,
   onRestart,
@@ -1614,6 +1902,7 @@ function ResultScreen({
   const axisProfile = useMemo(() => getAxisProfile(scores), [scores]);
   const resolved = useMemo(() => resolveResult(scores), [scores]);
   const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
+  const characterMeta = CHARACTER_META[resolved.key] || CHARACTER_META.DEFAULT;
 
   const axes = useMemo(() => {
     const social = toFiveScalePair(scores.P, scores.E);
@@ -1653,78 +1942,107 @@ function ResultScreen({
     ];
   }, [scores]);
 
+  const accentSoft = hexToRgba(report.color, 0.08);
+  const accentBorder = hexToRgba(report.color, 0.15);
+
   return (
     <Shell>
       <div className="grid gap-6">
-        <div
-          className="overflow-hidden rounded-[36px] p-7 text-white shadow-[0_24px_80px_rgba(15,23,42,0.14)] sm:p-10"
-          style={{
-            background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)`,
-          }}
-        >
-          <div className="flex flex-wrap gap-3">
-            <HeroBadge>RESULT TYPE</HeroBadge>
-            <HeroBadge>코드 {resolved.code}</HeroBadge>
-            <HeroBadge>축 차이 {resolved.diffText}</HeroBadge>
+        <CharacterSpotlight report={report} meta={characterMeta} code={resolved.code} />
+
+        <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+          <div className="grid gap-6">
+            <SectionCard
+              title="핵심 축 분석"
+              desc="성향의 방향성과 강도를 보기 쉽게 정리했어요."
+              accentColor={report.color}
+            >
+              <div className="grid gap-4">
+                {axes.map((axis) => (
+                  <AxisCard
+                    key={axis.name}
+                    name={axis.name}
+                    left={axis.left}
+                    right={axis.right}
+                    leftValue={axis.leftValue}
+                    rightValue={axis.rightValue}
+                    color={report.color}
+                  />
+                ))}
+              </div>
+
+              <div
+                className="mt-5 rounded-[22px] border p-4 text-sm leading-7"
+                style={{
+                  background: accentSoft,
+                  borderColor: accentBorder,
+                }}
+              >
+                <div className="font-black text-slate-900">프로파일 요약</div>
+                <div className="mt-2 text-slate-700">
+                  사회성 {axisProfile.social.toFixed(2)} · 판단 {axisProfile.judgment.toFixed(2)} · 진행{" "}
+                  {axisProfile.track.toFixed(2)} · 실행 {axisProfile.style.toFixed(2)}
+                </div>
+              </div>
+            </SectionCard>
+
+            <SectionCard title="결과 키워드" desc="이 유형을 한눈에 이해할 수 있는 핵심 인상이에요." accentColor={report.color}>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  report.title,
+                  characterMeta.label,
+                  characterMeta.tagline,
+                  `결과 코드 ${resolved.code}`,
+                ].map((item) => (
+                  <span
+                    key={item}
+                    className="inline-flex rounded-full border px-4 py-2 text-sm font-bold text-slate-700"
+                    style={{
+                      background: hexToRgba(report.color, 0.06),
+                      borderColor: hexToRgba(report.color, 0.14),
+                    }}
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </SectionCard>
           </div>
 
-          <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-5xl">{report.title}</h1>
-          <p className="mt-3 text-lg font-bold text-white/80">{report.subtitle}</p>
-          <p className="mt-6 max-w-4xl text-base leading-8 text-white/88 sm:text-lg">{report.summary}</p>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <SectionCard title="핵심 축 분석" desc="성향의 방향성과 강도를 보기 쉽게 정리했어요.">
-            <div className="grid gap-4">
-              {axes.map((axis) => (
-                <AxisCard
-                  key={axis.name}
-                  name={axis.name}
-                  left={axis.left}
-                  right={axis.right}
-                  leftValue={axis.leftValue}
-                  rightValue={axis.rightValue}
-                  color={report.color}
-                />
-              ))}
-            </div>
-
-            <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm leading-7 text-slate-600">
-              <div className="font-bold text-slate-800">프로파일 요약</div>
-              <div className="mt-2">
-                사회성 {axisProfile.social.toFixed(2)} · 판단 {axisProfile.judgment.toFixed(2)} · 진행{" "}
-                {axisProfile.track.toFixed(2)} · 실행 {axisProfile.style.toFixed(2)}
-              </div>
-            </div>
-          </SectionCard>
-
           <div className="grid gap-6">
-            <SectionCard title="학습 전략">
+            <SectionCard title="학습 전략" accentColor={report.color}>
               <ResultParagraph>{report.strategy}</ResultParagraph>
             </SectionCard>
 
-            <SectionCard title="부모 코칭">
+            <SectionCard title="부모 코칭" accentColor={report.color}>
               <ResultParagraph>{report.parent}</ResultParagraph>
             </SectionCard>
 
-            <SectionCard title="진로 · 학교 방향">
+            <SectionCard title="진로 · 학교 방향" accentColor={report.color}>
               <ResultParagraph>{report.path}</ResultParagraph>
             </SectionCard>
 
-            <SectionCard title="주의 패턴">
+            <SectionCard title="주의 패턴" accentColor={report.color}>
               <ResultParagraph>{report.danger}</ResultParagraph>
             </SectionCard>
 
-            <SectionCard title="추천 대화 방식">
+            <SectionCard title="추천 대화 방식" accentColor={report.color}>
               <ResultParagraph>{report.talk}</ResultParagraph>
             </SectionCard>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-white/80 bg-white/85 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+        <div
+          className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border bg-white/90 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)]"
+          style={{
+            borderColor: accentBorder,
+          }}
+        >
           <div>
             <div className="text-sm font-black text-slate-900">결과 리포트 저장 / 출력</div>
-            <div className="mt-1 text-sm text-slate-500">PDF용 인쇄 화면으로 바로 열 수 있어요.</div>
+            <div className="mt-1 text-sm text-slate-500">
+              PDF용 인쇄 화면으로 바로 열 수 있어요. 캐릭터 이미지는 웹 결과 화면에서 강조되고, PDF는 상담용 문서 중심으로 출력됩니다.
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-3">
@@ -1737,7 +2055,10 @@ function ResultScreen({
                   axes,
                 })
               }
-              className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+              className="rounded-full px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+              style={{
+                background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)`,
+              }}
             >
               PDF 출력하기
             </button>
