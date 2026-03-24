@@ -365,18 +365,14 @@ const RESULT_DB: Record<string, Report> = {
 };
 
 const CODE_TO_RESULT_KEY: Record<string, string> = {
-  // 이과 창의적영재형
   ERMs: "ERMS",
   ERmS: "ERMS",
   ERms: "ERMS",
-
-  // 이과 모범적영재형
   ERMS: "ERMS",
   eRMS: "ERMS",
   eRmS: "ERMS",
   eRms: "ERMS",
 
-  // 이과 영재형
   eRMF: "ERMF",
   eRMf: "ERMF",
   ERMF: "ERMF",
@@ -384,7 +380,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   ERmF: "ERMF",
   ERmf: "ERMF",
 
-  // 이과모범형
   eROS: "eROS",
   eRoS: "eROS",
   EROF: "eROS",
@@ -395,7 +390,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eRMS: "eROS",
   eRMs: "eROS",
 
-  // (수동적) 이과 모범형
   eRmS: "pROS",
   eRms: "pROS",
   pRMS: "pROS",
@@ -403,7 +397,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pROS: "pROS",
   pRoS: "pROS",
 
-  // 이과 뺀질이형
   PRMF: "PRMf",
   PRMf: "PRMf",
   PRmF: "PRMf",
@@ -416,7 +409,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pRmf: "PRMf",
   pRoF: "PRMf",
 
-  // 외향적 이과뺀질형
   ERoF: "EROF",
   ERof: "EROF",
   eROF: "EROF",
@@ -426,7 +418,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eRmF: "EROF",
   eRmf: "EROF",
 
-  // 이과 잠재성장형 (진주형 -> 잠재성장형)
   PROF: "PROS",
   PROf: "PROS",
   pROF: "PROS",
@@ -447,22 +438,18 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pROs: "PROS",
   pRos: "PROS",
 
-  // 문과 창의적영재형
   ECMF: "ECMf",
   ECMf: "ECMf",
 
-  // 문과 모범형 영재형
   ECMS: "ECMs",
   eCMS: "ECMs",
 
-  // 내성적 문과영재형
   ECMs: "ECoS",
   eCMs: "ECoS",
   ECoF: "ECoS",
   ECmf: "ECoS",
   pCMS: "ECoS",
 
-  // (내성적) 문과 모범형
   ECOS: "pCOS",
   ECOs: "pCOS",
   ECoS: "pCOS",
@@ -475,13 +462,11 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pCoS: "pCOS",
   pCmS: "pCOS",
 
-  // 문과모범형B
   eCoS: "eCOS",
   eCos: "eCOS",
   eCOS: "eCOS",
   ECOf: "eCOS",
 
-  // (외향적) 문과뺀질이형
   PCMF: "PCMs",
   PCMf: "PCMs",
   pCMF: "PCMs",
@@ -495,7 +480,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eCoF: "PCMs",
   eCof: "PCMs",
 
-  // (내향적) 문과 뺀질이
   PCMs: "PCmF",
   PCmF: "PCmF",
   PCmf: "PCmF",
@@ -505,7 +489,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   PCof: "PCmF",
   pCoF: "PCmF",
 
-  // 문과 잠재성장형 (진주형 -> 잠재성장형)
   PCOS: "PCOF",
   PCOs: "PCOF",
   PCoS: "PCOF",
@@ -523,32 +506,26 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   PCmS: "PCOF",
   PCms: "PCOF",
 
-  // 문·이과 혼합 영재형
   ErMS: "ErMS",
   ErmS: "ErMS",
   Erms: "ErMS",
   erMS: "ErMS",
 
-  // 문·이과 혼합 모범형
   erOS: "erOS",
   erOs: "erOS",
-  e rOS: "erOS", // harmless fallback-like typo key
   eRoS: "erOS",
   eRos: "erOS",
 
-  // 문·이과 혼합 수동적모범형
   PrMS: "PrmS",
   PrmS: "PrmS",
   Prms: "PrmS",
   prMS: "PrmS",
 
-  // 문·이과 혼합 뺀질이형
   PrMF: "PrMF",
   PrMf: "PrMF",
   PrmF: "PrMF",
   Prmf: "PrMF",
 
-  // 융합 잠재성장형
   PrOF: "PrOF",
   PrOf: "PrOF",
   ProF: "PrOF",
@@ -649,6 +626,21 @@ function resolveResult(scores: Record<string, number>): ResolvedResult {
     code: display.code,
     diffText: display.diffText,
     fullCode: display.full,
+  };
+}
+
+function toFiveScalePair(left: number, right: number) {
+  const total = left + right;
+  if (total === 0) {
+    return { leftValue: 2.5, rightValue: 2.5 };
+  }
+
+  const leftValue = (left / total) * 5;
+  const rightValue = (right / total) * 5;
+
+  return {
+    leftValue: Number(leftValue.toFixed(1)),
+    rightValue: Number(rightValue.toFixed(1)),
   };
 }
 
@@ -1220,438 +1212,500 @@ function ProgressBar({ value }: { value: number }) {
   );
 }
 
+function Shell({ children }: { children: ReactNode }) {
+  return (
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#dbeafe_0%,#f8fbff_38%,#f8fafc_100%)] text-slate-900">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">{children}</div>
+    </div>
+  );
+}
+
 function SectionCard({
   title,
+  desc,
   children,
 }: {
   title: string;
+  desc?: string;
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-[28px] border border-white/70 bg-white/85 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.06)] backdrop-blur">
-      <div className="mb-4 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-bold tracking-[0.16em] text-slate-500">
-        SECTION
+    <div className="rounded-[28px] border border-white/80 bg-white/85 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur">
+      <div className="mb-5">
+        <h2 className="text-xl font-black tracking-tight text-slate-900">{title}</h2>
+        {desc ? <p className="mt-1 text-sm text-slate-500">{desc}</p> : null}
       </div>
-      <h3 className="text-xl font-black tracking-tight text-slate-900">{title}</h3>
-      <div className="mt-4 text-[15px] leading-8 text-slate-600">{children}</div>
+      {children}
     </div>
+  );
+}
+
+function HeroBadge({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-extrabold tracking-[0.16em] text-white/90">
+      {children}
+    </span>
+  );
+}
+
+function ChoiceButton({
+  active,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={[
+        "w-full rounded-2xl border px-4 py-4 text-left text-base font-bold transition-all duration-200",
+        active
+          ? "border-slate-900 bg-slate-900 text-white shadow-lg"
+          : "border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50",
+      ].join(" ")}
+    >
+      {label}
+    </button>
   );
 }
 
 function LandingScreen({ onStart }: { onStart: () => void }) {
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.16),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(139,92,246,0.14),transparent_30%),linear-gradient(180deg,#f8fafc_0%,#eef6ff_45%,#f8fafc_100%)]" />
-      <div className="relative mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-12 lg:px-10 lg:py-16">
-        <div className="overflow-hidden rounded-[36px] border border-white/70 bg-white/80 shadow-[0_24px_90px_rgba(15,23,42,0.08)] backdrop-blur">
-          <div className="grid items-center gap-10 p-6 md:p-10 lg:grid-cols-[1.18fr_0.82fr] lg:p-12">
-            <div>
-              <div className="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-700">
-                학부모 신뢰형 학습성향검사
-              </div>
+    <Shell>
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="overflow-hidden rounded-[36px] bg-gradient-to-br from-slate-900 via-sky-900 to-cyan-700 p-7 text-white shadow-[0_24px_80px_rgba(2,6,23,0.24)] sm:p-10">
+          <div className="flex flex-wrap gap-3">
+            <HeroBadge>STUDY TYPE TEST</HeroBadge>
+            <HeroBadge>학부모 신뢰형 리포트</HeroBadge>
+          </div>
 
-              <h1 className="mt-6 text-[2.6rem] font-black leading-[1.18] tracking-[-0.04em] text-slate-900 md:text-[3.5rem]">
-                우리 아이의
-                <br />
-                <span className="bg-gradient-to-r from-sky-700 via-cyan-600 to-violet-600 bg-clip-text text-transparent">
-                  공부 방식과 성장 방향
-                </span>
-                을
-                <br />
-                더 정교하게 확인하세요
-              </h1>
+          <h1 className="mt-6 text-4xl font-black leading-tight tracking-tight sm:text-5xl">
+            학습성향
+            <br />
+            정밀 진단 검사
+          </h1>
 
-              <p className="mt-6 max-w-2xl text-[1.02rem] leading-8 text-slate-600 md:text-lg">
-                80문항 기반으로 아이의 학습 성향, 실행 스타일, 사고 특성,
-                부모 코칭 포인트, 진로 방향까지 한 번에 정리된 결과 리포트를 제공합니다.
-              </p>
+          <p className="mt-5 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">
+            학생의 응답을 바탕으로 학습 방식, 판단 습관, 실행 패턴, 성장 가능성을 분석해
+            결과 리포트로 정리합니다.
+          </p>
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/90 p-4">
-                  <div className="text-sm font-semibold text-slate-500">검사 구성</div>
-                  <div className="mt-2 text-2xl font-black text-slate-900">80문항</div>
-                </div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/90 p-4">
-                  <div className="text-sm font-semibold text-slate-500">응답 방식</div>
-                  <div className="mt-2 text-2xl font-black text-slate-900">그렇다 / 아니다</div>
-                </div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/90 p-4">
-                  <div className="text-sm font-semibold text-slate-500">결과 제공</div>
-                  <div className="mt-2 text-2xl font-black text-slate-900">PDF 리포트</div>
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <button
-                  onClick={onStart}
-                  className="rounded-2xl bg-gradient-to-r from-sky-700 to-violet-600 px-7 py-4 text-base font-bold text-white shadow-lg shadow-sky-200/50 transition hover:-translate-y-0.5"
-                >
-                  무료 검사 시작하기
-                </button>
-              </div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
+              <div className="text-xs font-extrabold tracking-[0.18em] text-white/60">QUESTIONS</div>
+              <div className="mt-2 text-3xl font-black">{QUESTIONS.length}</div>
+              <div className="mt-1 text-sm text-white/70">문항</div>
             </div>
-
-            <div className="grid gap-4">
-              <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-lg">
-                <div className="text-sm font-semibold text-slate-500">이런 분께 잘 맞아요</div>
-                <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-700">
-                  <li>• 아이의 성향을 단순 성격이 아니라 학습 방향으로 보고 싶은 경우</li>
-                  <li>• 부모 상담용으로 정리된 결과 문구가 필요한 경우</li>
-                  <li>• PDF로 저장해서 활용하고 싶은 경우</li>
-                </ul>
-              </div>
-
-              <div className="rounded-[30px] border border-slate-200 bg-gradient-to-br from-sky-50 to-violet-50 p-6 shadow-lg">
-                <div className="text-sm font-semibold text-slate-500">검사 특징</div>
-                <div className="mt-4 space-y-3 text-sm leading-7 text-slate-700">
-                  <p>• 80문항 기반으로 보다 세밀하게 성향을 분석합니다.</p>
-                  <p>• 결과 코드는 E-P / R-C / M-O / S-F 차이로 표시됩니다.</p>
-                  <p>• 결과 화면은 인쇄 및 PDF 저장용 리포트로 활용할 수 있습니다.</p>
-                </div>
-              </div>
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
+              <div className="text-xs font-extrabold tracking-[0.18em] text-white/60">REPORT</div>
+              <div className="mt-2 text-3xl font-black">PDF</div>
+              <div className="mt-1 text-sm text-white/70">출력 가능</div>
+            </div>
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
+              <div className="text-xs font-extrabold tracking-[0.18em] text-white/60">STYLE</div>
+              <div className="mt-2 text-3xl font-black">B</div>
+              <div className="mt-1 text-sm text-white/70">간단 체험형</div>
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={onStart}
+            className="mt-8 inline-flex items-center rounded-full bg-white px-7 py-4 text-base font-black text-slate-900 shadow-lg transition hover:-translate-y-0.5"
+          >
+            검사 시작하기
+          </button>
         </div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-[28px] border border-white/70 bg-white/80 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)] backdrop-blur">
-            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-100 text-lg font-black text-sky-700">
-              1
+        <div className="grid gap-6">
+          <SectionCard title="검사 안내" desc="부담 없이 빠르게 진행할 수 있도록 구성했어요.">
+            <div className="grid gap-4">
+              <InfoItem title="응답 방식" value="각 문항에 대해 ‘그렇다 / 아니다’ 중 하나를 선택" />
+              <InfoItem title="진행 구조" value="한 번에 한 문항씩 보여 렉을 줄이고 집중도를 높임" />
+              <InfoItem title="결과 제공" value="유형명, 요약, 학습 전략, 부모 코칭, 진로 방향, PDF 출력" />
             </div>
-            <h3 className="text-xl font-black text-slate-900">직관적인 검사</h3>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              각 문항에 대해 그렇다 / 아니다로 빠르게 응답할 수 있어 부담 없이 진행됩니다.
-            </p>
-          </div>
+          </SectionCard>
 
-          <div className="rounded-[28px] border border-white/70 bg-white/80 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)] backdrop-blur">
-            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-100 text-lg font-black text-cyan-700">
-              2
+          <SectionCard title="이런 분께 추천" desc="학생·학부모 상담용 체험판으로 사용하기 좋아요.">
+            <div className="space-y-3 text-sm leading-7 text-slate-600">
+              <p>• 학생의 현재 학습 태도와 잠재 성향을 빠르게 파악하고 싶은 경우</p>
+              <p>• 상담 전 아이의 성향을 가볍게 체크해 보고 싶은 경우</p>
+              <p>• 학부모에게 결과 리포트를 깔끔하게 보여주고 싶은 경우</p>
             </div>
-            <h3 className="text-xl font-black text-slate-900">정밀 코드 분석</h3>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              E-P / R-C / M-O / S-F 점수 차이를 기반으로 결과 코드를 만들고, 그 코드로 유형을 직접 매핑합니다.
-            </p>
-          </div>
-
-          <div className="rounded-[28px] border border-white/70 bg-white/80 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)] backdrop-blur">
-            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-100 text-lg font-black text-violet-700">
-              3
-            </div>
-            <h3 className="text-xl font-black text-slate-900">상담형 리포트</h3>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              학습 전략, 부모 코칭, 진로 방향, 주의 패턴까지 한 번에 확인할 수 있습니다.
-            </p>
-          </div>
+          </SectionCard>
         </div>
       </div>
-    </section>
+    </Shell>
+  );
+}
+
+function InfoItem({ title, value }: { title: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+      <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">{title}</div>
+      <div className="mt-2 text-sm font-semibold leading-6 text-slate-700">{value}</div>
+    </div>
   );
 }
 
 function TestScreen({
   currentIndex,
-  progress,
-  onReset,
+  answers,
   onAnswer,
+  onPrev,
 }: {
   currentIndex: number;
-  progress: number;
-  onReset: () => void;
+  answers: number[];
   onAnswer: (value: number) => void;
+  onPrev: () => void;
 }) {
+  const progress = Math.round((currentIndex / QUESTIONS.length) * 100);
+  const selected = answers[currentIndex] ?? null;
+
   return (
-    <section className="mx-auto max-w-4xl px-5 py-8 md:px-8 md:py-12 lg:px-10">
-      <div className="overflow-hidden rounded-[34px] border border-white/70 bg-white/85 p-6 shadow-[0_18px_70px_rgba(15,23,42,0.08)] backdrop-blur md:p-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="text-sm font-semibold text-sky-700">학습성향 정밀 검사</div>
-            <div className="mt-2 text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
-              문항 {currentIndex + 1} / {QUESTIONS.length}
-            </div>
-            <div className="mt-1 text-sm text-slate-500">
-              현재 문항에 가장 가까운 응답을 선택해 주세요.
-            </div>
-          </div>
-
-          <button
-            onClick={onReset}
-            className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-50"
-          >
-            처음으로
-          </button>
-        </div>
-
-        <div className="mt-6">
-          <ProgressBar value={progress} />
-          <div className="mt-2 text-right text-sm font-semibold text-slate-500">
-            {Math.round(progress)}%
-          </div>
-        </div>
-
-        <div className="mt-8 rounded-[30px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6 md:p-8">
-          <div className="inline-flex rounded-full border border-sky-200 bg-sky-50 px-4 py-1.5 text-sm font-bold text-sky-700">
-            QUESTION
-          </div>
-
-          <h2 className="mt-5 text-2xl font-black leading-relaxed tracking-tight text-slate-900 md:text-3xl md:leading-[1.6]">
-            {QUESTIONS[currentIndex]}
-          </h2>
-        </div>
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {CHOICES.map((choice, idx) => (
-            <button
-              key={choice.label}
-              onClick={() => onAnswer(choice.value)}
-              className={
-                idx === 0
-                  ? "rounded-[26px] border border-sky-200 bg-gradient-to-r from-sky-600 to-violet-600 px-6 py-6 text-center text-lg font-black text-white shadow-lg shadow-sky-200/50 transition hover:-translate-y-0.5"
-                  : "rounded-[26px] border border-slate-200 bg-white px-6 py-6 text-center text-lg font-black text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50"
-              }
-            >
-              <div className="text-sm font-semibold opacity-80">
-                {idx === 0 ? "선택 1" : "선택 2"}
+    <Shell>
+      <div className="mx-auto max-w-3xl">
+        <div className="rounded-[34px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:p-7">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="text-xs font-extrabold tracking-[0.18em] text-slate-400">QUESTION</div>
+              <div className="mt-2 text-lg font-black text-slate-900">
+                {currentIndex + 1} / {QUESTIONS.length}
               </div>
-              <div className="mt-1">{choice.label}</div>
+            </div>
+            <div className="min-w-[180px] flex-1 sm:max-w-xs">
+              <ProgressBar value={progress} />
+              <div className="mt-2 text-right text-xs font-bold text-slate-500">{progress}% 진행</div>
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-[30px] bg-gradient-to-br from-slate-50 to-sky-50 p-6 sm:p-8">
+            <div className="text-sm font-bold uppercase tracking-[0.2em] text-sky-600">문항</div>
+            <p className="mt-4 text-2xl font-black leading-[1.55] tracking-tight text-slate-900 sm:text-[30px]">
+              {QUESTIONS[currentIndex]}
+            </p>
+          </div>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {CHOICES.map((choice) => (
+              <ChoiceButton
+                key={choice.label}
+                active={selected === choice.value}
+                label={choice.label}
+                onClick={() => onAnswer(choice.value)}
+              />
+            ))}
+          </div>
+
+          <div className="mt-7 flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={onPrev}
+              disabled={currentIndex === 0}
+              className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              이전 문항
             </button>
-          ))}
+
+            <div className="text-sm font-semibold text-slate-500">
+              {selected === null ? "답변을 선택하면 다음으로 이동해요." : "응답 저장됨"}
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </Shell>
   );
 }
 
 function ResultScreen({
-  report,
-  resolved,
-  axes,
-  onDownloadPdf,
-  onReset,
+  answers,
+  onRestart,
 }: {
-  report: Report;
-  resolved: ResolvedResult;
-  axes: {
-    name: string;
-    left: string;
-    right: string;
-    leftValue: number;
-    rightValue: number;
-  }[];
-  onDownloadPdf: () => void;
-  onReset: () => void;
+  answers: number[];
+  onRestart: () => void;
 }) {
+  const scores = useMemo(() => makeScores(answers), [answers]);
+  const axisProfile = useMemo(() => getAxisProfile(scores), [scores]);
+  const resolved = useMemo(() => resolveResult(scores), [scores]);
+  const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
+
+  const axes = useMemo(() => {
+    const social = toFiveScalePair(scores.P, scores.E);
+    const judgment = toFiveScalePair(scores.R, scores.C);
+    const track = toFiveScalePair(scores.M, scores.O);
+    const style = toFiveScalePair(scores.F, scores.S);
+
+    return [
+      {
+        name: "대인 성향",
+        left: "수동적",
+        right: "외향적",
+        leftValue: social.leftValue,
+        rightValue: social.rightValue,
+      },
+      {
+        name: "판단 방식",
+        left: "원리형",
+        right: "규범형",
+        leftValue: judgment.leftValue,
+        rightValue: judgment.rightValue,
+      },
+      {
+        name: "진행 성향",
+        left: "자유형",
+        right: "계획형",
+        leftValue: track.leftValue,
+        rightValue: track.rightValue,
+      },
+      {
+        name: "실행 스타일",
+        left: "유연형",
+        right: "완수형",
+        leftValue: style.leftValue,
+        rightValue: style.rightValue,
+      },
+    ];
+  }, [scores]);
+
   return (
-    <section className="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-12 lg:px-10">
-      <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="space-y-6">
-          <div className="overflow-hidden rounded-[34px] border border-white/70 bg-white/88 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-            <div
-              className="px-6 py-10 text-white md:px-8"
-              style={{
-                background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)`,
-              }}
-            >
-              <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-sm font-semibold text-white/90">
-                무료 결과 리포트
-              </div>
-              <h1 className="mt-5 text-3xl font-black tracking-tight md:text-4xl">
-                {report.title}
-              </h1>
-              <div className="mt-2 text-sm text-white/75">
-                결과 코드 {resolved.fullCode} · {report.subtitle}
-              </div>
-              <p className="mt-5 rounded-2xl border border-white/10 bg-white/10 p-5 text-[15px] leading-8 text-white/90">
-                {report.summary}
-              </p>
+    <Shell>
+      <div className="grid gap-6">
+        <div
+          className="overflow-hidden rounded-[36px] p-7 text-white shadow-[0_24px_80px_rgba(15,23,42,0.14)] sm:p-10"
+          style={{
+            background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)`,
+          }}
+        >
+          <div className="flex flex-wrap gap-3">
+            <HeroBadge>RESULT TYPE</HeroBadge>
+            <HeroBadge>코드 {resolved.code}</HeroBadge>
+            <HeroBadge>축 차이 {resolved.diffText}</HeroBadge>
+          </div>
+
+          <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-5xl">{report.title}</h1>
+          <p className="mt-3 text-lg font-bold text-white/80">{report.subtitle}</p>
+          <p className="mt-6 max-w-4xl text-base leading-8 text-white/88 sm:text-lg">{report.summary}</p>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <SectionCard title="핵심 축 분석" desc="성향의 방향성과 강도를 보기 쉽게 정리했어요.">
+            <div className="grid gap-4">
+              {axes.map((axis) => (
+                <AxisCard
+                  key={axis.name}
+                  name={axis.name}
+                  left={axis.left}
+                  right={axis.right}
+                  leftValue={axis.leftValue}
+                  rightValue={axis.rightValue}
+                  color={report.color}
+                />
+              ))}
             </div>
 
-            <div className="p-6 md:p-8">
-              <div className="grid gap-4">
-                {axes.map((axis) => (
-                  <div
-                    key={axis.name}
-                    className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-5"
-                  >
-                    <div className="flex items-center justify-between gap-3 text-sm font-bold text-slate-500">
-                      <span>{axis.left}</span>
-                      <span className="rounded-full bg-white px-3 py-1 text-slate-700 ring-1 ring-slate-200">
-                        {axis.name}
-                      </span>
-                      <span>{axis.right}</span>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-2 gap-3">
-                      <div className="rounded-2xl bg-white px-4 py-4 text-center ring-1 ring-slate-200">
-                        <div className="text-xs font-semibold tracking-[0.14em] text-slate-400">
-                          LEFT
-                        </div>
-                        <div className="mt-2 text-base font-black text-slate-800">
-                          {scoreLabel(axis.leftValue)}
-                        </div>
-                      </div>
-                      <div className="rounded-2xl bg-white px-4 py-4 text-center ring-1 ring-slate-200">
-                        <div className="text-xs font-semibold tracking-[0.14em] text-slate-400">
-                          RIGHT
-                        </div>
-                        <div className="mt-2 text-base font-black text-slate-800">
-                          {scoreLabel(axis.rightValue)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                <button
-                  onClick={onDownloadPdf}
-                  className="rounded-2xl bg-gradient-to-r from-sky-700 to-violet-600 px-6 py-4 text-sm font-black text-white shadow-lg shadow-sky-200/50 transition hover:-translate-y-0.5"
-                >
-                  PDF 저장
-                </button>
-                <button
-                  onClick={onReset}
-                  className="rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-black text-slate-700 transition hover:bg-slate-50"
-                >
-                  다시 검사하기
-                </button>
+            <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm leading-7 text-slate-600">
+              <div className="font-bold text-slate-800">프로파일 요약</div>
+              <div className="mt-2">
+                사회성 {axisProfile.social.toFixed(2)} · 판단 {axisProfile.judgment.toFixed(2)} · 진행{" "}
+                {axisProfile.track.toFixed(2)} · 실행 {axisProfile.style.toFixed(2)}
               </div>
             </div>
+          </SectionCard>
+
+          <div className="grid gap-6">
+            <SectionCard title="학습 전략">
+              <ResultParagraph>{report.strategy}</ResultParagraph>
+            </SectionCard>
+
+            <SectionCard title="부모 코칭">
+              <ResultParagraph>{report.parent}</ResultParagraph>
+            </SectionCard>
+
+            <SectionCard title="진로 · 학교 방향">
+              <ResultParagraph>{report.path}</ResultParagraph>
+            </SectionCard>
+
+            <SectionCard title="주의 패턴">
+              <ResultParagraph>{report.danger}</ResultParagraph>
+            </SectionCard>
+
+            <SectionCard title="추천 대화 방식">
+              <ResultParagraph>{report.talk}</ResultParagraph>
+            </SectionCard>
           </div>
         </div>
 
-        <div className="space-y-5">
-          <SectionCard title="학습 전략">{report.strategy}</SectionCard>
-          <SectionCard title="부모 코칭">{report.parent}</SectionCard>
-          <SectionCard title="진로 · 학교 방향">{report.path}</SectionCard>
-          <SectionCard title="주의 패턴">{report.danger}</SectionCard>
-          <SectionCard title="추천 대화 방식">{report.talk}</SectionCard>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-white/80 bg-white/85 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+          <div>
+            <div className="text-sm font-black text-slate-900">결과 리포트 저장 / 출력</div>
+            <div className="mt-1 text-sm text-slate-500">PDF용 인쇄 화면으로 바로 열 수 있어요.</div>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                generatePrintableReport({
+                  report,
+                  resultCode: resolved.fullCode,
+                  axes,
+                })
+              }
+              className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+            >
+              PDF 출력하기
+            </button>
+            <button
+              type="button"
+              onClick={onRestart}
+              className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+            >
+              처음부터 다시하기
+            </button>
+          </div>
         </div>
       </div>
-    </section>
+    </Shell>
+  );
+}
+
+function ResultParagraph({ children }: { children: ReactNode }) {
+  return <p className="text-[15px] leading-8 text-slate-700">{children}</p>;
+}
+
+function AxisCard({
+  name,
+  left,
+  right,
+  leftValue,
+  rightValue,
+  color,
+}: {
+  name: string;
+  left: string;
+  right: string;
+  leftValue: number;
+  rightValue: number;
+  color: string;
+}) {
+  const leftPercent = `${(leftValue / 5) * 100}%`;
+  const rightPercent = `${(rightValue / 5) * 100}%`;
+
+  return (
+    <div className="rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="text-base font-black text-slate-900">{name}</div>
+        <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-extrabold text-slate-500">
+          {axisSummary(left, right, leftValue, rightValue)}
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-sm font-bold text-slate-500">
+        <span>{left}</span>
+        <span>{right}</span>
+      </div>
+
+      <div className="mt-3 grid grid-cols-[1fr_10px_1fr] items-center">
+        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="ml-auto h-full rounded-full"
+            style={{
+              width: leftPercent,
+              background: `linear-gradient(90deg, #cbd5e1 0%, ${color} 100%)`,
+            }}
+          />
+        </div>
+        <div className="relative h-3">
+          <div className="absolute left-1/2 top-[-2px] h-4 w-[2px] -translate-x-1/2 rounded-full bg-slate-300" />
+        </div>
+        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="h-full rounded-full"
+            style={{
+              width: rightPercent,
+              background: `linear-gradient(90deg, ${color} 0%, #0f172a 100%)`,
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
+          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">LEFT</div>
+          <div className="mt-1 text-sm font-black text-slate-900">{scoreLabel(leftValue)}</div>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
+          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">RIGHT</div>
+          <div className="mt-1 text-sm font-black text-slate-900">{scoreLabel(rightValue)}</div>
+        </div>
+      </div>
+    </div>
   );
 }
 
 export default function Page() {
   const [step, setStep] = useState<Step>("landing");
+  const [answers, setAnswers] = useState<number[]>(Array(QUESTIONS.length).fill(-1));
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
 
-  const progress = useMemo(() => (answers.length / QUESTIONS.length) * 100, [answers.length]);
-  const scores = useMemo(() => makeScores(answers), [answers]);
-  const resolved = useMemo(() => resolveResult(scores), [scores]);
-  const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
-
-  const axes = useMemo(() => {
-    const profile = getAxisProfile(scores);
-
-    const axisPair = (value: number) => {
-      const magnitude = Math.abs(value);
-
-      const strong =
-        magnitude >= 1.2 ? 4.8 :
-        magnitude >= 0.6 ? 3.8 :
-        magnitude >= 0.2 ? 3.0 : 2.6;
-
-      const weak =
-        magnitude >= 1.2 ? 2.0 :
-        magnitude >= 0.6 ? 2.4 :
-        magnitude >= 0.2 ? 2.8 : 3.0;
-
-      return { strong, weak };
-    };
-
-    const socialPair = axisPair(profile.social);
-    const trackPair = axisPair(profile.track);
-    const judgmentPair = axisPair(profile.judgment);
-    const stylePair = axisPair(profile.style);
-
-    return [
-      {
-        name: "적극성",
-        left: "내향",
-        right: "외향",
-        leftValue: profile.social < 0 ? socialPair.strong : socialPair.weak,
-        rightValue: profile.social >= 0 ? socialPair.strong : socialPair.weak,
-      },
-      {
-        name: "학습 결",
-        left: "문과",
-        right: "이과",
-        leftValue: profile.track < 0 ? trackPair.strong : trackPair.weak,
-        rightValue: profile.track >= 0 ? trackPair.strong : trackPair.weak,
-      },
-      {
-        name: "판단 방식",
-        left: "감정",
-        right: "사고",
-        leftValue: profile.judgment < 0 ? judgmentPair.strong : judgmentPair.weak,
-        rightValue: profile.judgment >= 0 ? judgmentPair.strong : judgmentPair.weak,
-      },
-      {
-        name: "실행 스타일",
-        left: "자유",
-        right: "책임",
-        leftValue: profile.style < 0 ? stylePair.strong : stylePair.weak,
-        rightValue: profile.style >= 0 ? stylePair.strong : stylePair.weak,
-      },
-    ];
-  }, [scores]);
+  const answeredCount = useMemo(
+    () => answers.filter((value) => value !== -1).length,
+    [answers]
+  );
 
   const startTest = () => {
     setStep("test");
     setCurrentIndex(0);
-    setAnswers([]);
+  };
+
+  const restartTest = () => {
+    setAnswers(Array(QUESTIONS.length).fill(-1));
+    setCurrentIndex(0);
+    setStep("landing");
   };
 
   const handleAnswer = (value: number) => {
-    const next = [...answers, value];
-    setAnswers(next);
+    setAnswers((prev) => {
+      const next = [...prev];
+      next[currentIndex] = value;
+      return next;
+    });
 
     if (currentIndex === QUESTIONS.length - 1) {
       setStep("result");
-    } else {
-      setCurrentIndex((prev) => prev + 1);
+      return;
     }
+
+    setCurrentIndex((prev) => prev + 1);
   };
 
-  const resetAll = () => {
-    setStep("landing");
-    setCurrentIndex(0);
-    setAnswers([]);
+  const handlePrev = () => {
+    setCurrentIndex((prev) => Math.max(0, prev - 1));
   };
 
-  const handleDownloadPdf = () => {
-    generatePrintableReport({
-      report,
-      resultCode: resolved.fullCode,
-      axes,
-    });
-  };
+  if (step === "landing") {
+    return <LandingScreen onStart={startTest} />;
+  }
 
-  return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.08),_transparent_30%),linear-gradient(180deg,#f8fafc_0%,#eef6ff_45%,#f8fafc_100%)] text-slate-900">
-      {step === "landing" && <LandingScreen onStart={startTest} />}
+  if (step === "test") {
+    return (
+      <TestScreen
+        currentIndex={currentIndex}
+        answers={answers}
+        onAnswer={handleAnswer}
+        onPrev={handlePrev}
+      />
+    );
+  }
 
-      {step === "test" && (
-        <TestScreen
-          currentIndex={currentIndex}
-          progress={progress}
-          onReset={resetAll}
-          onAnswer={handleAnswer}
-        />
-      )}
+  if (answeredCount !== QUESTIONS.length) {
+    setStep("test");
+    return null;
+  }
 
-      {step === "result" && (
-        <ResultScreen
-          report={report}
-          resolved={resolved}
-          axes={axes}
-          onDownloadPdf={handleDownloadPdf}
-          onReset={resetAll}
-        />
-      )}
-    </div>
-  );
+  return <ResultScreen answers={answers} onRestart={restartTest} />;
 }
