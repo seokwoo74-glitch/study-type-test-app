@@ -1099,20 +1099,23 @@ function ChoiceButton({
   label,
   active,
   onClick,
+  disabled = false,
 }: {
   label: string;
   active: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={`rounded-[24px] border px-5 py-5 text-left transition-all ${
         active
           ? "border-slate-900 bg-slate-900 text-white shadow-[0_18px_40px_rgba(15,23,42,0.22)]"
           : "border-slate-200 bg-white text-slate-800 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50"
-      }`}
+      } ${disabled ? "pointer-events-none opacity-70" : ""}`}
     >
       <div className="text-lg font-black tracking-tight">{label}</div>
       <div className={`mt-2 text-sm ${active ? "text-white/80" : "text-slate-500"}`}>
@@ -1797,14 +1800,17 @@ function TestScreen({
   answers,
   onAnswer,
   onPrev,
+  isTransitioning,
 }: {
   currentIndex: number;
   answers: number[];
   onAnswer: (value: number) => void;
   onPrev: () => void;
+  isTransitioning: boolean;
 }) {
-  const progress = Math.round((currentIndex / QUESTIONS.length) * 100);
-  const selected = answers[currentIndex] ?? null;
+  const safeIndex = Math.min(Math.max(currentIndex, 0), QUESTIONS.length - 1);
+  const progress = Math.round(((safeIndex + 1) / QUESTIONS.length) * 100);
+  const selected = answers[safeIndex] ?? null;
 
   return (
     <Shell>
@@ -1816,7 +1822,7 @@ function TestScreen({
                 QUESTION
               </div>
               <div className="mt-2 text-lg font-black text-slate-900">
-                {currentIndex + 1} / {QUESTIONS.length}
+                {safeIndex + 1} / {QUESTIONS.length}
               </div>
             </div>
 
@@ -1833,7 +1839,7 @@ function TestScreen({
               문항
             </div>
             <p className="mt-4 text-2xl font-black leading-[1.55] tracking-tight text-slate-900 sm:text-[30px]">
-              {QUESTIONS[currentIndex]}
+              {QUESTIONS[safeIndex] ?? "문항을 불러오는 중입니다."}
             </p>
           </div>
 
@@ -1843,6 +1849,7 @@ function TestScreen({
                 key={choice.label}
                 active={selected === choice.value}
                 label={choice.label}
+                disabled={isTransitioning}
                 onClick={() => onAnswer(choice.value)}
               />
             ))}
@@ -1852,7 +1859,7 @@ function TestScreen({
             <button
               type="button"
               onClick={onPrev}
-              disabled={currentIndex === 0}
+              disabled={safeIndex === 0 || isTransitioning}
               className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               이전 문항
@@ -1871,6 +1878,7 @@ function TestScreen({
 export default function Page() {
   const [step, setStep] = useState<Step>("landing");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [answers, setAnswers] = useState<number[]>(() =>
     Array(QUESTIONS.length).fill(-1)
   );
@@ -1886,29 +1894,42 @@ export default function Page() {
   };
 
   const handleAnswer = (value: number) => {
+    if (isTransitioning) return;
+    if (currentIndex < 0 || currentIndex >= QUESTIONS.length) return;
+
+    setIsTransitioning(true);
+
     setAnswers((prev) => {
       const next = [...prev];
       next[currentIndex] = value;
       return next;
     });
 
-    if (currentIndex === QUESTIONS.length - 1) {
-      setStep("result");
+    const isLastQuestion = currentIndex === QUESTIONS.length - 1;
+
+    if (isLastQuestion) {
+      setTimeout(() => {
+        setStep("result");
+        setIsTransitioning(false);
+      }, 120);
       return;
     }
 
     setTimeout(() => {
-      setCurrentIndex((prev) => prev + 1);
+      setCurrentIndex((prev) => Math.min(prev + 1, QUESTIONS.length - 1));
+      setIsTransitioning(false);
     }, 120);
   };
 
   const handlePrev = () => {
+    if (isTransitioning) return;
     setCurrentIndex((prev) => Math.max(prev - 1, 0));
   };
 
   const handleRestart = () => {
     setAnswers(Array(QUESTIONS.length).fill(-1));
     setCurrentIndex(0);
+    setIsTransitioning(false);
     setStep("landing");
   };
 
@@ -1923,6 +1944,7 @@ export default function Page() {
         answers={answers}
         onAnswer={handleAnswer}
         onPrev={handlePrev}
+        isTransitioning={isTransitioning}
       />
     );
   }
