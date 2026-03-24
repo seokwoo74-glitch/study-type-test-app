@@ -126,6 +126,7 @@ const QUESTIONS: string[] = [
   "사람마다 성격과 취향이 다르기 마련이므로 다른 사람들의 방법을 따라하고 싶지는 않다",
 ];
 
+// 엑셀 채점지 기준 SCORE_MAP
 const SCORE_MAP: Record<string, number>[] = [
   { O: 1 },
   { O: 5 },
@@ -490,272 +491,61 @@ const RESULT_DB: Record<string, Report> = {
 };
 
 const CHARACTER_META: Record<string, CharacterMeta> = {
-  ERMS: {
-    label: "창의 연구자",
-    tagline: "깊이 있는 탐구와 독창성이 빛나는 최상위 이과형",
-    emoji: "🧠",
-    image: "/characters/ERMS.png",
-    aura: "from-blue-500/25 via-sky-400/10 to-cyan-300/20",
-  },
-  ERMF: {
-    label: "몰입 발명가",
-    tagline: "좋아하는 분야에 압도적으로 빠져드는 영재형",
-    emoji: "⚡",
-    image: "/characters/ERMF.png",
-    aura: "from-teal-500/25 via-emerald-400/10 to-cyan-300/20",
-  },
-  eROS: {
-    label: "엘리트 플래너",
-    tagline: "성실함과 자기관리가 돋보이는 안정형 상위권",
-    emoji: "📘",
-    image: "/characters/eROS.png",
-    aura: "from-sky-500/25 via-cyan-400/10 to-blue-300/20",
-  },
-  pROS: {
-    label: "차분한 성취가",
-    tagline: "묵직하게 쌓아 올리는 실속형 상위권",
-    emoji: "🛡️",
-    image: "/characters/pROS.png",
-    aura: "from-cyan-500/25 via-sky-400/10 to-indigo-300/20",
-  },
-  PRMf: {
-    label: "자유로운 문제해결사",
-    tagline: "관심 분야에서 번뜩이는 재능을 터뜨리는 편차형",
-    emoji: "🎯",
-    image: "/characters/PRMf.png",
-    aura: "from-violet-500/25 via-fuchsia-400/10 to-purple-300/20",
-  },
-  EROF: {
-    label: "에너지 크리에이터",
-    tagline: "사람과 환경 속에서 아이디어가 살아나는 활동형",
-    emoji: "🚀",
-    image: "/characters/EROF.png",
-    aura: "from-purple-500/25 via-fuchsia-400/10 to-pink-300/20",
-  },
-  PROS: {
-    label: "성장 새싹",
-    tagline: "작은 성취를 쌓을수록 크게 성장하는 잠재형",
-    emoji: "🌱",
-    image: "/characters/PROS.png",
-    aura: "from-orange-500/25 via-amber-400/10 to-yellow-300/20",
-  },
-  ECMf: {
-    label: "감각 스토리텔러",
-    tagline: "표현력과 창의성이 돋보이는 문과 창의형",
-    emoji: "🎨",
-    image: "/characters/ECMf.png",
-    aura: "from-pink-500/25 via-rose-400/10 to-fuchsia-300/20",
-  },
-  ECMs: {
-    label: "품격 있는 우등생",
-    tagline: "안정성과 완성도를 동시에 갖춘 문과 영재형",
-    emoji: "👑",
-    image: "/characters/ECMs.png",
-    aura: "from-blue-500/25 via-indigo-400/10 to-sky-300/20",
-  },
-  ECoS: {
-    label: "깊이형 사색가",
-    tagline: "조용하지만 강한 사고력과 언어 감각을 지닌 유형",
-    emoji: "📚",
-    image: "/characters/ECoS.png",
-    aura: "from-violet-500/25 via-indigo-400/10 to-purple-300/20",
-  },
-  pCOS: {
-    label: "정교한 실천가",
-    tagline: "차분하고 정교하게 계획을 현실로 만드는 유형",
-    emoji: "🧩",
-    image: "/characters/pCOS.png",
-    aura: "from-cyan-500/25 via-blue-400/10 to-slate-300/20",
-  },
-  eCOS: {
-    label: "리더형 모범생",
-    tagline: "성적과 대외 역량을 균형 있게 이끄는 유형",
-    emoji: "🌟",
-    image: "/characters/eCOS.png",
-    aura: "from-emerald-500/25 via-teal-400/10 to-green-300/20",
-  },
-  PCMs: {
-    label: "무드 드라이버",
-    tagline: "분위기와 관계 에너지 속에서 움직이는 외향형",
-    emoji: "🎤",
-    image: "/characters/PCMs.png",
-    aura: "from-purple-500/25 via-pink-400/10 to-fuchsia-300/20",
-  },
-  PCmF: {
-    label: "조용한 몰입러",
-    tagline: "겉은 조용하지만 좋아하는 일엔 강하게 빠지는 유형",
-    emoji: "🌙",
-    image: "/characters/PCmF.png",
-    aura: "from-fuchsia-500/25 via-purple-400/10 to-violet-300/20",
-  },
-  PCOF: {
-    label: "따뜻한 성장형",
-    tagline: "작은 성공을 발판 삼아 천천히 커지는 문과 잠재형",
-    emoji: "☀️",
-    image: "/characters/PCOF.png",
-    aura: "from-orange-500/25 via-yellow-400/10 to-amber-300/20",
-  },
-  ErMS: {
-    label: "융합 설계자",
-    tagline: "문·이과를 넘나드는 통합적 사고를 가진 융합형",
-    emoji: "🧭",
-    image: "/characters/ErMS.png",
-    aura: "from-teal-500/25 via-sky-400/10 to-indigo-300/20",
-  },
-  erOS: {
-    label: "균형 운영자",
-    tagline: "실리와 균형을 바탕으로 안정적으로 성장하는 유형",
-    emoji: "⚖️",
-    image: "/characters/erOS.png",
-    aura: "from-sky-500/25 via-teal-400/10 to-cyan-300/20",
-  },
-  PrmS: {
-    label: "차곡차곡 성과형",
-    tagline: "꾸준함으로 결과를 만들어내는 혼합 모범형",
-    emoji: "🏅",
-    image: "/characters/PrmS.png",
-    aura: "from-blue-500/25 via-cyan-400/10 to-slate-300/20",
-  },
-  PrMF: {
-    label: "융합 아이디어러",
-    tagline: "재능은 넓고, 마무리 훈련이 중요한 융합 편차형",
-    emoji: "💡",
-    image: "/characters/PrMF.png",
-    aura: "from-violet-500/25 via-indigo-400/10 to-fuchsia-300/20",
-  },
-  PrOF: {
-    label: "가능성 탐험가",
-    tagline: "생활 속 경험이 쌓일수록 잠재력이 열리는 성장형",
-    emoji: "🌈",
-    image: "/characters/PrOF.png",
-    aura: "from-orange-500/25 via-amber-400/10 to-rose-300/20",
-  },
-  DEFAULT: {
-    label: "성향 분석 캐릭터",
-    tagline: "현재 응답을 바탕으로 가장 가까운 성향을 분석했어요.",
-    emoji: "✨",
-    image: "/characters/default.png",
-    aura: "from-slate-500/25 via-slate-300/10 to-sky-300/20",
-  },
+  ERMS: { label: "창의 연구자", tagline: "깊이 있는 탐구와 독창성이 빛나는 최상위 이과형", emoji: "🧠", image: "/characters/ERMS.png", aura: "from-blue-500/25 via-sky-400/10 to-cyan-300/20" },
+  ERMF: { label: "몰입 발명가", tagline: "좋아하는 분야에 압도적으로 빠져드는 영재형", emoji: "⚡", image: "/characters/ERMF.png", aura: "from-teal-500/25 via-emerald-400/10 to-cyan-300/20" },
+  eROS: { label: "엘리트 플래너", tagline: "성실함과 자기관리가 돋보이는 안정형 상위권", emoji: "📘", image: "/characters/eROS.png", aura: "from-sky-500/25 via-cyan-400/10 to-blue-300/20" },
+  pROS: { label: "차분한 성취가", tagline: "묵직하게 쌓아 올리는 실속형 상위권", emoji: "🛡️", image: "/characters/pROS.png", aura: "from-cyan-500/25 via-sky-400/10 to-indigo-300/20" },
+  PRMf: { label: "자유로운 문제해결사", tagline: "관심 분야에서 번뜩이는 재능을 터뜨리는 편차형", emoji: "🎯", image: "/characters/PRMf.png", aura: "from-violet-500/25 via-fuchsia-400/10 to-purple-300/20" },
+  EROF: { label: "에너지 크리에이터", tagline: "사람과 환경 속에서 아이디어가 살아나는 활동형", emoji: "🚀", image: "/characters/EROF.png", aura: "from-purple-500/25 via-fuchsia-400/10 to-pink-300/20" },
+  PROS: { label: "성장 새싹", tagline: "작은 성취를 쌓을수록 크게 성장하는 잠재형", emoji: "🌱", image: "/characters/PROS.png", aura: "from-orange-500/25 via-amber-400/10 to-yellow-300/20" },
+  ECMf: { label: "감각 스토리텔러", tagline: "표현력과 창의성이 돋보이는 문과 창의형", emoji: "🎨", image: "/characters/ECMf.png", aura: "from-pink-500/25 via-rose-400/10 to-fuchsia-300/20" },
+  ECMs: { label: "품격 있는 우등생", tagline: "안정성과 완성도를 동시에 갖춘 문과 영재형", emoji: "👑", image: "/characters/ECMs.png", aura: "from-blue-500/25 via-indigo-400/10 to-sky-300/20" },
+  ECoS: { label: "깊이형 사색가", tagline: "조용하지만 강한 사고력과 언어 감각을 지닌 유형", emoji: "📚", image: "/characters/ECoS.png", aura: "from-violet-500/25 via-indigo-400/10 to-purple-300/20" },
+  pCOS: { label: "정교한 실천가", tagline: "차분하고 정교하게 계획을 현실로 만드는 유형", emoji: "🧩", image: "/characters/pCOS.png", aura: "from-cyan-500/25 via-blue-400/10 to-slate-300/20" },
+  eCOS: { label: "리더형 모범생", tagline: "성적과 대외 역량을 균형 있게 이끄는 유형", emoji: "🌟", image: "/characters/eCOS.png", aura: "from-emerald-500/25 via-teal-400/10 to-green-300/20" },
+  PCMs: { label: "무드 드라이버", tagline: "분위기와 관계 에너지 속에서 움직이는 외향형", emoji: "🎤", image: "/characters/PCMs.png", aura: "from-purple-500/25 via-pink-400/10 to-fuchsia-300/20" },
+  PCmF: { label: "조용한 몰입러", tagline: "겉은 조용하지만 좋아하는 일엔 강하게 빠지는 유형", emoji: "🌙", image: "/characters/PCmF.png", aura: "from-fuchsia-500/25 via-purple-400/10 to-violet-300/20" },
+  PCOF: { label: "따뜻한 성장형", tagline: "작은 성공을 발판 삼아 천천히 커지는 문과 잠재형", emoji: "☀️", image: "/characters/PCOF.png", aura: "from-orange-500/25 via-yellow-400/10 to-amber-300/20" },
+  ErMS: { label: "융합 설계자", tagline: "문·이과를 넘나드는 통합적 사고를 가진 융합형", emoji: "🧭", image: "/characters/ErMS.png", aura: "from-teal-500/25 via-sky-400/10 to-indigo-300/20" },
+  erOS: { label: "균형 운영자", tagline: "실리와 균형을 바탕으로 안정적으로 성장하는 유형", emoji: "⚖️", image: "/characters/erOS.png", aura: "from-sky-500/25 via-teal-400/10 to-cyan-300/20" },
+  PrmS: { label: "차곡차곡 성과형", tagline: "꾸준함으로 결과를 만들어내는 혼합 모범형", emoji: "🏅", image: "/characters/PrmS.png", aura: "from-blue-500/25 via-cyan-400/10 to-slate-300/20" },
+  PrMF: { label: "융합 아이디어러", tagline: "재능은 넓고, 마무리 훈련이 중요한 융합 편차형", emoji: "💡", image: "/characters/PrMF.png", aura: "from-violet-500/25 via-indigo-400/10 to-fuchsia-300/20" },
+  PrOF: { label: "가능성 탐험가", tagline: "생활 속 경험이 쌓일수록 잠재력이 열리는 성장형", emoji: "🌈", image: "/characters/PrOF.png", aura: "from-orange-500/25 via-amber-400/10 to-rose-300/20" },
+  DEFAULT: { label: "성향 분석 캐릭터", tagline: "현재 응답을 바탕으로 가장 가까운 성향을 분석했어요.", emoji: "✨", image: "/characters/default.png", aura: "from-slate-500/25 via-slate-300/10 to-sky-300/20" },
 };
 
 const CHARACTER_PROMPTS: Record<string, PromptMeta> = {
-  ERMS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "genius young scientist student, slightly messy hair, holding glowing formula hologram, confident eyes, blue tone, futuristic lab vibe",
-  },
-  ERMF: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "focused student deeply immersed in experiment, sparks of light around, intense eyes, teal color theme, innovation energy",
-  },
-  eROS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "organized top student with neat uniform, holding planner and books, calm smile, sky blue theme, clean and reliable mood",
-  },
-  pROS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "quiet diligent student, tidy desk, slightly shy expression, soft blue tone, calm and stable personality",
-  },
-  PRMf: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "smart but relaxed student, hoodie style, holding math notebook casually, playful confident smile, purple tone",
-  },
-  EROF: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "energetic outgoing student, dynamic pose, pointing forward, bright purple pink gradient, charismatic vibe",
-  },
-  PROS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "young student with small glowing seed in hands, hopeful expression, warm orange light, growth concept",
-  },
-  ECMf: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "artistic student holding notebook and pen, dreamy expression, pink tone, creative aura around",
-  },
-  ECMs: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "elegant top student, confident posture, holding book, royal blue tone, intelligent and composed",
-  },
-  ECoS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "quiet deep thinker student reading book, soft purple tone, calm and intellectual mood",
-  },
-  pCOS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "organized quiet student writing notes carefully, gentle blue tone, precise and thoughtful",
-  },
-  eCOS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "bright and confident student leader, smiling, slightly extroverted, green tone, balanced personality",
-  },
-  PCMs: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "expressive student speaking or presenting, lively expression, pink-purple tone, social energy",
-  },
-  PCmF: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "quiet creative student with headphones, relaxed pose, violet tone, introverted but unique vibe",
-  },
-  PCOF: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "warm and kind student, soft sunlight glow, yellow tone, gentle growth concept",
-  },
-  ErMS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "balanced genius student, half science half art elements around, teal tone, dual intelligence",
-  },
-  erOS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "balanced and practical student, holding books and tablet, calm expression, blue green tone",
-  },
-  PrmS: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "steady hardworking student, holding notebook tightly, humble smile, soft blue tone",
-  },
-  PrMF: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "creative flexible student with light bulb idea, relaxed posture, purple blue tone, clever vibe",
-  },
-  PrOF: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "student looking at rainbow light, curious expression, soft orange pink gradient, growth and exploration",
-  },
-  DEFAULT: {
-    base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background",
-    detail:
-      "smart Korean student character, warm smile, clean white gradient background, premium educational app mascot",
-  },
+  ERMS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "genius young scientist student, slightly messy hair, holding glowing formula hologram, confident eyes, blue tone, futuristic lab vibe" },
+  ERMF: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "focused student deeply immersed in experiment, sparks of light around, intense eyes, teal color theme, innovation energy" },
+  eROS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "organized top student with neat uniform, holding planner and books, calm smile, sky blue theme, clean and reliable mood" },
+  pROS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "quiet diligent student, tidy desk, slightly shy expression, soft blue tone, calm and stable personality" },
+  PRMf: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "smart but relaxed student, hoodie style, holding math notebook casually, playful confident smile, purple tone" },
+  EROF: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "energetic outgoing student, dynamic pose, pointing forward, bright purple pink gradient, charismatic vibe" },
+  PROS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "young student with small glowing seed in hands, hopeful expression, warm orange light, growth concept" },
+  ECMf: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "artistic student holding notebook and pen, dreamy expression, pink tone, creative aura around" },
+  ECMs: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "elegant top student, confident posture, holding book, royal blue tone, intelligent and composed" },
+  ECoS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "quiet deep thinker student reading book, soft purple tone, calm and intellectual mood" },
+  pCOS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "organized quiet student writing notes carefully, gentle blue tone, precise and thoughtful" },
+  eCOS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "bright and confident student leader, smiling, slightly extroverted, green tone, balanced personality" },
+  PCMs: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "expressive student speaking or presenting, lively expression, pink-purple tone, social energy" },
+  PCmF: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "quiet creative student with headphones, relaxed pose, violet tone, introverted but unique vibe" },
+  PCOF: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "warm and kind student, soft sunlight glow, yellow tone, gentle growth concept" },
+  ErMS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "balanced genius student, half science half art elements around, teal tone, dual intelligence" },
+  erOS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "balanced and practical student, holding books and tablet, calm expression, blue green tone" },
+  PrmS: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "steady hardworking student, holding notebook tightly, humble smile, soft blue tone" },
+  PrMF: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "creative flexible student with light bulb idea, relaxed posture, purple blue tone, clever vibe" },
+  PrOF: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "student looking at rainbow light, curious expression, soft orange pink gradient, growth and exploration" },
+  DEFAULT: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "smart Korean student character, warm smile, clean white gradient background, premium educational app mascot" },
 };
 
+// 엑셀 결과표 기준 매핑 보정본
 const CODE_TO_RESULT_KEY: Record<string, string> = {
+  // 이과 창의적영재형
   ERMS: "ERMS",
   ERMs: "ERMS",
-  ERmS: "ERMS",
-  ERms: "ERMS",
   eRMS: "ERMS",
-  eRmS: "ERMS",
-  eRms: "ERMS",
 
+  // 이과 영재형
   ERMF: "ERMF",
   ERMf: "ERMF",
   ERmF: "ERMF",
@@ -763,19 +553,21 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eRMF: "ERMF",
   eRMf: "ERMF",
 
+  // 이과모범형
   eROS: "eROS",
   eRoS: "eROS",
   EROS: "eROS",
   EROs: "eROS",
   ERoS: "eROS",
   ERos: "eROS",
-  eRMs: "eROS",
 
+  // (수동적) 이과 모범형
   pROS: "pROS",
   pRoS: "pROS",
   pRMS: "pROS",
   pRmS: "pROS",
 
+  // 이과 뺀질이형
   PRMF: "PRMf",
   PRMf: "PRMf",
   PRmF: "PRMf",
@@ -788,6 +580,7 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pRmf: "PRMf",
   pRoF: "PRMf",
 
+  // 외향적 이과뺀질형
   EROF: "EROF",
   ERoF: "EROF",
   ERof: "EROF",
@@ -797,6 +590,7 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eRof: "EROF",
   eRmf: "EROF",
 
+  // 이과 잠재성장형
   PROF: "PROS",
   PROf: "PROS",
   PROS: "PROS",
@@ -817,35 +611,41 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eROs: "PROS",
   eRos: "PROS",
 
+  // 문과 창의적영재형
   ECMF: "ECMf",
   ECMf: "ECMf",
 
+  // 문과 모범형 영재형
   ECMS: "ECMs",
   eCMS: "ECMs",
 
-  ECMs: "ECoS",
-  eCMs: "ECoS",
+  // 내성적 문과영재형
+  ECOS: "ECoS",
+  ECOs: "ECoS",
+  ECoS: "ECoS",
+  ECos: "ECoS",
+  ECmS: "ECoS",
+  ECms: "ECoS",
+  eCmS: "ECoS",
+  eCms: "ECoS",
+  pCMS: "ECoS",
   ECoF: "ECoS",
   ECmf: "ECoS",
-  pCMS: "ECoS",
+  ECMs: "ECoS",
+  eCMs: "ECoS",
 
-  ECOS: "pCOS",
-  ECOs: "pCOS",
-  ECoS: "pCOS",
-  ECos: "pCOS",
-  ECmS: "pCOS",
-  ECms: "pCOS",
-  eCmS: "pCOS",
-  eCms: "pCOS",
+  // (내성적) 문과 모범형
   pCOS: "pCOS",
   pCoS: "pCOS",
   pCmS: "pCOS",
 
-  eCOS: "eCOS",
+  // 문과모범형B
   eCoS: "eCOS",
   eCos: "eCOS",
+  eCOS: "eCOS",
   ECOf: "eCOS",
 
+  // (외향적) 문과뺀질이형
   PCMF: "PCMs",
   PCMf: "PCMs",
   pCMF: "PCMs",
@@ -859,6 +659,7 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eCoF: "PCMs",
   eCof: "PCMs",
 
+  // (내향적) 문과 뺀질이
   PCmF: "PCmF",
   PCmf: "PCmF",
   PCms: "PCmF",
@@ -868,6 +669,7 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   PCof: "PCmF",
   pCoF: "PCmF",
 
+  // 문과 잠재성장형
   PCOF: "PCOF",
   PCOf: "PCOF",
   PCOS: "PCOF",
@@ -884,24 +686,63 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pCof: "PCOF",
   eCOs: "PCOF",
 
+  // 문·이과 혼합 영재형
   ErMS: "ErMS",
-  ErmS: "ErMS",
-  Erms: "ErMS",
+  ErMs: "ErMS",
+  EcMS: "ErMS",
+  EcMs: "ErMS",
   erMS: "ErMS",
+  ecMS: "ErMS",
+  ErMF: "ErMS",
+  ErMf: "ErMS",
+  ErmF: "ErMS",
+  Ermf: "ErMS",
+  EcMF: "ErMS",
+  EcMf: "ErMS",
+  EcmF: "ErMS",
+  Ecmf: "ErMS",
+  erMF: "ErMS",
+  erMf: "ErMS",
+  ecMF: "ErMS",
+  ecMf: "ErMS",
 
+  // 문·이과 혼합 모범형
+  ErOS: "erOS",
+  ErOs: "erOS",
+  EroS: "erOS",
+  Eros: "erOS",
+  EcOS: "erOS",
+  EcOs: "erOS",
+  EcoS: "erOS",
+  Ecos: "erOS",
   erOS: "erOS",
-  erOs: "erOS",
+  eroS: "erOS",
+  ecOS: "erOS",
+  ecoS: "erOS",
+  ErmS: "erOS",
+  Erms: "erOS",
+  ermS: "erOS",
+  erms: "erOS",
+  EcmS: "erOS",
+  Ecms: "erOS",
+  ecmS: "erOS",
+  ecms: "erOS",
+  ErOf: "erOS",
+  EcOf: "erOS",
 
+  // 문·이과 혼합 수동적모범형
   PrMS: "PrmS",
   PrmS: "PrmS",
   Prms: "PrmS",
   prMS: "PrmS",
 
+  // 문·이과 혼합 뺀질이형
   PrMF: "PrMF",
   PrMf: "PrMF",
   PrmF: "PrMF",
   Prmf: "PrMF",
 
+  // 융합 잠재성장형
   PrOF: "PrOF",
   PrOf: "PrOF",
   ProF: "PrOF",
@@ -929,9 +770,10 @@ function makeScores(answers: number[]) {
   };
 
   answers.forEach((answer, idx) => {
+    if (answer !== 1) return;
     const map = SCORE_MAP[idx] || {};
     Object.entries(map).forEach(([key, value]) => {
-      total[key] += Number(value) * answer;
+      total[key] += Number(value);
     });
   });
 
@@ -968,6 +810,8 @@ function axisSummary(left: string, right: string, leftValue: number, rightValue:
   return `${left} ${scoreLabel(leftValue)} / ${right} ${scoreLabel(rightValue)}`;
 }
 
+// 엑셀 규칙: 1개 차이시 소문자 적용
+// 단, 0 차이도 균형형으로 소문자 처리
 function buildDisplayCode(scores: Record<string, number>) {
   const socialDiff = Math.abs(scores.E - scores.P);
   const judgmentDiff = Math.abs(scores.R - scores.C);
@@ -979,8 +823,7 @@ function buildDisplayCode(scores: Record<string, number>) {
   const trackLetter = scores.M >= scores.O ? "M" : "O";
   const styleLetter = scores.S >= scores.F ? "S" : "F";
 
-  const formatLetter = (letter: string, diff: number) =>
-    diff <= 2 ? letter.toLowerCase() : letter.toUpperCase();
+  const formatLetter = (letter: string, diff: number) => (diff <= 1 ? letter.toLowerCase() : letter.toUpperCase());
 
   const code =
     formatLetter(socialLetter, socialDiff) +
@@ -1022,24 +865,6 @@ function toFiveScalePair(left: number, right: number) {
     leftValue: Number(leftValue.toFixed(1)),
     rightValue: Number(rightValue.toFixed(1)),
   };
-}
-
-function hexToRgba(hex: string, alpha: number) {
-  const normalized = hex.replace("#", "");
-  const full =
-    normalized.length === 3
-      ? normalized
-          .split("")
-          .map((c) => c + c)
-          .join("")
-      : normalized;
-
-  const num = parseInt(full, 16);
-  const r = (num >> 16) & 255;
-  const g = (num >> 8) & 255;
-  const b = num & 255;
-
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function getCharacterPrompt(resultKey: string) {
@@ -1167,367 +992,62 @@ function generatePrintableReport({
         <meta charset="utf-8" />
         <title>학습성향 결과 리포트</title>
         <style>
-          * {
-            box-sizing: border-box;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          html, body {
-            margin: 0;
-            padding: 0;
-            background: #eef4fb;
-            color: #0f172a;
-            font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
-          }
-          body {
-            line-height: 1.7;
-          }
-          .page {
-            width: 100%;
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 28px;
-          }
-          .shell {
-            background:
-              radial-gradient(circle at top left, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10), transparent 28%),
-              radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.07), transparent 26%),
-              linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-            border: 1px solid rgba(226, 232, 240, 0.95);
-            border-radius: 34px;
-            overflow: hidden;
-            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.10);
-          }
-          .hero {
-            position: relative;
-            overflow: hidden;
-            padding: 34px 36px 30px;
-            background: linear-gradient(135deg, ${report.color} 0%, #0f172a 100%);
-            color: #ffffff;
-          }
-          .hero:before {
-            content: "";
-            position: absolute;
-            right: -80px;
-            top: -80px;
-            width: 240px;
-            height: 240px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.10);
-            filter: blur(6px);
-          }
-          .hero:after {
-            content: "";
-            position: absolute;
-            left: -60px;
-            bottom: -100px;
-            width: 220px;
-            height: 220px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.07);
-          }
-          .hero-inner {
-            position: relative;
-            z-index: 1;
-          }
-          .badge-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 18px;
-          }
-          .badge {
-            display: inline-flex;
-            align-items: center;
-            border-radius: 999px;
-            padding: 8px 14px;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0.08em;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.16);
-          }
-          .hero h1 {
-            margin: 0;
-            font-size: 34px;
-            line-height: 1.22;
-            font-weight: 900;
-            letter-spacing: -0.03em;
-          }
-          .hero-sub {
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.82);
-          }
-          .hero-summary {
-            margin-top: 22px;
-            padding: 18px 20px;
-            border-radius: 22px;
-            background: rgba(255,255,255,0.09);
-            border: 1px solid rgba(255,255,255,0.14);
-            font-size: 15px;
-            line-height: 1.9;
-            color: rgba(255,255,255,0.94);
-          }
-          .content {
-            padding: 26px;
-          }
-          .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 14px;
-            margin-bottom: 18px;
-          }
-          .meta-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 22px;
-            padding: 18px;
-          }
-          .meta-label {
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.14em;
-            color: #64748b;
-            margin-bottom: 10px;
-          }
-          .meta-value {
-            font-size: 18px;
-            font-weight: 900;
-            color: #0f172a;
-            line-height: 1.45;
-          }
-          .result-emphasis {
-            background: ${softTint};
-            border: 1px solid ${softBorder};
-            color: ${report.color};
-            border-radius: 999px;
-            padding: 7px 12px;
-            font-size: 12px;
-            font-weight: 800;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-          }
-          .axis-wrap {
-            margin-top: 22px;
-            margin-bottom: 22px;
-          }
-          .block-title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 14px;
-          }
-          .block-title h2 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 900;
-            letter-spacing: -0.02em;
-            color: #0f172a;
-          }
-          .block-title .desc {
-            font-size: 13px;
-            color: #64748b;
-            font-weight: 600;
-          }
-          .axis-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-          }
-          .axis-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 24px;
-            padding: 18px;
-            box-shadow: 0 8px 26px rgba(15, 23, 42, 0.04);
-          }
-          .axis-top {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 14px;
-          }
-          .axis-name {
-            font-size: 16px;
-            font-weight: 900;
-            color: #0f172a;
-          }
-          .axis-chip {
-            display: inline-flex;
-            align-self: flex-start;
-            border-radius: 999px;
-            padding: 6px 11px;
-            font-size: 11px;
-            font-weight: 800;
-            color: #475569;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-          }
-          .axis-label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748b;
-          }
-          .axis-track {
-            position: relative;
-            display: grid;
-            grid-template-columns: 1fr 10px 1fr;
-            align-items: center;
-            gap: 0;
-            margin-bottom: 14px;
-          }
-          .axis-half {
-            height: 12px;
-            border-radius: 999px;
-            background: #e2e8f0;
-            overflow: hidden;
-            position: relative;
-          }
-          .axis-half:first-child .axis-fill {
-            margin-left: auto;
-          }
-          .axis-divider {
-            width: 10px;
-            height: 12px;
-            position: relative;
-          }
-          .axis-divider:before {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: -3px;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 18px;
-            border-radius: 999px;
-            background: #cbd5e1;
-          }
-          .axis-fill {
-            height: 100%;
-            border-radius: 999px;
-          }
-          .axis-fill.left {
-            background: linear-gradient(90deg, #cbd5e1 0%, ${report.color} 100%);
-          }
-          .axis-fill.right {
-            background: linear-gradient(90deg, ${report.color} 0%, #0f172a 100%);
-          }
-          .axis-score-row {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 10px;
-          }
-          .axis-score-box {
-            border-radius: 18px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 12px 14px;
-            text-align: center;
-          }
-          .axis-score-title {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            font-weight: 800;
-            color: #94a3b8;
-          }
-          .axis-score-value {
-            margin-top: 6px;
-            font-size: 15px;
-            font-weight: 900;
-            color: #0f172a;
-          }
-          .sections {
-            display: grid;
-            gap: 14px;
-          }
-          .section-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 24px;
-            padding: 22px 22px 20px;
-            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
-          }
-          .section-head {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-          }
-          .section-index {
-            width: 34px;
-            height: 34px;
-            border-radius: 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 900;
-            background: ${softTint};
-            color: ${report.color};
-            border: 1px solid ${softBorder};
-            flex-shrink: 0;
-          }
-          .section-card h2 {
-            margin: 0;
-            font-size: 19px;
-            font-weight: 900;
-            color: #0f172a;
-            letter-spacing: -0.02em;
-          }
-          .section-card p {
-            margin: 0;
-            font-size: 14px;
-            line-height: 1.95;
-            color: #334155;
-            white-space: pre-wrap;
-          }
-          .footer {
-            margin-top: 18px;
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            align-items: center;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 16px;
-            color: #64748b;
-            font-size: 12px;
-            font-weight: 600;
-          }
-          .footer strong {
-            color: #0f172a;
-          }
-          @page {
-            size: A4;
-            margin: 14mm;
-          }
+          * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          html, body { margin: 0; padding: 0; background: #eef4fb; color: #0f172a; font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif; }
+          body { line-height: 1.7; }
+          .page { width: 100%; max-width: 1120px; margin: 0 auto; padding: 28px; }
+          .shell { background: radial-gradient(circle at top left, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10), transparent 28%), radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.07), transparent 26%), linear-gradient(180deg, #ffffff 0%, #f8fbff 100%); border: 1px solid rgba(226, 232, 240, 0.95); border-radius: 34px; overflow: hidden; box-shadow: 0 24px 80px rgba(15, 23, 42, 0.10); }
+          .hero { position: relative; overflow: hidden; padding: 34px 36px 30px; background: linear-gradient(135deg, ${report.color} 0%, #0f172a 100%); color: #ffffff; }
+          .hero:before { content: ""; position: absolute; right: -80px; top: -80px; width: 240px; height: 240px; border-radius: 999px; background: rgba(255, 255, 255, 0.10); filter: blur(6px); }
+          .hero:after { content: ""; position: absolute; left: -60px; bottom: -100px; width: 220px; height: 220px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); }
+          .hero-inner { position: relative; z-index: 1; }
+          .badge-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+          .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 8px 14px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.16); }
+          .hero h1 { margin: 0; font-size: 34px; line-height: 1.22; font-weight: 900; letter-spacing: -0.03em; }
+          .hero-sub { margin-top: 10px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.82); }
+          .hero-summary { margin-top: 22px; padding: 18px 20px; border-radius: 22px; background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.14); font-size: 15px; line-height: 1.9; color: rgba(255,255,255,0.94); }
+          .content { padding: 26px; }
+          .meta-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+          .meta-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 22px; padding: 18px; }
+          .meta-label { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; color: #64748b; margin-bottom: 10px; }
+          .meta-value { font-size: 18px; font-weight: 900; color: #0f172a; line-height: 1.45; }
+          .result-emphasis { background: ${softTint}; border: 1px solid ${softBorder}; color: ${report.color}; border-radius: 999px; padding: 7px 12px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; }
+          .axis-wrap { margin-top: 22px; margin-bottom: 22px; }
+          .block-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+          .block-title h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.02em; color: #0f172a; }
+          .block-title .desc { font-size: 13px; color: #64748b; font-weight: 600; }
+          .axis-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+          .axis-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 18px; box-shadow: 0 8px 26px rgba(15, 23, 42, 0.04); }
+          .axis-top { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+          .axis-name { font-size: 16px; font-weight: 900; color: #0f172a; }
+          .axis-chip { display: inline-flex; align-self: flex-start; border-radius: 999px; padding: 6px 11px; font-size: 11px; font-weight: 800; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; }
+          .axis-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; font-weight: 700; color: #64748b; }
+          .axis-track { position: relative; display: grid; grid-template-columns: 1fr 10px 1fr; align-items: center; gap: 0; margin-bottom: 14px; }
+          .axis-half { height: 12px; border-radius: 999px; background: #e2e8f0; overflow: hidden; position: relative; }
+          .axis-half:first-child .axis-fill { margin-left: auto; }
+          .axis-divider { width: 10px; height: 12px; position: relative; }
+          .axis-divider:before { content: ""; position: absolute; left: 50%; top: -3px; transform: translateX(-50%); width: 2px; height: 18px; border-radius: 999px; background: #cbd5e1; }
+          .axis-fill { height: 100%; border-radius: 999px; }
+          .axis-fill.left { background: linear-gradient(90deg, #cbd5e1 0%, ${report.color} 100%); }
+          .axis-fill.right { background: linear-gradient(90deg, ${report.color} 0%, #0f172a 100%); }
+          .axis-score-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+          .axis-score-box { border-radius: 18px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; text-align: center; }
+          .axis-score-title { font-size: 11px; letter-spacing: 0.14em; font-weight: 800; color: #94a3b8; }
+          .axis-score-value { margin-top: 6px; font-size: 15px; font-weight: 900; color: #0f172a; }
+          .sections { display: grid; gap: 14px; }
+          .section-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 22px 22px 20px; box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04); }
+          .section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+          .section-index { width: 34px; height: 34px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; background: ${softTint}; color: ${report.color}; border: 1px solid ${softBorder}; flex-shrink: 0; }
+          .section-card h2 { margin: 0; font-size: 19px; font-weight: 900; color: #0f172a; letter-spacing: -0.02em; }
+          .section-card p { margin: 0; font-size: 14px; line-height: 1.95; color: #334155; white-space: pre-wrap; }
+          .footer { margin-top: 18px; display: flex; justify-content: space-between; gap: 12px; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 16px; color: #64748b; font-size: 12px; font-weight: 600; }
+          .footer strong { color: #0f172a; }
+          @page { size: A4; margin: 14mm; }
           @media print {
-            html, body {
-              background: #ffffff;
-            }
-            .page {
-              max-width: none;
-              padding: 0;
-            }
-            .shell {
-              border: none;
-              box-shadow: none;
-              border-radius: 0;
-            }
-            .hero,
-            .axis-card,
-            .section-card,
-            .meta-card {
-              break-inside: avoid;
-              page-break-inside: avoid;
-            }
+            html, body { background: #ffffff; }
+            .page { max-width: none; padding: 0; }
+            .shell { border: none; box-shadow: none; border-radius: 0; }
+            .hero, .axis-card, .section-card, .meta-card { break-inside: avoid; page-break-inside: avoid; }
           }
         </style>
       </head>
@@ -1540,13 +1060,9 @@ function generatePrintableReport({
                   <div class="badge">학부모용 정밀 분석 리포트</div>
                   <div class="badge">결과 코드 ${escapeHtml(resultCode)}</div>
                 </div>
-
                 <h1>${escapeHtml(report.title)}</h1>
                 <div class="hero-sub">${escapeHtml(report.subtitle)}</div>
-
-                <div class="hero-summary">
-                  ${escapeHtml(report.summary)}
-                </div>
+                <div class="hero-summary">${escapeHtml(report.summary)}</div>
               </div>
             </div>
 
@@ -1573,10 +1089,7 @@ function generatePrintableReport({
                   <h2>핵심 축 분석</h2>
                   <div class="desc">성향의 강약을 보기 쉽게 정리했습니다.</div>
                 </div>
-
-                <div class="axis-grid">
-                  ${axisCards}
-                </div>
+                <div class="axis-grid">${axisCards}</div>
               </div>
 
               <div class="sections">
@@ -1743,7 +1256,7 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
         </div>
 
         <div className="grid gap-6">
-          <SectionCard title="검사 안내" desc="부담 없이 빠르게 진행할 수 있도록 구성했어요.">
+          <SectionCard title="검사 안내" desc="엑셀 채점표 기준으로 결과가 나오도록 정리한 버전이에요.">
             <div className="grid gap-4">
               <InfoItem title="응답 방식" value="각 문항에 대해 ‘그렇다 / 아니다’ 중 하나를 선택" />
               <InfoItem title="진행 구조" value="한 번에 한 문항씩 보여 렉을 줄이고 집중도를 높임" />
@@ -1753,9 +1266,9 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
 
           <SectionCard title="이런 분께 추천" desc="학생·학부모 상담용 체험판으로 사용하기 좋아요.">
             <div className="space-y-3 text-sm leading-7 text-slate-600">
-              <p>• 학생의 현재 학습 태도와 잠재 성향을 빠르게 파악하고 싶은 경우</p>
-              <p>• 상담 전 아이의 성향을 가볍게 체크해 보고 싶은 경우</p>
-              <p>• 학부모에게 결과 리포트를 깔끔하게 보여주고 싶은 경우</p>
+              <p>• 아이의 성향을 단순 성격이 아니라 학습 방향으로 보고 싶은 경우</p>
+              <p>• 부모 상담용으로 정리된 결과 문구가 필요한 경우</p>
+              <p>• PDF로 저장해서 활용하고 싶은 경우</p>
             </div>
           </SectionCard>
         </div>
@@ -2081,18 +1594,6 @@ function CharacterPromptCard({
             Midjourney 버전 복사
           </button>
         </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-600">
-          <div className="font-black text-slate-800">추천 사용법</div>
-          <div className="mt-2">
-            • DALL·E: 기본 프롬프트 사용
-            <br />
-            • Midjourney: Midjourney 추천 버전 사용
-            <br />
-            • 배경 제거용 캐릭터를 만들고 싶으면 마지막에 <span className="font-bold">plain background</span> 또는{" "}
-            <span className="font-bold">transparent background style</span> 문구를 덧붙이면 좋아요.
-          </div>
-        </div>
       </div>
     </SectionCard>
   );
@@ -2118,34 +1619,10 @@ function ResultScreen({
     const style = toFiveScalePair(scores.F, scores.S);
 
     return [
-      {
-        name: "대인 성향",
-        left: "수동적",
-        right: "외향적",
-        leftValue: social.leftValue,
-        rightValue: social.rightValue,
-      },
-      {
-        name: "판단 방식",
-        left: "원리형",
-        right: "규범형",
-        leftValue: judgment.leftValue,
-        rightValue: judgment.rightValue,
-      },
-      {
-        name: "진행 성향",
-        left: "자유형",
-        right: "계획형",
-        leftValue: track.leftValue,
-        rightValue: track.rightValue,
-      },
-      {
-        name: "실행 스타일",
-        left: "유연형",
-        right: "완수형",
-        leftValue: style.leftValue,
-        rightValue: style.rightValue,
-      },
+      { name: "대인 성향", left: "수동적", right: "외향적", leftValue: social.leftValue, rightValue: social.rightValue },
+      { name: "판단 방식", left: "원리형", right: "규범형", leftValue: judgment.leftValue, rightValue: judgment.rightValue },
+      { name: "진행 성향", left: "자유형", right: "계획형", leftValue: track.leftValue, rightValue: track.rightValue },
+      { name: "실행 스타일", left: "유연형", right: "완수형", leftValue: style.leftValue, rightValue: style.rightValue },
     ];
   }, [scores]);
 
@@ -2193,19 +1670,19 @@ function ResultScreen({
               </div>
             </SectionCard>
 
-            <SectionCard title="결과 키워드" desc="이 유형을 한눈에 이해할 수 있는 핵심 인상이에요." accentColor={report.color}>
-              <div className="flex flex-wrap gap-3">
-                {[report.title, characterMeta.label, characterMeta.tagline, `결과 코드 ${resolved.code}`].map((item) => (
-                  <span
-                    key={item}
-                    className="inline-flex rounded-full border px-4 py-2 text-sm font-bold text-slate-700"
+            <SectionCard title="원점수 요약" desc="엑셀 채점표 기준 축별 합산 점수예요." accentColor={report.color}>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {(["E", "P", "R", "C", "M", "O", "S", "F"] as const).map((key) => (
+                  <div
+                    key={key}
+                    className="rounded-2xl border bg-white p-4 text-center"
                     style={{
-                      background: hexToRgba(report.color, 0.06),
-                      borderColor: hexToRgba(report.color, 0.14),
+                      borderColor: hexToRgba(report.color, 0.12),
                     }}
                   >
-                    {item}
-                  </span>
+                    <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">{key}</div>
+                    <div className="mt-2 text-xl font-black text-slate-900">{scores[key]}</div>
+                  </div>
                 ))}
               </div>
             </SectionCard>
@@ -2245,7 +1722,7 @@ function ResultScreen({
           <div>
             <div className="text-sm font-black text-slate-900">결과 리포트 저장 / 출력</div>
             <div className="mt-1 text-sm text-slate-500">
-              PDF용 인쇄 화면으로 바로 열 수 있어요. 캐릭터 이미지는 웹 결과 화면에서 강조되고, PDF는 상담용 문서 중심으로 출력됩니다.
+              PDF용 인쇄 화면으로 바로 열 수 있어요.
             </div>
           </div>
 
