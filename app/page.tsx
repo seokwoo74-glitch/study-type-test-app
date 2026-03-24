@@ -126,7 +126,6 @@ const QUESTIONS: string[] = [
   "사람마다 성격과 취향이 다르기 마련이므로 다른 사람들의 방법을 따라하고 싶지는 않다",
 ];
 
-// 엑셀 채점지 기준 SCORE_MAP
 const SCORE_MAP: Record<string, number>[] = [
   { O: 1 },
   { O: 5 },
@@ -168,7 +167,6 @@ const SCORE_MAP: Record<string, number>[] = [
   { M: 5 },
   { P: 3 },
   { R: 5 },
-
   { C: 5 },
   { M: 5 },
   { M: 5 },
@@ -538,14 +536,11 @@ const CHARACTER_PROMPTS: Record<string, PromptMeta> = {
   DEFAULT: { base: "cute but premium Korean educational character, clean background, soft lighting, high detail, 2D illustration, modern animation style, character centered, no text, white or gradient background", detail: "smart Korean student character, warm smile, clean white gradient background, premium educational app mascot" },
 };
 
-// 엑셀 결과표 기준 매핑 보정본
 const CODE_TO_RESULT_KEY: Record<string, string> = {
-  // 이과 창의적영재형
   ERMS: "ERMS",
   ERMs: "ERMS",
   eRMS: "ERMS",
 
-  // 이과 영재형
   ERMF: "ERMF",
   ERMf: "ERMF",
   ERmF: "ERMF",
@@ -553,7 +548,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eRMF: "ERMF",
   eRMf: "ERMF",
 
-  // 이과모범형
   eROS: "eROS",
   eRoS: "eROS",
   EROS: "eROS",
@@ -561,13 +555,11 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   ERoS: "eROS",
   ERos: "eROS",
 
-  // (수동적) 이과 모범형
   pROS: "pROS",
   pRoS: "pROS",
   pRMS: "pROS",
   pRmS: "pROS",
 
-  // 이과 뺀질이형
   PRMF: "PRMf",
   PRMf: "PRMf",
   PRmF: "PRMf",
@@ -580,7 +572,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pRmf: "PRMf",
   pRoF: "PRMf",
 
-  // 외향적 이과뺀질형
   EROF: "EROF",
   ERoF: "EROF",
   ERof: "EROF",
@@ -590,7 +581,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eRof: "EROF",
   eRmf: "EROF",
 
-  // 이과 잠재성장형
   PROF: "PROS",
   PROf: "PROS",
   PROS: "PROS",
@@ -611,15 +601,12 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eROs: "PROS",
   eRos: "PROS",
 
-  // 문과 창의적영재형
   ECMF: "ECMf",
   ECMf: "ECMf",
 
-  // 문과 모범형 영재형
   ECMS: "ECMs",
   eCMS: "ECMs",
 
-  // 내성적 문과영재형
   ECOS: "ECoS",
   ECOs: "ECoS",
   ECoS: "ECoS",
@@ -634,18 +621,15 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   ECMs: "ECoS",
   eCMs: "ECoS",
 
-  // (내성적) 문과 모범형
   pCOS: "pCOS",
   pCoS: "pCOS",
   pCmS: "pCOS",
 
-  // 문과모범형B
   eCoS: "eCOS",
   eCos: "eCOS",
   eCOS: "eCOS",
   ECOf: "eCOS",
 
-  // (외향적) 문과뺀질이형
   PCMF: "PCMs",
   PCMf: "PCMs",
   pCMF: "PCMs",
@@ -659,7 +643,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eCoF: "PCMs",
   eCof: "PCMs",
 
-  // (내향적) 문과 뺀질이
   PCmF: "PCmF",
   PCmf: "PCmF",
   PCms: "PCmF",
@@ -669,7 +652,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   PCof: "PCmF",
   pCoF: "PCmF",
 
-  // 문과 잠재성장형
   PCOF: "PCOF",
   PCOf: "PCOF",
   PCOS: "PCOF",
@@ -686,7 +668,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pCof: "PCOF",
   eCOs: "PCOF",
 
-  // 문·이과 혼합 영재형
   ErMS: "ErMS",
   ErMs: "ErMS",
   EcMS: "ErMS",
@@ -706,7 +687,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   ecMF: "ErMS",
   ecMf: "ErMS",
 
-  // 문·이과 혼합 모범형
   ErOS: "erOS",
   ErOs: "erOS",
   EroS: "erOS",
@@ -730,19 +710,16 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   ErOf: "erOS",
   EcOf: "erOS",
 
-  // 문·이과 혼합 수동적모범형
   PrMS: "PrmS",
   PrmS: "PrmS",
   Prms: "PrmS",
   prMS: "PrmS",
 
-  // 문·이과 혼합 뺀질이형
   PrMF: "PrMF",
   PrMf: "PrMF",
   PrmF: "PrMF",
   Prmf: "PrMF",
 
-  // 융합 잠재성장형
   PrOF: "PrOF",
   PrOf: "PrOF",
   ProF: "PrOF",
@@ -806,12 +783,6 @@ function scoreLabel(value: number) {
   return "낮음";
 }
 
-function axisSummary(left: string, right: string, leftValue: number, rightValue: number) {
-  return `${left} ${scoreLabel(leftValue)} / ${right} ${scoreLabel(rightValue)}`;
-}
-
-// 엑셀 규칙: 1개 차이시 소문자 적용
-// 단, 0 차이도 균형형으로 소문자 처리
 function buildDisplayCode(scores: Record<string, number>) {
   const socialDiff = Math.abs(scores.E - scores.P);
   const judgmentDiff = Math.abs(scores.R - scores.C);
@@ -823,7 +794,8 @@ function buildDisplayCode(scores: Record<string, number>) {
   const trackLetter = scores.M >= scores.O ? "M" : "O";
   const styleLetter = scores.S >= scores.F ? "S" : "F";
 
-  const formatLetter = (letter: string, diff: number) => (diff <= 1 ? letter.toLowerCase() : letter.toUpperCase());
+  const formatLetter = (letter: string, diff: number) =>
+    diff <= 1 ? letter.toLowerCase() : letter.toUpperCase();
 
   const code =
     formatLetter(socialLetter, socialDiff) +
@@ -893,7 +865,7 @@ function getCharacterPrompt(resultKey: string) {
 async function copyText(text: string) {
   try {
     await navigator.clipboard.writeText(text);
-    window.alert("프롬프트가 복사됐어요.");
+    window.alert("복사됐어요.");
   } catch {
     window.alert("복사에 실패했어요. 직접 선택해서 복사해 주세요.");
   }
@@ -922,244 +894,231 @@ function generatePrintableReport({
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
 
-  const hexToRgb = (hex: string) => {
-    const normalized = hex.replace("#", "");
-    const full =
-      normalized.length === 3
-        ? normalized
-            .split("")
-            .map((c) => c + c)
-            .join("")
-        : normalized;
-
-    const num = parseInt(full, 16);
-    return {
-      r: (num >> 16) & 255,
-      g: (num >> 8) & 255,
-      b: num & 255,
-    };
-  };
-
-  const rgb = hexToRgb(report.color);
-  const softTint = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10)`;
-  const softBorder = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.20)`;
-
-  const axisBar = (leftValue: number, rightValue: number) => {
-    const leftPercent = Math.max(0, Math.min(100, (leftValue / 5) * 100));
-    const rightPercent = Math.max(0, Math.min(100, (rightValue / 5) * 100));
-
-    return `
-      <div class="axis-track">
-        <div class="axis-half">
-          <div class="axis-fill left" style="width:${leftPercent}%"></div>
-        </div>
-        <div class="axis-divider"></div>
-        <div class="axis-half">
-          <div class="axis-fill right" style="width:${rightPercent}%"></div>
-        </div>
-      </div>
-    `;
-  };
-
-  const axisCards = axes
-    .map(
-      (axis) => `
-      <div class="axis-card">
-        <div class="axis-top">
-          <div class="axis-name">${escapeHtml(axis.name)}</div>
-          <div class="axis-chip">${escapeHtml(
-            axisSummary(axis.left, axis.right, axis.leftValue, axis.rightValue)
-          )}</div>
-        </div>
-
-        <div class="axis-label-row">
-          <span>${escapeHtml(axis.left)}</span>
-          <span>${escapeHtml(axis.right)}</span>
-        </div>
-
-        ${axisBar(axis.leftValue, axis.rightValue)}
-
-        <div class="axis-score-row">
-          <div class="axis-score-box">
-            <div class="axis-score-title">LEFT</div>
-            <div class="axis-score-value">${escapeHtml(scoreLabel(axis.leftValue))}</div>
-          </div>
-          <div class="axis-score-box">
-            <div class="axis-score-title">RIGHT</div>
-            <div class="axis-score-value">${escapeHtml(scoreLabel(axis.rightValue))}</div>
-          </div>
-        </div>
-      </div>
-    `
-    )
-    .join("");
-
-  const section = (title: string, body: string, index: string) => `
-    <section class="section-card">
-      <div class="section-head">
-        <div class="section-index">${index}</div>
-        <h2>${escapeHtml(title)}</h2>
-      </div>
-      <p>${escapeHtml(body)}</p>
-    </section>
-  `;
-
-  const html = `
-    <html>
+  return `
+    <!doctype html>
+    <html lang="ko">
       <head>
         <meta charset="utf-8" />
-        <title>학습성향 결과 리포트</title>
+        <title>학습성향 리포트</title>
         <style>
-          * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          html, body { margin: 0; padding: 0; background: #eef4fb; color: #0f172a; font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif; }
-          body { line-height: 1.7; }
-          .page { width: 100%; max-width: 1120px; margin: 0 auto; padding: 28px; }
-          .shell { background: radial-gradient(circle at top left, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10), transparent 28%), radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.07), transparent 26%), linear-gradient(180deg, #ffffff 0%, #f8fbff 100%); border: 1px solid rgba(226, 232, 240, 0.95); border-radius: 34px; overflow: hidden; box-shadow: 0 24px 80px rgba(15, 23, 42, 0.10); }
-          .hero { position: relative; overflow: hidden; padding: 34px 36px 30px; background: linear-gradient(135deg, ${report.color} 0%, #0f172a 100%); color: #ffffff; }
-          .hero:before { content: ""; position: absolute; right: -80px; top: -80px; width: 240px; height: 240px; border-radius: 999px; background: rgba(255, 255, 255, 0.10); filter: blur(6px); }
-          .hero:after { content: ""; position: absolute; left: -60px; bottom: -100px; width: 220px; height: 220px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); }
-          .hero-inner { position: relative; z-index: 1; }
-          .badge-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-          .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 8px 14px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.16); }
-          .hero h1 { margin: 0; font-size: 34px; line-height: 1.22; font-weight: 900; letter-spacing: -0.03em; }
-          .hero-sub { margin-top: 10px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.82); }
-          .hero-summary { margin-top: 22px; padding: 18px 20px; border-radius: 22px; background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.14); font-size: 15px; line-height: 1.9; color: rgba(255,255,255,0.94); }
-          .content { padding: 26px; }
-          .meta-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
-          .meta-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 22px; padding: 18px; }
-          .meta-label { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; color: #64748b; margin-bottom: 10px; }
-          .meta-value { font-size: 18px; font-weight: 900; color: #0f172a; line-height: 1.45; }
-          .result-emphasis { background: ${softTint}; border: 1px solid ${softBorder}; color: ${report.color}; border-radius: 999px; padding: 7px 12px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; }
-          .axis-wrap { margin-top: 22px; margin-bottom: 22px; }
-          .block-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-          .block-title h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.02em; color: #0f172a; }
-          .block-title .desc { font-size: 13px; color: #64748b; font-weight: 600; }
-          .axis-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-          .axis-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 18px; box-shadow: 0 8px 26px rgba(15, 23, 42, 0.04); }
-          .axis-top { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-          .axis-name { font-size: 16px; font-weight: 900; color: #0f172a; }
-          .axis-chip { display: inline-flex; align-self: flex-start; border-radius: 999px; padding: 6px 11px; font-size: 11px; font-weight: 800; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; }
-          .axis-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; font-weight: 700; color: #64748b; }
-          .axis-track { position: relative; display: grid; grid-template-columns: 1fr 10px 1fr; align-items: center; gap: 0; margin-bottom: 14px; }
-          .axis-half { height: 12px; border-radius: 999px; background: #e2e8f0; overflow: hidden; position: relative; }
-          .axis-half:first-child .axis-fill { margin-left: auto; }
-          .axis-divider { width: 10px; height: 12px; position: relative; }
-          .axis-divider:before { content: ""; position: absolute; left: 50%; top: -3px; transform: translateX(-50%); width: 2px; height: 18px; border-radius: 999px; background: #cbd5e1; }
-          .axis-fill { height: 100%; border-radius: 999px; }
-          .axis-fill.left { background: linear-gradient(90deg, #cbd5e1 0%, ${report.color} 100%); }
-          .axis-fill.right { background: linear-gradient(90deg, ${report.color} 0%, #0f172a 100%); }
-          .axis-score-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-          .axis-score-box { border-radius: 18px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; text-align: center; }
-          .axis-score-title { font-size: 11px; letter-spacing: 0.14em; font-weight: 800; color: #94a3b8; }
-          .axis-score-value { margin-top: 6px; font-size: 15px; font-weight: 900; color: #0f172a; }
-          .sections { display: grid; gap: 14px; }
-          .section-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 22px 22px 20px; box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04); }
-          .section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-          .section-index { width: 34px; height: 34px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; background: ${softTint}; color: ${report.color}; border: 1px solid ${softBorder}; flex-shrink: 0; }
-          .section-card h2 { margin: 0; font-size: 19px; font-weight: 900; color: #0f172a; letter-spacing: -0.02em; }
-          .section-card p { margin: 0; font-size: 14px; line-height: 1.95; color: #334155; white-space: pre-wrap; }
-          .footer { margin-top: 18px; display: flex; justify-content: space-between; gap: 12px; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 16px; color: #64748b; font-size: 12px; font-weight: 600; }
-          .footer strong { color: #0f172a; }
-          @page { size: A4; margin: 14mm; }
+          * { box-sizing: border-box; }
+          body {
+            margin: 0;
+            font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+          }
+          .wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 32px 24px 56px;
+          }
+          .hero {
+            border-radius: 28px;
+            padding: 32px;
+            color: white;
+            background: linear-gradient(135deg, ${report.color} 0%, #0f172a 85%);
+          }
+          .badge {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .14em;
+            background: rgba(255,255,255,.14);
+            margin-right: 8px;
+          }
+          h1,h2,h3,p { margin: 0; }
+          .title { font-size: 34px; font-weight: 900; margin-top: 18px; }
+          .subtitle { font-size: 16px; opacity: .9; margin-top: 8px; }
+          .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 22px;
+          }
+          .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 22px;
+            padding: 20px;
+            margin-top: 18px;
+          }
+          .card h3 {
+            font-size: 14px;
+            letter-spacing: .16em;
+            color: #64748b;
+            margin-bottom: 10px;
+          }
+          .card p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #334155;
+          }
+          .axis-row {
+            margin-bottom: 18px;
+          }
+          .axis-head {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+          }
+          .bar {
+            height: 12px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: #e2e8f0;
+            display: flex;
+          }
+          .left {
+            background: linear-gradient(90deg, #cbd5e1 0%, ${report.color} 100%);
+          }
+          .right {
+            background: linear-gradient(90deg, ${report.color} 0%, #0f172a 100%);
+          }
           @media print {
-            html, body { background: #ffffff; }
-            .page { max-width: none; padding: 0; }
-            .shell { border: none; box-shadow: none; border-radius: 0; }
-            .hero, .axis-card, .section-card, .meta-card { break-inside: avoid; page-break-inside: avoid; }
+            body { background: white; }
+            .wrap { padding: 0; }
           }
         </style>
       </head>
       <body>
-        <div class="page">
-          <div class="shell">
-            <div class="hero">
-              <div class="hero-inner">
-                <div class="badge-row">
-                  <div class="badge">학부모용 정밀 분석 리포트</div>
-                  <div class="badge">결과 코드 ${escapeHtml(resultCode)}</div>
-                </div>
-                <h1>${escapeHtml(report.title)}</h1>
-                <div class="hero-sub">${escapeHtml(report.subtitle)}</div>
-                <div class="hero-summary">${escapeHtml(report.summary)}</div>
-              </div>
+        <div class="wrap">
+          <div class="hero">
+            <div>
+              <span class="badge">LEARNING REPORT</span>
+              <span class="badge">${escapeHtml(resultCode)}</span>
             </div>
+            <div class="title">${escapeHtml(report.title)}</div>
+            <div class="subtitle">${escapeHtml(report.subtitle)}</div>
+            <p style="margin-top:18px; line-height:1.9; font-size:15px; opacity:.94;">
+              ${escapeHtml(report.summary)}
+            </p>
+          </div>
 
-            <div class="content">
-              <div class="meta-grid">
-                <div class="meta-card">
-                  <div class="meta-label">RESULT TYPE</div>
-                  <div class="meta-value">${escapeHtml(report.title)}</div>
-                </div>
-                <div class="meta-card">
-                  <div class="meta-label">GUIDE</div>
-                  <div class="meta-value">학습 전략 · 부모 코칭 · 진로 방향</div>
-                </div>
-                <div class="meta-card">
-                  <div class="meta-label">REPORT NOTE</div>
-                  <div class="meta-value">
-                    <span class="result-emphasis">성향에 맞는 전략 제안형 리포트</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="axis-wrap">
-                <div class="block-title">
-                  <h2>핵심 축 분석</h2>
-                  <div class="desc">성향의 강약을 보기 쉽게 정리했습니다.</div>
-                </div>
-                <div class="axis-grid">${axisCards}</div>
-              </div>
-
-              <div class="sections">
-                ${section("학습 전략", report.strategy, "01")}
-                ${section("부모 코칭", report.parent, "02")}
-                ${section("진로 · 학교 방향", report.path, "03")}
-                ${section("주의 패턴", report.danger, "04")}
-                ${section("추천 대화 방식", report.talk, "05")}
-              </div>
-
-              <div class="footer">
-                <div><strong>학습성향 결과 리포트</strong></div>
-                <div>본 리포트는 응답 결과를 바탕으로 자동 생성되었습니다.</div>
-              </div>
+          <div class="grid">
+            <div class="card">
+              <h3>학습 전략</h3>
+              <p>${escapeHtml(report.strategy)}</p>
+            </div>
+            <div class="card">
+              <h3>부모 코칭 포인트</h3>
+              <p>${escapeHtml(report.parent)}</p>
+            </div>
+            <div class="card">
+              <h3>진로 방향</h3>
+              <p>${escapeHtml(report.path)}</p>
+            </div>
+            <div class="card">
+              <h3>주의할 패턴</h3>
+              <p>${escapeHtml(report.danger)}</p>
             </div>
           </div>
-        </div>
 
-        <script>
-          window.onload = function () {
-            window.print();
-          };
-        </script>
+          <div class="card">
+            <h3>핵심 축 분석</h3>
+            ${axes
+              .map((axis) => {
+                const total = axis.leftValue + axis.rightValue || 5;
+                const leftPct = `${(axis.leftValue / total) * 100}%`;
+                const rightPct = `${(axis.rightValue / total) * 100}%`;
+                return `
+                  <div class="axis-row">
+                    <div class="axis-head">
+                      <span>${escapeHtml(axis.name)} · ${escapeHtml(axis.left)}</span>
+                      <span>${escapeHtml(axis.right)}</span>
+                    </div>
+                    <div class="bar">
+                      <div class="left" style="width:${leftPct}"></div>
+                      <div class="right" style="width:${rightPct}"></div>
+                    </div>
+                  </div>
+                `;
+              })
+              .join("")}
+          </div>
+
+          <div class="card">
+            <h3>대화 제안</h3>
+            <p>${escapeHtml(report.talk)}</p>
+          </div>
+        </div>
       </body>
     </html>
   `;
-
-  const printWindow = window.open("", "_blank");
-  if (!printWindow) return;
-
-  printWindow.document.open();
-  printWindow.document.write(html);
-  printWindow.document.close();
 }
 
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="relative h-3 w-full overflow-hidden rounded-full bg-slate-200/80">
-      <div
-        className="h-full rounded-full bg-gradient-to-r from-sky-500 via-cyan-500 to-violet-500 transition-all duration-500"
-        style={{ width: `${value}%` }}
-      />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent)]" />
-    </div>
-  );
+function printReport(html: string) {
+  const win = window.open("", "_blank", "width=1100,height=900");
+  if (!win) {
+    window.alert("팝업이 차단되어 있어요. 팝업 허용 후 다시 시도해 주세요.");
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => {
+    win.print();
+  }, 250);
 }
 
 function Shell({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#dbeafe_0%,#f8fbff_38%,#f8fafc_100%)] text-slate-900">
-      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">{children}</div>
+    <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#f8fafc_44%,#eef2ff_100%)] text-slate-900">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {children}
+      </div>
+    </main>
+  );
+}
+
+function HeroBadge({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-extrabold tracking-[0.16em] text-white/85 backdrop-blur">
+      {children}
+    </span>
+  );
+}
+
+function ProgressBar({ value }: { value: number }) {
+  return (
+    <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+      <div
+        className="h-full rounded-full bg-gradient-to-r from-sky-500 to-slate-900 transition-all duration-300"
+        style={{ width: `${value}%` }}
+      />
     </div>
+  );
+}
+
+function ChoiceButton({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-[24px] border px-5 py-5 text-left transition-all ${
+        active
+          ? "border-slate-900 bg-slate-900 text-white shadow-[0_18px_40px_rgba(15,23,42,0.22)]"
+          : "border-slate-200 bg-white text-slate-800 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50"
+      }`}
+    >
+      <div className="text-lg font-black tracking-tight">{label}</div>
+      <div className={`mt-2 text-sm ${active ? "text-white/80" : "text-slate-500"}`}>
+        가장 가까운 응답을 선택해 주세요.
+      </div>
+    </button>
   );
 }
 
@@ -1175,54 +1134,448 @@ function SectionCard({
   accentColor?: string;
 }) {
   return (
-    <div
-      className="rounded-[28px] border bg-white/85 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur"
+    <section
+      className="rounded-[30px] border bg-white/90 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)] backdrop-blur"
       style={{
-        borderColor: accentColor ? hexToRgba(accentColor, 0.18) : "rgba(255,255,255,0.8)",
+        borderColor: accentColor ? hexToRgba(accentColor, 0.16) : "rgba(226,232,240,1)",
         boxShadow: accentColor
-          ? `0 18px 60px ${hexToRgba(accentColor, 0.10)}`
-          : "0 18px 60px rgba(15,23,42,0.08)",
+          ? `0 18px 60px ${hexToRgba(accentColor, 0.08)}`
+          : "0 18px 60px rgba(15,23,42,0.06)",
       }}
     >
       <div className="mb-5">
-        <h2 className="text-xl font-black tracking-tight text-slate-900">{title}</h2>
-        {desc ? <p className="mt-1 text-sm text-slate-500">{desc}</p> : null}
+        <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
+          SECTION
+        </div>
+        <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-900">
+          {title}
+        </h3>
+        {desc ? (
+          <p className="mt-2 text-sm leading-7 text-slate-500">{desc}</p>
+        ) : null}
       </div>
       {children}
+    </section>
+  );
+}
+
+function AxisCard({
+  name,
+  left,
+  right,
+  leftValue,
+  rightValue,
+  color,
+}: {
+  name: string;
+  left: string;
+  right: string;
+  leftValue: number;
+  rightValue: number;
+  color: string;
+}) {
+  const total = leftValue + rightValue || 5;
+  const leftPercent = `${(leftValue / total) * 100}%`;
+  const rightPercent = `${(rightValue / total) * 100}%`;
+
+  return (
+    <div className="rounded-[24px] border border-slate-200 bg-slate-50/70 p-5">
+      <div className="text-sm font-black tracking-tight text-slate-900">{name}</div>
+
+      <div className="mt-4 flex items-center justify-between text-sm font-bold text-slate-500">
+        <span>{left}</span>
+        <span>{right}</span>
+      </div>
+
+      <div className="mt-3 grid grid-cols-[1fr_10px_1fr] items-center">
+        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="ml-auto h-full rounded-full"
+            style={{
+              width: leftPercent,
+              background: `linear-gradient(90deg, #cbd5e1 0%, ${color} 100%)`,
+            }}
+          />
+        </div>
+        <div className="relative h-3">
+          <div className="absolute left-1/2 top-[-2px] h-4 w-[2px] -translate-x-1/2 rounded-full bg-slate-300" />
+        </div>
+        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="h-full rounded-full"
+            style={{
+              width: rightPercent,
+              background: `linear-gradient(90deg, ${color} 0%, #0f172a 100%)`,
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
+          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">
+            LEFT
+          </div>
+          <div className="mt-1 text-sm font-black text-slate-900">
+            {scoreLabel(leftValue)}
+          </div>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
+          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">
+            RIGHT
+          </div>
+          <div className="mt-1 text-sm font-black text-slate-900">
+            {scoreLabel(rightValue)}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function HeroBadge({ children }: { children: ReactNode }) {
+function CharacterSpotlight({
+  report,
+  meta,
+  code,
+}: {
+  report: Report;
+  meta: CharacterMeta;
+  code: string;
+}) {
+  const hasImage = Boolean(meta.image);
+
   return (
-    <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-extrabold tracking-[0.16em] text-white/90">
-      {children}
-    </span>
+    <div
+      className="relative overflow-hidden rounded-[32px] border p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.16)]"
+      style={{
+        background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 88%)`,
+        borderColor: "rgba(255,255,255,0.12)",
+      }}
+    >
+      <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${meta.aura}`} />
+      <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
+      <div className="pointer-events-none absolute -bottom-16 -left-8 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+
+      <div className="relative z-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div>
+          <div className="flex flex-wrap gap-3">
+            <HeroBadge>RESULT TYPE</HeroBadge>
+            <HeroBadge>코드 {code}</HeroBadge>
+            <HeroBadge>{meta.label}</HeroBadge>
+          </div>
+
+          <div className="mt-5 flex items-center gap-3">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/14 text-3xl shadow-inner shadow-white/10">
+              {meta.emoji}
+            </div>
+            <div>
+              <div className="text-sm font-bold uppercase tracking-[0.2em] text-white/65">
+                학습성향 결과
+              </div>
+              <h2 className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
+                {report.title}
+              </h2>
+            </div>
+          </div>
+
+          <p className="mt-5 text-lg font-bold leading-8 text-white/90">
+            {meta.tagline}
+          </p>
+
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/78">
+            {report.summary}
+          </p>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-[22px] border border-white/12 bg-white/10 p-4 backdrop-blur">
+              <div className="text-[11px] font-extrabold tracking-[0.16em] text-white/55">
+                RESULT TITLE
+              </div>
+              <div className="mt-2 text-base font-black text-white">
+                {report.title}
+              </div>
+              <div className="mt-1 text-sm font-semibold text-white/70">
+                {report.subtitle}
+              </div>
+            </div>
+
+            <div className="rounded-[22px] border border-white/12 bg-white/10 p-4 backdrop-blur">
+              <div className="text-[11px] font-extrabold tracking-[0.16em] text-white/55">
+                CHARACTER LABEL
+              </div>
+              <div className="mt-2 text-base font-black text-white">
+                {meta.label}
+              </div>
+              <div className="mt-1 text-sm font-semibold text-white/70">
+                {code}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center lg:justify-end">
+          <div className="relative flex h-[280px] w-full max-w-[280px] items-center justify-center rounded-[30px] border border-white/12 bg-white/10 p-4 backdrop-blur">
+            {hasImage ? (
+              <img
+                src={meta.image}
+                alt={meta.label}
+                className="h-full w-full rounded-[24px] object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full flex-col items-center justify-center rounded-[24px] bg-white/8 text-center">
+                <div className="text-6xl">{meta.emoji}</div>
+                <div className="mt-4 text-lg font-black text-white">
+                  {meta.label}
+                </div>
+                <div className="mt-2 px-4 text-sm leading-6 text-white/70">
+                  캐릭터 이미지가 준비되면 이 영역에 표시됩니다.
+                </div>
+              </div>
+            )}
+
+            <div className="pointer-events-none absolute inset-x-8 bottom-3 h-8 rounded-full bg-black/20 blur-xl" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
-function ChoiceButton({
-  active,
-  label,
-  onClick,
+function PromptCard({
+  resultKey,
+  reportColor,
 }: {
-  active: boolean;
-  label: string;
-  onClick: () => void;
+  resultKey: string;
+  reportColor: string;
 }) {
+  const prompt = getCharacterPrompt(resultKey);
+  const mjPrompt = `${prompt}, full body character sheet, premium educational mascot, high detail, clean composition --ar 3:4 --stylize 250`;
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={[
-        "w-full rounded-2xl border px-4 py-4 text-left text-base font-bold transition-all duration-200",
-        active
-          ? "border-slate-900 bg-slate-900 text-white shadow-lg"
-          : "border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50",
-      ].join(" ")}
+    <SectionCard
+      title="캐릭터 프롬프트"
+      desc="캐릭터 일러스트 제작용 프롬프트를 바로 복사할 수 있어요."
+      accentColor={reportColor}
     >
-      {label}
-    </button>
+      <div className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-4 text-sm leading-7 text-slate-700">
+        {prompt}
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={() => copyText(prompt)}
+          className="rounded-full px-4 py-2 text-sm font-black text-white transition hover:-translate-y-0.5"
+          style={{
+            background: `linear-gradient(135deg, ${reportColor} 0%, #0f172a 100%)`,
+          }}
+        >
+          기본 프롬프트 복사
+        </button>
+
+        <button
+          type="button"
+          onClick={() => copyText(mjPrompt)}
+          className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+        >
+          Midjourney 버전 복사
+        </button>
+      </div>
+    </SectionCard>
+  );
+}
+
+function ScoreSummary({
+  scores,
+}: {
+  scores: Record<string, number>;
+}) {
+  const items = [
+    { label: "E", value: scores.E },
+    { label: "P", value: scores.P },
+    { label: "R", value: scores.R },
+    { label: "C", value: scores.C },
+    { label: "M", value: scores.M },
+    { label: "O", value: scores.O },
+    { label: "S", value: scores.S },
+    { label: "F", value: scores.F },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {items.map((item) => (
+        <div
+          key={item.label}
+          className="rounded-[20px] border border-slate-200 bg-slate-50/70 p-4 text-center"
+        >
+          <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
+            {item.label}
+          </div>
+          <div className="mt-2 text-xl font-black text-slate-900">
+            {item.value}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ResultScreen({
+  answers,
+  onRestart,
+}: {
+  answers: number[];
+  onRestart: () => void;
+}) {
+  const scores = useMemo(() => makeScores(answers), [answers]);
+  const axisProfile = useMemo(() => getAxisProfile(scores), [scores]);
+  const resolved = useMemo(() => resolveResult(scores), [scores]);
+  const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
+  const characterMeta = CHARACTER_META[resolved.key] || CHARACTER_META.DEFAULT;
+
+  const axes = useMemo(() => {
+    const social = toFiveScalePair(scores.P, scores.E);
+    const judgment = toFiveScalePair(scores.R, scores.C);
+    const track = toFiveScalePair(scores.M, scores.O);
+    const style = toFiveScalePair(scores.F, scores.S);
+
+    return [
+      { name: "대인 성향", left: "수동적", right: "외향적", leftValue: social.leftValue, rightValue: social.rightValue },
+      { name: "판단 방식", left: "원리형", right: "규범형", leftValue: judgment.leftValue, rightValue: judgment.rightValue },
+      { name: "진행 성향", left: "자유형", right: "계획형", leftValue: track.leftValue, rightValue: track.rightValue },
+      { name: "실행 스타일", left: "유연형", right: "완수형", leftValue: style.leftValue, rightValue: style.rightValue },
+    ];
+  }, [scores]);
+
+  const accentSoft = hexToRgba(report.color, 0.08);
+  const accentBorder = hexToRgba(report.color, 0.15);
+
+  const printableHtml = useMemo(
+    () =>
+      generatePrintableReport({
+        report,
+        resultCode: resolved.fullCode,
+        axes,
+      }),
+    [report, resolved.fullCode, axes]
+  );
+
+  return (
+    <Shell>
+      <div className="grid gap-6">
+        <CharacterSpotlight report={report} meta={characterMeta} code={resolved.code} />
+
+        <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+          <div className="grid gap-6">
+            <SectionCard
+              title="핵심 축 분석"
+              desc="성향의 방향성과 강도를 보기 쉽게 정리했어요."
+              accentColor={report.color}
+            >
+              <div className="grid gap-4">
+                {axes.map((axis) => (
+                  <AxisCard
+                    key={axis.name}
+                    name={axis.name}
+                    left={axis.left}
+                    right={axis.right}
+                    leftValue={axis.leftValue}
+                    rightValue={axis.rightValue}
+                    color={report.color}
+                  />
+                ))}
+              </div>
+
+              <div
+                className="mt-5 rounded-[22px] border p-4 text-sm leading-7"
+                style={{
+                  background: accentSoft,
+                  borderColor: accentBorder,
+                }}
+              >
+                <div className="font-black text-slate-900">프로파일 요약</div>
+                <div className="mt-2 text-slate-700">
+                  사회성 {axisProfile.social.toFixed(2)} · 판단 {axisProfile.judgment.toFixed(2)} · 진행{" "}
+                  {axisProfile.track.toFixed(2)} · 실행 {axisProfile.style.toFixed(2)}
+                </div>
+              </div>
+            </SectionCard>
+
+            <SectionCard
+              title="원점수 요약"
+              desc="엑셀 채점표 기준 축별 합산 점수예요."
+              accentColor={report.color}
+            >
+              <ScoreSummary scores={scores} />
+
+              <div className="mt-5 rounded-[22px] border border-slate-200 bg-slate-50/70 p-4 text-sm leading-7 text-slate-700">
+                <div className="font-black text-slate-900">표시 코드</div>
+                <div className="mt-2">{resolved.fullCode}</div>
+              </div>
+            </SectionCard>
+
+            <PromptCard resultKey={resolved.key} reportColor={report.color} />
+          </div>
+
+          <div className="grid gap-6">
+            <SectionCard
+              title="결과 해석"
+              desc="유형 설명과 실제 적용 방향을 함께 확인해 보세요."
+              accentColor={report.color}
+            >
+              <div className="grid gap-4">
+                <InfoItem title="유형명" value={`${report.title} · ${report.subtitle}`} />
+                <InfoItem title="핵심 설명" value={report.summary} />
+                <InfoItem title="학습 전략" value={report.strategy} />
+                <InfoItem title="부모 코칭" value={report.parent} />
+                <InfoItem title="진로 방향" value={report.path} />
+                <InfoItem title="주의 패턴" value={report.danger} />
+                <InfoItem title="대화 제안" value={report.talk} />
+              </div>
+            </SectionCard>
+
+            <SectionCard
+              title="활용하기"
+              desc="출력하거나 다시 검사할 수 있어요."
+              accentColor={report.color}
+            >
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => printReport(printableHtml)}
+                  className="rounded-full px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+                  style={{
+                    background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)`,
+                  }}
+                >
+                  PDF / 인쇄하기
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onRestart}
+                  className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+                >
+                  처음부터 다시하기
+                </button>
+              </div>
+
+              <div className="mt-5 rounded-[22px] border border-slate-200 bg-slate-50/70 p-4 text-sm leading-7 text-slate-600">
+                상담용 체험판으로도 활용할 수 있도록 결과 문구를 정리해 두었습니다.
+              </div>
+            </SectionCard>
+
+            <SectionCard title="이런 분께 추천" desc="학생·학부모 상담용 체험판으로 사용하기 좋아요.">
+              <div className="space-y-3 text-sm leading-7 text-slate-600">
+                <p>• 아이의 성향을 단순 성격이 아니라 학습 방향으로 보고 싶은 경우</p>
+                <p>• 부모 상담용으로 정리된 결과 문구가 필요한 경우</p>
+                <p>• PDF로 저장해서 활용하고 싶은 경우</p>
+              </div>
+            </SectionCard>
+          </div>
+        </div>
+      </div>
+    </Shell>
   );
 }
 
@@ -1426,401 +1779,88 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
   );
 }
 
-function ResultParagraph({ children }: { children: ReactNode }) {
-  return <p className="text-[15px] leading-8 text-slate-700">{children}</p>;
-}
-
-function AxisCard({
-  name,
-  left,
-  right,
-  leftValue,
-  rightValue,
-  color,
-}: {
-  name: string;
-  left: string;
-  right: string;
-  leftValue: number;
-  rightValue: number;
-  color: string;
-}) {
-  const leftPercent = `${(leftValue / 5) * 100}%`;
-  const rightPercent = `${(rightValue / 5) * 100}%`;
-
+function InfoItem({ title, value }: { title: string; value: string }) {
   return (
-    <div
-      className="rounded-[24px] border bg-white/80 p-4"
-      style={{
-        borderColor: hexToRgba(color, 0.14),
-        boxShadow: `0 14px 36px ${hexToRgba(color, 0.06)}`,
-      }}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-base font-black text-slate-900">{name}</div>
-        <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-extrabold text-slate-500">
-          {axisSummary(left, right, leftValue, rightValue)}
-        </div>
+    <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+      <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
+        {title}
       </div>
-
-      <div className="mt-4 flex items-center justify-between text-sm font-bold text-slate-500">
-        <span>{left}</span>
-        <span>{right}</span>
-      </div>
-
-      <div className="mt-3 grid grid-cols-[1fr_10px_1fr] items-center">
-        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="ml-auto h-full rounded-full"
-            style={{
-              width: leftPercent,
-              background: `linear-gradient(90deg, #cbd5e1 0%, ${color} 100%)`,
-            }}
-          />
-        </div>
-        <div className="relative h-3">
-          <div className="absolute left-1/2 top-[-2px] h-4 w-[2px] -translate-x-1/2 rounded-full bg-slate-300" />
-        </div>
-        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: rightPercent,
-              background: `linear-gradient(90deg, ${color} 0%, #0f172a 100%)`,
-            }}
-          />
-        </div>
-      </div>
-
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
-          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">LEFT</div>
-          <div className="mt-1 text-sm font-black text-slate-900">{scoreLabel(leftValue)}</div>
-        </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
-          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">RIGHT</div>
-          <div className="mt-1 text-sm font-black text-slate-900">{scoreLabel(rightValue)}</div>
-        </div>
+      <div className="mt-2 text-sm font-semibold leading-6 text-slate-700">
+        {value}
       </div>
     </div>
   );
 }
 
-function CharacterSpotlight({
-  report,
-  meta,
-  code,
-}: {
-  report: Report;
-  meta: CharacterMeta;
-  code: string;
-}) {
-  const hasImage = Boolean(meta.image);
-
-  return (
-    <div
-      className="relative overflow-hidden rounded-[32px] border p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.16)]"
-      style={{
-        background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 88%)`,
-        borderColor: "rgba(255,255,255,0.12)",
-      }}
-    >
-      <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${meta.aura}`} />
-      <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
-      <div className="pointer-events-none absolute -bottom-16 -left-8 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
-
-      <div className="relative z-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-        <div>
-          <div className="flex flex-wrap gap-3">
-            <HeroBadge>RESULT TYPE</HeroBadge>
-            <HeroBadge>코드 {code}</HeroBadge>
-            <HeroBadge>{meta.label}</HeroBadge>
-          </div>
-
-          <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-5xl">{report.title}</h1>
-          <p className="mt-3 text-lg font-bold text-white/80">{report.subtitle}</p>
-
-          <div className="mt-5 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-bold text-white/90">
-            {meta.tagline}
-          </div>
-
-          <p className="mt-6 max-w-3xl text-base leading-8 text-white/88 sm:text-lg">{report.summary}</p>
-        </div>
-
-        <div className="relative">
-          <div className="mx-auto flex max-w-[360px] items-center justify-center rounded-[30px] border border-white/15 bg-white/10 p-5 backdrop-blur">
-            <div className="w-full rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.20),rgba(255,255,255,0.06))] p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <span className="rounded-full bg-white/12 px-3 py-1 text-[11px] font-extrabold tracking-[0.18em] text-white/80">
-                  CHARACTER
-                </span>
-                <span className="text-xs font-bold text-white/70">{meta.label}</span>
-              </div>
-
-              {hasImage ? (
-                <div className="overflow-hidden rounded-[24px] border border-white/10 bg-white/10">
-                  <img
-                    src={meta.image}
-                    alt={meta.label}
-                    className="h-[280px] w-full object-cover"
-                    onError={(e) => {
-                      const target = e.currentTarget;
-                      target.style.display = "none";
-                      const fallback = target.nextElementSibling as HTMLElement | null;
-                      if (fallback) fallback.style.display = "flex";
-                    }}
-                  />
-                  <div
-                    style={{ display: "none" }}
-                    className="h-[280px] w-full items-center justify-center rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.10),rgba(255,255,255,0.04))]"
-                  >
-                    <div className="text-center">
-                      <div className="text-7xl">{meta.emoji}</div>
-                      <div className="mt-4 text-base font-black text-white">{meta.label}</div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex h-[280px] items-center justify-center rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.10),rgba(255,255,255,0.04))]">
-                  <div className="text-center">
-                    <div className="text-7xl drop-shadow-[0_10px_30px_rgba(0,0,0,0.15)]">{meta.emoji}</div>
-                    <div className="mt-4 text-base font-black text-white">{meta.label}</div>
-                    <div className="mt-2 text-sm leading-6 text-white/70">유형별 캐릭터 일러스트 자리</div>
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-4 rounded-2xl border border-white/10 bg-black/10 p-4">
-                <div className="text-xs font-extrabold tracking-[0.16em] text-white/60">FIRST IMPRESSION</div>
-                <div className="mt-2 text-sm font-semibold leading-6 text-white/90">{meta.tagline}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CharacterPromptCard({
-  resultKey,
-  reportColor,
-}: {
-  resultKey: string;
-  reportColor: string;
-}) {
-  const prompt = getCharacterPrompt(resultKey);
-  const mjPrompt = `${prompt} --ar 1:1 --v 6 --style raw`;
-
-  return (
-    <SectionCard
-      title="캐릭터 이미지 생성 프롬프트"
-      desc="이 유형에 맞는 캐릭터 일러스트를 바로 생성할 수 있어요."
-      accentColor={reportColor}
-    >
-      <div className="grid gap-4">
-        <div
-          className="rounded-[22px] border p-4"
-          style={{
-            background: hexToRgba(reportColor, 0.05),
-            borderColor: hexToRgba(reportColor, 0.14),
-          }}
-        >
-          <div className="mb-2 text-xs font-extrabold tracking-[0.16em] text-slate-500">
-            기본 생성 프롬프트
-          </div>
-          <p className="break-words text-[14px] leading-7 text-slate-700">{prompt}</p>
-        </div>
-
-        <div
-          className="rounded-[22px] border p-4"
-          style={{
-            background: "rgba(15,23,42,0.03)",
-            borderColor: "rgba(15,23,42,0.08)",
-          }}
-        >
-          <div className="mb-2 text-xs font-extrabold tracking-[0.16em] text-slate-500">
-            Midjourney 추천 버전
-          </div>
-          <p className="break-words text-[14px] leading-7 text-slate-700">{mjPrompt}</p>
-        </div>
-
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => copyText(prompt)}
-            className="rounded-full px-4 py-2 text-sm font-black text-white transition hover:-translate-y-0.5"
-            style={{
-              background: `linear-gradient(135deg, ${reportColor} 0%, #0f172a 100%)`,
-            }}
-          >
-            기본 프롬프트 복사
-          </button>
-
-          <button
-            type="button"
-            onClick={() => copyText(mjPrompt)}
-            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-50"
-          >
-            Midjourney 버전 복사
-          </button>
-        </div>
-      </div>
-    </SectionCard>
-  );
-}
-
-function ResultScreen({
+function TestScreen({
+  currentIndex,
   answers,
-  onRestart,
+  onAnswer,
+  onPrev,
 }: {
+  currentIndex: number;
   answers: number[];
-  onRestart: () => void;
+  onAnswer: (value: number) => void;
+  onPrev: () => void;
 }) {
-  const scores = useMemo(() => makeScores(answers), [answers]);
-  const axisProfile = useMemo(() => getAxisProfile(scores), [scores]);
-  const resolved = useMemo(() => resolveResult(scores), [scores]);
-  const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
-  const characterMeta = CHARACTER_META[resolved.key] || CHARACTER_META.DEFAULT;
-
-  const axes = useMemo(() => {
-    const social = toFiveScalePair(scores.P, scores.E);
-    const judgment = toFiveScalePair(scores.R, scores.C);
-    const track = toFiveScalePair(scores.M, scores.O);
-    const style = toFiveScalePair(scores.F, scores.S);
-
-    return [
-      { name: "대인 성향", left: "수동적", right: "외향적", leftValue: social.leftValue, rightValue: social.rightValue },
-      { name: "판단 방식", left: "원리형", right: "규범형", leftValue: judgment.leftValue, rightValue: judgment.rightValue },
-      { name: "진행 성향", left: "자유형", right: "계획형", leftValue: track.leftValue, rightValue: track.rightValue },
-      { name: "실행 스타일", left: "유연형", right: "완수형", leftValue: style.leftValue, rightValue: style.rightValue },
-    ];
-  }, [scores]);
-
-  const accentSoft = hexToRgba(report.color, 0.08);
-  const accentBorder = hexToRgba(report.color, 0.15);
+  const progress = Math.round((currentIndex / QUESTIONS.length) * 100);
+  const selected = answers[currentIndex] ?? null;
 
   return (
     <Shell>
-      <div className="grid gap-6">
-        <CharacterSpotlight report={report} meta={characterMeta} code={resolved.code} />
-
-        <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-          <div className="grid gap-6">
-            <SectionCard
-              title="핵심 축 분석"
-              desc="성향의 방향성과 강도를 보기 쉽게 정리했어요."
-              accentColor={report.color}
-            >
-              <div className="grid gap-4">
-                {axes.map((axis) => (
-                  <AxisCard
-                    key={axis.name}
-                    name={axis.name}
-                    left={axis.left}
-                    right={axis.right}
-                    leftValue={axis.leftValue}
-                    rightValue={axis.rightValue}
-                    color={report.color}
-                  />
-                ))}
+      <div className="mx-auto max-w-3xl">
+        <div className="rounded-[34px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:p-7">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="text-xs font-extrabold tracking-[0.18em] text-slate-400">
+                QUESTION
               </div>
-
-              <div
-                className="mt-5 rounded-[22px] border p-4 text-sm leading-7"
-                style={{
-                  background: accentSoft,
-                  borderColor: accentBorder,
-                }}
-              >
-                <div className="font-black text-slate-900">프로파일 요약</div>
-                <div className="mt-2 text-slate-700">
-                  사회성 {axisProfile.social.toFixed(2)} · 판단 {axisProfile.judgment.toFixed(2)} · 진행{" "}
-                  {axisProfile.track.toFixed(2)} · 실행 {axisProfile.style.toFixed(2)}
-                </div>
+              <div className="mt-2 text-lg font-black text-slate-900">
+                {currentIndex + 1} / {QUESTIONS.length}
               </div>
-            </SectionCard>
+            </div>
 
-            <SectionCard title="원점수 요약" desc="엑셀 채점표 기준 축별 합산 점수예요." accentColor={report.color}>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {(["E", "P", "R", "C", "M", "O", "S", "F"] as const).map((key) => (
-                  <div
-                    key={key}
-                    className="rounded-2xl border bg-white p-4 text-center"
-                    style={{
-                      borderColor: hexToRgba(report.color, 0.12),
-                    }}
-                  >
-                    <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">{key}</div>
-                    <div className="mt-2 text-xl font-black text-slate-900">{scores[key]}</div>
-                  </div>
-                ))}
+            <div className="min-w-[180px] flex-1 sm:max-w-xs">
+              <ProgressBar value={progress} />
+              <div className="mt-2 text-right text-xs font-bold text-slate-500">
+                {progress}% 진행
               </div>
-            </SectionCard>
-          </div>
-
-          <div className="grid gap-6">
-            <SectionCard title="학습 전략" accentColor={report.color}>
-              <ResultParagraph>{report.strategy}</ResultParagraph>
-            </SectionCard>
-
-            <SectionCard title="부모 코칭" accentColor={report.color}>
-              <ResultParagraph>{report.parent}</ResultParagraph>
-            </SectionCard>
-
-            <SectionCard title="진로 · 학교 방향" accentColor={report.color}>
-              <ResultParagraph>{report.path}</ResultParagraph>
-            </SectionCard>
-
-            <SectionCard title="주의 패턴" accentColor={report.color}>
-              <ResultParagraph>{report.danger}</ResultParagraph>
-            </SectionCard>
-
-            <SectionCard title="추천 대화 방식" accentColor={report.color}>
-              <ResultParagraph>{report.talk}</ResultParagraph>
-            </SectionCard>
-
-            <CharacterPromptCard resultKey={resolved.key} reportColor={report.color} />
-          </div>
-        </div>
-
-        <div
-          className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border bg-white/90 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)]"
-          style={{
-            borderColor: accentBorder,
-          }}
-        >
-          <div>
-            <div className="text-sm font-black text-slate-900">결과 리포트 저장 / 출력</div>
-            <div className="mt-1 text-sm text-slate-500">
-              PDF용 인쇄 화면으로 바로 열 수 있어요.
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="mt-8 rounded-[30px] bg-gradient-to-br from-slate-50 to-sky-50 p-6 sm:p-8">
+            <div className="text-sm font-bold uppercase tracking-[0.2em] text-sky-600">
+              문항
+            </div>
+            <p className="mt-4 text-2xl font-black leading-[1.55] tracking-tight text-slate-900 sm:text-[30px]">
+              {QUESTIONS[currentIndex]}
+            </p>
+          </div>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {CHOICES.map((choice) => (
+              <ChoiceButton
+                key={choice.label}
+                active={selected === choice.value}
+                label={choice.label}
+                onClick={() => onAnswer(choice.value)}
+              />
+            ))}
+          </div>
+
+          <div className="mt-6 flex items-center justify-between gap-3">
             <button
               type="button"
-              onClick={() =>
-                generatePrintableReport({
-                  report,
-                  resultCode: resolved.fullCode,
-                  axes,
-                })
-              }
-              className="rounded-full px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
-              style={{
-                background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)`,
-              }}
+              onClick={onPrev}
+              disabled={currentIndex === 0}
+              className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              PDF 출력하기
+              이전 문항
             </button>
-            <button
-              type="button"
-              onClick={onRestart}
-              className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
-            >
-              처음부터 다시하기
-            </button>
+
+            <div className="text-sm font-semibold text-slate-500">
+              가장 가까운 응답을 선택해 주세요.
+            </div>
           </div>
         </div>
       </div>
@@ -1830,21 +1870,19 @@ function ResultScreen({
 
 export default function Page() {
   const [step, setStep] = useState<Step>("landing");
-  const [answers, setAnswers] = useState<number[]>(Array(QUESTIONS.length).fill(-1));
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<number[]>(() =>
+    Array(QUESTIONS.length).fill(-1)
+  );
 
-  const answeredCount = useMemo(() => answers.filter((value) => value !== -1).length, [answers]);
+  const answeredCount = useMemo(
+    () => answers.filter((answer) => answer !== -1).length,
+    [answers]
+  );
   const isComplete = answeredCount === QUESTIONS.length;
 
-  const startTest = () => {
+  const handleStart = () => {
     setStep("test");
-    setCurrentIndex(0);
-  };
-
-  const restartTest = () => {
-    setAnswers(Array(QUESTIONS.length).fill(-1));
-    setCurrentIndex(0);
-    setStep("landing");
   };
 
   const handleAnswer = (value: number) => {
@@ -1859,15 +1897,23 @@ export default function Page() {
       return;
     }
 
-    setCurrentIndex((prev) => prev + 1);
+    setTimeout(() => {
+      setCurrentIndex((prev) => prev + 1);
+    }, 120);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => Math.max(0, prev - 1));
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleRestart = () => {
+    setAnswers(Array(QUESTIONS.length).fill(-1));
+    setCurrentIndex(0);
+    setStep("landing");
   };
 
   if (step === "landing") {
-    return <LandingScreen onStart={startTest} />;
+    return <LandingScreen onStart={handleStart} />;
   }
 
   if (step === "test" || !isComplete) {
@@ -1881,5 +1927,5 @@ export default function Page() {
     );
   }
 
-  return <ResultScreen answers={answers} onRestart={restartTest} />;
+  return <ResultScreen answers={answers} onRestart={handleRestart} />;
 }
