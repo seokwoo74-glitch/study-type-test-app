@@ -380,14 +380,13 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   ERmF: "ERMF",
   ERmf: "ERMF",
 
-  eROS: "eROS",
+   eROS: "eROS",
   eRoS: "eROS",
   EROF: "eROS",
   EROS: "eROS",
   EROs: "eROS",
   ERoS: "eROS",
   ERos: "eROS",
-  eRMS: "eROS",
   eRMs: "eROS",
 
   eRmS: "pROS",
