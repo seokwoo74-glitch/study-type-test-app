@@ -380,7 +380,7 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   ERmF: "ERMF",
   ERmf: "ERMF",
 
-   eROS: "eROS",
+  eROS: "eROS",
   eRoS: "eROS",
   EROF: "eROS",
   EROS: "eROS",
@@ -389,8 +389,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   ERos: "eROS",
   eRMs: "eROS",
 
-  eRmS: "pROS",
-  eRms: "pROS",
   pRMS: "pROS",
   pRmS: "pROS",
   pROS: "pROS",
@@ -414,7 +412,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eROf: "EROF",
   eRoF: "EROF",
   eRof: "EROF",
-  eRmF: "EROF",
   eRmf: "EROF",
 
   PROF: "PROS",
@@ -479,8 +476,8 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   eCoF: "PCMs",
   eCof: "PCMs",
 
-  PCMs: "PCmF",
   PCmF: "PCmF",
+  PCms: "PCmF",
   PCmf: "PCmF",
   pCmF: "PCmF",
   pCmf: "PCmF",
@@ -503,7 +500,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
   pCms: "PCOF",
   PCMS: "PCOF",
   PCmS: "PCOF",
-  PCms: "PCOF",
 
   ErMS: "ErMS",
   ErmS: "ErMS",
@@ -512,8 +508,6 @@ const CODE_TO_RESULT_KEY: Record<string, string> = {
 
   erOS: "erOS",
   erOs: "erOS",
-  eRoS: "erOS",
-  eRos: "erOS",
 
   PrMS: "PrmS",
   PrmS: "PrmS",
