@@ -1015,7 +1015,6 @@ ${axes.map(a=>`
 </body>
 </html>`;
 }
-}
 
 function Shell({ children }: { children: ReactNode }) {
   return <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_35%),linear-gradient(180deg,#f8fbff_0%,#f8fafc_100%)] text-slate-900">{children}</main>;
