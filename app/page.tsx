@@ -1001,9 +1001,24 @@ h2{margin:0 0 10px;font-size:18px}
 
 <div class="card">
 <h2>축 분석</h2>
-${axes.map(a=>`
-<div class="axis">
-<div>${escapeHtml(a.name)}</div>
+${axes.map(a=>{
+  const leftPercent = a.leftValue * 20;
+  const rightPercent = a.rightValue * 20;
+  return `
+  <div class="axis">
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+      <span>${a.left} (${a.leftValue})</span>
+      <span>${a.name}</span>
+      <span>${a.right} (${a.rightValue})</span>
+    </div>
+    <div style="display:flex;height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden">
+      <div style="width:${leftPercent}%;background:#94a3b8"></div>
+      <div style="width:${rightPercent}%;background:${report.color}"></div>
+    </div>
+  </div>
+  `;
+}).join("")}
+</div>
 <div class="bar"><div class="fill" style="width:${Math.max(a.leftValue,a.rightValue)*20}%"></div></div>
 </div>
 `).join("")}
