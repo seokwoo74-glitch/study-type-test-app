@@ -927,11 +927,37 @@ function printReport(html: string) {
   setTimeout(() => win.print(), 250);
 }
 
+function generateAxisNarratives(scores: Record<string, number>) {
+  const social = scores.E >= scores.P
+    ? "외향성이 더 강해 사람과의 상호작용, 발표, 협업 환경에서 에너지가 살아날 가능성이 큽니다."
+    : "내향성이 더 강해 혼자 집중하는 시간, 조용한 환경, 자기 속도에 맞춘 학습에서 안정적으로 실력을 발휘할 가능성이 큽니다.";
+
+  const judgment = scores.R >= scores.C
+    ? "논리 성향이 더 강해 근거와 원리, 명확한 기준이 있는 설명에서 이해가 빠른 편입니다."
+    : "창의 성향이 더 강해 다양한 관점, 확장 해석, 자유로운 아이디어 연결에서 강점이 나타날 가능성이 큽니다.";
+
+  const track = scores.M >= scores.O
+    ? "모범 성향이 더 강해 계획표, 체크리스트, 정해진 흐름 안에서 꾸준히 성과를 쌓는 방식이 잘 맞습니다."
+    : "자율 성향이 더 강해 스스로 선택권이 있을 때 몰입도가 올라가며, 통제보다 자율성이 성과에 더 긍정적으로 작용할 수 있습니다.";
+
+  const style = scores.S >= scores.F
+    ? "안정 성향이 더 강해 예측 가능한 일정과 익숙한 루틴 속에서 실수 없이 실력을 쌓아가는 방식이 효과적입니다."
+    : "도전 성향이 더 강해 새로운 과제, 변화 있는 환경, 목표가 분명한 경쟁 상황에서 동기와 집중력이 살아날 가능성이 큽니다.";
+
+  return [
+    { title: "외향·내향 해석", body: social },
+    { title: "논리·창의 해석", body: judgment },
+    { title: "모범·자율 해석", body: track },
+    { title: "안정·도전 해석", body: style },
+  ];
+}
+
 function generatePrintableReport({
   report,
   resultCode,
   student,
   axes,
+  axisNarratives,
 }: {
   report: Report;
   resultCode: string;
@@ -942,6 +968,10 @@ function generatePrintableReport({
     right: string;
     leftValue: number;
     rightValue: number;
+  }[];
+  axisNarratives: {
+    title: string;
+    body: string;
   }[];
 }) {
   const escapeHtml = (value: string) =>
@@ -1007,9 +1037,9 @@ ${axes.map(a=>{
   return `
   <div class="axis">
     <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
-      <span>${a.left} (${a.leftValue})</span>
-      <span>${a.name}</span>
-      <span>${a.right} (${a.rightValue})</span>
+      <span>${escapeHtml(a.left)} (${a.leftValue})</span>
+      <span>${escapeHtml(a.name)}</span>
+      <span>${escapeHtml(a.right)} (${a.rightValue})</span>
     </div>
     <div style="display:flex;height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden">
       <div style="width:${leftPercent}%;background:#94a3b8"></div>
@@ -1019,8 +1049,14 @@ ${axes.map(a=>{
   `;
 }).join("")}
 </div>
-<div class="bar"><div class="fill" style="width:${Math.max(a.leftValue,a.rightValue)*20}%"></div></div>
-</div>
+
+<div class="card">
+<h2>축별 해석</h2>
+${axisNarratives.map(item => `
+  <div class="item" style="margin-top:10px">
+    <div style="font-weight:700;margin-bottom:6px">${escapeHtml(item.title)}</div>
+    <div class="text">${escapeHtml(item.body)}</div>
+  </div>
 `).join("")}
 </div>
 
@@ -1231,7 +1267,14 @@ function ResultScreen({ student, scores, resolved, report, onRestart }: { studen
     { name: "모범·자율", left: "모범", right: "자율", ...toFiveScalePair(scores.M, scores.O) },
     { name: "안정·도전", left: "안정", right: "도전", ...toFiveScalePair(scores.S, scores.F) },
   ];
-  const printableHtml = generatePrintableReport({ report, resultCode: resolved.fullCode, student, axes });
+  const axisNarratives = generateAxisNarratives(scores);
+  const printableHtml = generatePrintableReport({
+    report,
+    resultCode: resolved.fullCode,
+    student,
+    axes,
+    axisNarratives,
+  });
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -1276,6 +1319,14 @@ function ResultScreen({ student, scores, resolved, report, onRestart }: { studen
               <InfoItem title="진로 방향" value={report.path} />
               <InfoItem title="주의 패턴" value={report.danger} />
               <InfoItem title="대화 제안" value={report.talk} />
+            </div>
+          </SectionCard>
+
+          <SectionCard title="축별 해석" desc="축 점수를 실제 지도 문장으로 풀어낸 자동 해석입니다." accentColor={report.color}>
+            <div className="grid gap-4">
+              {axisNarratives.map((item) => (
+                <InfoItem key={item.title} title={item.title} value={item.body} />
+              ))}
             </div>
           </SectionCard>
 
