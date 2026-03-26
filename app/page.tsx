@@ -1360,7 +1360,7 @@ export default function Page() {
   };
 
   const restart = () => {
-    setStudent({ name: "", grade: "", phone: "" });
+    setStudent({ name: "", grade: "", school: "", phone: "" });
     setAnswers(Array(QUESTIONS.length).fill(-1));
     setCurrentIndex(0);
     setHasSavedResult(false);
