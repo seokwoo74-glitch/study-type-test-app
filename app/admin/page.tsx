@@ -49,7 +49,6 @@ export default function AdminPage() {
   );
 
   const totalCount = records.length;
-  const latestCount = records.slice(0, 5).length;
 
   const resultStats = useMemo(() => {
     const map = new Map<string, number>();
@@ -86,8 +85,7 @@ export default function AdminPage() {
             관리자 페이지
           </h1>
           <p className="mt-3 text-sm leading-7 text-slate-600">
-            기본형 관리자 페이지입니다. 현재는 간단한 비밀번호로 접근하며,
-            실제 운영 시에는 Supabase Auth 같은 인증 방식으로 바꾸는 걸 추천합니다.
+            현재는 기본형 관리자 로그인입니다. 실제 운영 시에는 Supabase Auth 같은 방식으로 바꾸는 걸 추천합니다.
           </p>
 
           <div className="mt-6">
@@ -112,7 +110,7 @@ export default function AdminPage() {
           </button>
 
           <div className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-500">
-            테스트용 기본 비밀번호: <span className="font-black text-slate-700">1234</span>
+            테스트용 비밀번호: <span className="font-black text-slate-700">1234</span>
           </div>
         </div>
       </main>
@@ -160,30 +158,30 @@ export default function AdminPage() {
 
           <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.05)]">
             <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
-              RECENT LIST
+              DATA SOURCE
             </div>
-            <div className="mt-3 text-3xl font-black text-slate-950">{latestCount}</div>
+            <div className="mt-3 text-lg font-black text-slate-950">localStorage</div>
           </div>
 
           <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.05)]">
             <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
-              DATA SOURCE
+              SELECTED
             </div>
-            <div className="mt-3 text-lg font-black text-slate-950">localStorage 기본형</div>
+            <div className="mt-3 text-lg font-black text-slate-950">
+              {selected ? selected.student.name : "선택 없음"}
+            </div>
           </div>
         </div>
 
         <div className="mt-6 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
-            <div className="mb-5 flex items-center justify-between gap-3">
-              <div>
-                <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
-                  SUBMISSIONS
-                </div>
-                <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">
-                  검사 결과 목록
-                </h2>
+            <div className="mb-5">
+              <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
+                SUBMISSIONS
               </div>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">
+                검사 결과 목록
+              </h2>
             </div>
 
             <div className="overflow-x-auto">
@@ -201,13 +199,19 @@ export default function AdminPage() {
                 <tbody>
                   {records.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="rounded-2xl bg-slate-50 px-4 py-10 text-center text-sm font-semibold text-slate-500">
+                      <td
+                        colSpan={6}
+                        className="rounded-2xl bg-slate-50 px-4 py-10 text-center text-sm font-semibold text-slate-500"
+                      >
                         아직 저장된 검사 결과가 없습니다.
                       </td>
                     </tr>
                   ) : (
                     records.map((item) => (
-                      <tr key={item.id} className="rounded-2xl bg-slate-50 text-sm font-semibold text-slate-700">
+                      <tr
+                        key={item.id}
+                        className="rounded-2xl bg-slate-50 text-sm font-semibold text-slate-700"
+                      >
                         <td className="rounded-l-2xl px-3 py-4">{item.student.name}</td>
                         <td className="px-3 py-4">{item.student.grade}</td>
                         <td className="px-3 py-4">{item.student.phone}</td>
@@ -231,30 +235,6 @@ export default function AdminPage() {
           </div>
 
           <div className="grid gap-6">
-            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
-              <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
-                MANAGEMENT
-              </div>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">
-                관리자 메뉴
-              </h2>
-
-              <div className="mt-5 grid gap-3">
-                <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
-                  결과 조회
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
-                  문항 관리 (다음 단계)
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
-                  결과 문구 관리 (다음 단계)
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
-                  프롬프트 관리 (다음 단계)
-                </div>
-              </div>
-            </div>
-
             <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
               <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
                 RESULT STATS
@@ -317,8 +297,35 @@ export default function AdminPage() {
                   <div className="rounded-2xl bg-slate-50 p-4 text-sm font-semibold text-slate-700">
                     응답 수: {selected.answers.length}개
                   </div>
+                  <div className="rounded-2xl bg-slate-50 p-4 text-sm font-semibold text-slate-700">
+                    점수: E {selected.scores.E} / P {selected.scores.P} / R {selected.scores.R} / C {selected.scores.C} / M {selected.scores.M} / O {selected.scores.O} / S {selected.scores.S} / F {selected.scores.F}
+                  </div>
                 </div>
               )}
+            </div>
+
+            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+              <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
+                NEXT STEP
+              </div>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900">
+                다음 확장 기능
+              </h2>
+
+              <div className="mt-5 grid gap-3">
+                <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
+                  문항 관리
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
+                  결과 문구 관리
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
+                  프롬프트 관리
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">
+                  Supabase 연동
+                </div>
+              </div>
             </div>
           </div>
         </div>
