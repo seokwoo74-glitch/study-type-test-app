@@ -25,7 +25,7 @@ type Report = {
 type AxisProfile = {
   social: number;
   judgment: number;
- track: number;
+  track: number;
   style: number;
 };
 
@@ -255,7 +255,7 @@ const RESULT_DB: Record<string, Report> = {
     talk: "‘잘하는 걸 살리면서 끝까지 연결해보자’는 접근이 효과적입니다.",
     color: "#0f766e",
   },
-  eROS: {
+  EROS: {
     title: "이과모범형",
     subtitle: "4%~10% 미만",
     summary: "이과 성향과 자기관리 능력이 함께 강한 안정형 상위권입니다.",
@@ -266,43 +266,6 @@ const RESULT_DB: Record<string, Report> = {
     danger: "관계와 활동에 에너지가 분산될 수 있습니다.",
     talk: "‘지금의 리듬만 지키면 충분히 좋은 결과로 이어질 수 있어’라는 대화가 좋습니다.",
     color: "#0891b2",
-  },
-  pROS: {
-    title: "(수동적) 이과 모범형",
-    subtitle: "4%~10% 미만",
-    summary: "성실함과 인내심을 바탕으로 상위권을 안정적으로 유지하는 유형입니다.",
-    strategy:
-      "개념 정리와 실수 관리, 시험 불안 조절이 중요하며 적극적 경험을 조금씩 넓히는 것이 좋습니다.",
-    parent: "안정감을 해치지 않는 선에서 경험의 폭을 넓혀주는 것이 좋습니다.",
-    path: "SKY, 지방의대, 자연과학, 공학, 수의학, 약학 계열과 잘 맞습니다.",
-    danger: "실수 하나에 멘탈 영향이 큰 편입니다.",
-    talk: "‘차분히 쌓아온 힘이 크다’는 식의 대화가 좋습니다.",
-    color: "#0284c7",
-  },
-  PRMF: {
-    title: "이과 뺀질이형",
-    subtitle: "20% 미만",
-    summary:
-      "특정 과목에서는 강점을 보이지만 흥미 없는 과목은 쉽게 놓칠 수 있는 유형입니다.",
-    strategy:
-      "절대 학습시간 확보, 감독이 있는 환경, 선호 과목의 성과를 전체 학습 동기로 연결하는 구조가 필요합니다.",
-    parent: "자유도보다 책임감이 생기는 환경이 더 적합합니다.",
-    path: "이공계열, 논술·정시 전략, IT 분야와 연결될 수 있습니다.",
-    danger: "좋아하는 과목만 밀고 나가다 전체 균형이 무너질 수 있습니다.",
-    talk: "‘짧게라도 끝까지 가는 힘을 같이 만들어보자’는 식의 대화가 좋습니다.",
-    color: "#7c3aed",
-  },
-  EROF: {
-    title: "외향적 이과뺀질형",
-    subtitle: "20% 미만",
-    summary:
-      "관심 있는 과목에서는 번뜩이는 성과를 보이지만 주변 환경의 영향을 크게 받는 유형입니다.",
-    strategy: "통제적 환경, 선택과 집중, 책임감 경험이 효과적입니다.",
-    parent: "학습 공간과 함께하는 집단을 신중히 선택하는 것이 중요합니다.",
-    path: "자유전공, 자연과학, 건축, IT 마케팅, 이공계 연구 계열과 잘 맞습니다.",
-    danger: "많은 일을 시작하지만 끝맺음이 약할 수 있습니다.",
-    talk: "‘환경을 잘 고르면 강점이 훨씬 크게 드러날 수 있어’라는 코칭이 효과적입니다.",
-    color: "#9333ea",
   },
   PROS: {
     title: "이과 잠재성장형",
@@ -379,28 +342,66 @@ const RESULT_DB: Record<string, Report> = {
 };
 
 const CHARACTER_META: Record<string, CharacterMeta> = {
-  ERMS: { label: "창의 연구자", tagline: "깊이 있는 탐구와 독창성이 빛나는 최상위 이과형", emoji: "🧠", aura: "from-blue-500/25 via-sky-400/10 to-cyan-300/20" },
-  ERMF: { label: "몰입 발명가", tagline: "좋아하는 분야에 압도적으로 빠져드는 영재형", emoji: "⚡", aura: "from-teal-500/25 via-emerald-400/10 to-cyan-300/20" },
-  eROS: { label: "엘리트 플래너", tagline: "성실함과 자기관리가 돋보이는 안정형 상위권", emoji: "📘", aura: "from-sky-500/25 via-cyan-400/10 to-blue-300/20" },
-  pROS: { label: "차분한 성취가", tagline: "묵직하게 쌓아 올리는 실속형 상위권", emoji: "🛡️", aura: "from-cyan-500/25 via-sky-400/10 to-indigo-300/20" },
-  PRMF: { label: "자유로운 문제해결사", tagline: "관심 분야에서 번뜩이는 재능을 터뜨리는 편차형", emoji: "🎯", aura: "from-violet-500/25 via-fuchsia-400/10 to-purple-300/20" },
-  EROF: { label: "에너지 크리에이터", tagline: "사람과 환경 속에서 아이디어가 살아나는 활동형", emoji: "🚀", aura: "from-purple-500/25 via-fuchsia-400/10 to-pink-300/20" },
-  PROS: { label: "성장 새싹", tagline: "작은 성취를 쌓을수록 크게 성장하는 잠재형", emoji: "🌱", aura: "from-orange-500/25 via-amber-400/10 to-yellow-300/20" },
-  ECMF: { label: "감각 스토리텔러", tagline: "표현력과 창의성이 돋보이는 문과 창의형", emoji: "🎨", aura: "from-pink-500/25 via-rose-400/10 to-fuchsia-300/20" },
-  ECMS: { label: "품격 있는 우등생", tagline: "안정성과 완성도를 동시에 갖춘 문과 영재형", emoji: "👑", aura: "from-blue-500/25 via-indigo-400/10 to-sky-300/20" },
-  ECOS: { label: "깊이형 사색가", tagline: "조용하지만 강한 사고력과 언어 감각을 지닌 유형", emoji: "📚", aura: "from-violet-500/25 via-indigo-400/10 to-purple-300/20" },
-  PCOF: { label: "따뜻한 성장형", tagline: "작은 성공을 발판 삼아 천천히 커지는 문과 잠재형", emoji: "☀️", aura: "from-orange-500/25 via-yellow-400/10 to-amber-300/20" },
-  DEFAULT: { label: "성향 분석 캐릭터", tagline: "현재 응답을 바탕으로 가장 가까운 성향을 분석했어요.", emoji: "✨", aura: "from-slate-500/25 via-slate-300/10 to-sky-300/20" },
+  ERMS: {
+    label: "창의 연구자",
+    tagline: "깊이 있는 탐구와 독창성이 빛나는 최상위 이과형",
+    emoji: "🧠",
+    aura: "from-blue-500/25 via-sky-400/10 to-cyan-300/20",
+  },
+  ERMF: {
+    label: "몰입 발명가",
+    tagline: "좋아하는 분야에 압도적으로 빠져드는 영재형",
+    emoji: "⚡",
+    aura: "from-teal-500/25 via-emerald-400/10 to-cyan-300/20",
+  },
+  EROS: {
+    label: "엘리트 플래너",
+    tagline: "성실함과 자기관리가 돋보이는 안정형 상위권",
+    emoji: "📘",
+    aura: "from-sky-500/25 via-cyan-400/10 to-blue-300/20",
+  },
+  PROS: {
+    label: "성장 새싹",
+    tagline: "작은 성취를 쌓을수록 크게 성장하는 잠재형",
+    emoji: "🌱",
+    aura: "from-orange-500/25 via-amber-400/10 to-yellow-300/20",
+  },
+  ECMF: {
+    label: "감각 스토리텔러",
+    tagline: "표현력과 창의성이 돋보이는 문과 창의형",
+    emoji: "🎨",
+    aura: "from-pink-500/25 via-rose-400/10 to-fuchsia-300/20",
+  },
+  ECMS: {
+    label: "품격 있는 우등생",
+    tagline: "안정성과 완성도를 동시에 갖춘 문과 영재형",
+    emoji: "👑",
+    aura: "from-blue-500/25 via-indigo-400/10 to-sky-300/20",
+  },
+  ECOS: {
+    label: "깊이형 사색가",
+    tagline: "조용하지만 강한 사고력과 언어 감각을 지닌 유형",
+    emoji: "📚",
+    aura: "from-violet-500/25 via-indigo-400/10 to-purple-300/20",
+  },
+  PCOF: {
+    label: "따뜻한 성장형",
+    tagline: "작은 성공을 발판 삼아 천천히 커지는 문과 잠재형",
+    emoji: "☀️",
+    aura: "from-orange-500/25 via-yellow-400/10 to-amber-300/20",
+  },
+  DEFAULT: {
+    label: "성향 분석 캐릭터",
+    tagline: "현재 응답을 바탕으로 가장 가까운 성향을 분석했어요.",
+    emoji: "✨",
+    aura: "from-slate-500/25 via-slate-300/10 to-sky-300/20",
+  },
 };
 
 const CODE_TO_RESULT_KEY: Record<string, string> = {
   ERMS: "ERMS",
   ERMF: "ERMF",
-  EROS: "eROS",
-  eROS: "eROS",
-  pROS: "pROS",
-  PRMF: "PRMF",
-  PROF: "PROS",
+  EROS: "EROS",
   PROS: "PROS",
   ECMF: "ECMF",
   ECMS: "ECMS",
@@ -822,6 +823,7 @@ function CharacterSpotlight({
       }}
     >
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${meta.aura}`} />
+
       <div className="relative z-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div>
           <div className="flex flex-wrap gap-3">
@@ -880,7 +882,7 @@ function CharacterSpotlight({
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <div className="flex h-[280px] w-full max-w-[280px] flex-col items-center justify-center rounded-[30px] border border-white/12 bg-white/10 p-4 backdrop-blur text-center">
+          <div className="flex h-[280px] w-full max-w-[280px] flex-col items-center justify-center rounded-[30px] border border-white/12 bg-white/10 p-4 text-center backdrop-blur">
             <div className="text-6xl">{meta.emoji}</div>
             <div className="mt-4 text-lg font-black text-white">{meta.label}</div>
             <div className="mt-2 px-4 text-sm leading-6 text-white/70">
@@ -984,23 +986,27 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
         </div>
 
         <div className="grid gap-6">
-  <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-900 p-7 text-white shadow-[0_24px_80px_rgba(2,6,23,0.18)]">
-    <div className="text-xs font-extrabold tracking-[0.18em] text-white/55">
-      REPORT PREVIEW
-    </div>
+          <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-900 p-7 text-white shadow-[0_24px_80px_rgba(2,6,23,0.18)]">
+            <div className="text-xs font-extrabold tracking-[0.18em] text-white/55">
+              REPORT PREVIEW
+            </div>
 
-    <h2 className="mt-3 text-[28px] font-black leading-[1.25] tracking-[-0.03em]">
-      결과는 단순한 유형명이 아니라
-      <br />
-      해석 중심 리포트입니다
-    </h2>
+            <h2 className="mt-3 text-[28px] font-black leading-[1.25] tracking-[-0.03em]">
+              결과는 단순한 유형명이 아니라
+              <br />
+              해석 중심 리포트입니다
+            </h2>
 
-    <p className="mt-4 text-sm leading-7 text-white/75">
-      학생의 성향을 이해하기 쉽게 정리하고, 실제 학습 상황에서
-      적용할 수 있는 방향까지 함께 제안합니다.
-    </p>
-  </div>
-</div>
+            <p className="mt-4 text-sm leading-7 text-white/75">
+              학생의 성향을 이해하기 쉽게 정리하고, 실제 학습 상황에서
+              적용할 수 있는 방향까지 함께 제안합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </Shell>
+  );
+}
 
 function StudentFormScreen({
   student,
@@ -1208,10 +1214,34 @@ function ResultScreen({
     const style = toFiveScalePair(scores.F, scores.S);
 
     return [
-      { name: "대인 성향", left: "수동적", right: "외향적", leftValue: social.leftValue, rightValue: social.rightValue },
-      { name: "판단 방식", left: "원리형", right: "규범형", leftValue: judgment.leftValue, rightValue: judgment.rightValue },
-      { name: "진행 성향", left: "자유형", right: "계획형", leftValue: track.leftValue, rightValue: track.rightValue },
-      { name: "실행 스타일", left: "유연형", right: "완수형", leftValue: style.leftValue, rightValue: style.rightValue },
+      {
+        name: "대인 성향",
+        left: "수동적",
+        right: "외향적",
+        leftValue: social.leftValue,
+        rightValue: social.rightValue,
+      },
+      {
+        name: "판단 방식",
+        left: "원리형",
+        right: "규범형",
+        leftValue: judgment.leftValue,
+        rightValue: judgment.rightValue,
+      },
+      {
+        name: "진행 성향",
+        left: "자유형",
+        right: "계획형",
+        leftValue: track.leftValue,
+        rightValue: track.rightValue,
+      },
+      {
+        name: "실행 스타일",
+        left: "유연형",
+        right: "완수형",
+        leftValue: style.leftValue,
+        rightValue: style.rightValue,
+      },
     ];
   }, [scores]);
 
