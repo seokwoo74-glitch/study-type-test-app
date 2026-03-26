@@ -984,44 +984,23 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
         </div>
 
         <div className="grid gap-6">
-          <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-900 p-7 text-white shadow-[0_24px_80px_rgba(2,6,23,0.18)]">
-            <div className="text-xs font-extrabold tracking-[0.18em] text-white/55">
-              REPORT PREVIEW
-            </div>
+  <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-900 p-7 text-white shadow-[0_24px_80px_rgba(2,6,23,0.18)]">
+    <div className="text-xs font-extrabold tracking-[0.18em] text-white/55">
+      REPORT PREVIEW
+    </div>
 
-            <h2 className="mt-3 text-[28px] font-black leading-[1.25] tracking-[-0.03em]">
-              결과는 단순한 유형명이 아니라
-              <br />
-              해석 중심 리포트입니다
-            </h2>
+    <h2 className="mt-3 text-[28px] font-black leading-[1.25] tracking-[-0.03em]">
+      결과는 단순한 유형명이 아니라
+      <br />
+      해석 중심 리포트입니다
+    </h2>
 
-            <p className="mt-4 text-sm leading-7 text-white/75">
-              학생의 성향을 이해하기 쉽게 정리하고, 실제 학습 상황에서
-              적용할 수 있는 방향까지 함께 제안합니다.
-            </p>
-          </div>
-
-          <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
-            <div className="mb-5">
-              <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
-                INFO
-              </div>
-              <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-900">
-                진행 전 입력 정보
-              </h3>
-            </div>
-
-            <div className="grid gap-3 text-sm font-semibold text-slate-700">
-              <div className="rounded-2xl bg-slate-50 p-4">이름</div>
-              <div className="rounded-2xl bg-slate-50 p-4">학년</div>
-              <div className="rounded-2xl bg-slate-50 p-4">전화번호</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Shell>
-  );
-}
+    <p className="mt-4 text-sm leading-7 text-white/75">
+      학생의 성향을 이해하기 쉽게 정리하고, 실제 학습 상황에서
+      적용할 수 있는 방향까지 함께 제안합니다.
+    </p>
+  </div>
+</div>
 
 function StudentFormScreen({
   student,
