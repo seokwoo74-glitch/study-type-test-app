@@ -1238,9 +1238,7 @@ function ResultScreen({ student, scores, resolved, report, onRestart }: { studen
             <AxisBars scores={scores} />
           </SectionCard>
 
-          <SectionCard title="원점수 요약" desc="엑셀 채점표 기준 축별 합산 점수예요." accentColor={report.color}>
-            <ScoreSummary scores={scores} />
-          </SectionCard>
+          
         </div>
 
         <div className="grid gap-6">
@@ -1371,14 +1369,6 @@ export default function Page() {
         {step === "result" && <ResultScreen student={student} scores={scores} resolved={resolved} report={report} onRestart={restart} />}
       </div>
 
-      <div className="fixed bottom-4 left-1/2 z-20 w-[min(92vw,720px)] -translate-x-1/2 rounded-full border border-white/70 bg-white/90 px-4 py-3 shadow-lg backdrop-blur">
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-black tracking-[0.08em] text-slate-500">
-          <span>STEP {step.toUpperCase()}</span>
-          <span>응답 {answeredCount} / {QUESTIONS.length}</span>
-          <span>예상 코드 {resolved.code}</span>
-          <span>축 {axisProfile.social.toFixed(1)} / {axisProfile.judgment.toFixed(1)} / {axisProfile.track.toFixed(1)} / {axisProfile.style.toFixed(1)}</span>
-        </div>
-      </div>
-    </Shell>
+      </Shell>
   );
 }
