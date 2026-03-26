@@ -954,59 +954,67 @@ function generatePrintableReport({
 
   return `<!doctype html>
 <html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <title>학습성향 리포트</title>
-    <style>
-      *{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#f8fafc;color:#0f172a}
-      .page{max-width:900px;margin:0 auto;padding:40px}
-      .card{background:white;border:1px solid #e2e8f0;border-radius:24px;padding:24px;margin-bottom:20px}
-      .badge{display:inline-block;padding:8px 14px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:700;font-size:12px}
-      h1{font-size:32px;margin:16px 0 8px} h2{font-size:18px;margin:0 0 12px}
-      .muted{color:#475569;line-height:1.8}
-      .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-      .row{padding:14px;border-radius:16px;background:#f8fafc;border:1px solid #e2e8f0}
-      .label{font-size:12px;color:#64748b;font-weight:700;margin-bottom:8px}
-      .value{font-size:15px;line-height:1.7;white-space:pre-wrap}
-      .axis{margin-top:10px}
-      .bar{height:10px;border-radius:999px;background:#e2e8f0;overflow:hidden}
-      .fill{height:100%;background:${report.color}}
-      @media print{body{background:#fff}.page{padding:0}.card{break-inside:avoid}}
-    </style>
-  </head>
-  <body>
-    <div class="page">
-      <div class="card">
-        <span class="badge">학습성향검사 리포트</span>
-        <h1>${escapeHtml(report.title)}</h1>
-        <p class="muted">${escapeHtml(report.subtitle)} · 결과코드 ${escapeHtml(resultCode)}</p>
-      </div>
-      <div class="card">
-        <h2>학생 정보</h2>
-        <div class="grid">
-          <div class="row"><div class="label">이름</div><div class="value">${escapeHtml(student.name || "-")}</div></div>
-          <div class="row"><div class="label">학년</div><div class="value">${escapeHtml(student.grade || "-")}</div></div>
-          <div class="row"><div class="label">전화번호</div><div class="value">${escapeHtml(student.phone || "-")}</div></div>
-          <div class="row"><div class="label">유형명</div><div class="value">${escapeHtml(report.title)} · ${escapeHtml(report.subtitle)}</div></div>
-        </div>
-      </div>
-      <div class="card"><h2>핵심 설명</h2><div class="value">${escapeHtml(report.summary)}</div></div>
-      <div class="card"><h2>학습 전략</h2><div class="value">${escapeHtml(report.strategy)}</div></div>
-      <div class="card"><h2>부모 코칭</h2><div class="value">${escapeHtml(report.parent)}</div></div>
-      <div class="card"><h2>진로 방향</h2><div class="value">${escapeHtml(report.path)}</div></div>
-      <div class="card"><h2>주의 패턴</h2><div class="value">${escapeHtml(report.danger)}</div></div>
-      <div class="card"><h2>대화 제안</h2><div class="value">${escapeHtml(report.talk)}</div></div>
-      <div class="card"><h2>축 분석</h2>
-        ${axes.map((axis) => `
-          <div class="axis">
-            <div class="label">${escapeHtml(axis.name)} · ${escapeHtml(axis.left)} ${axis.leftValue} / ${escapeHtml(axis.right)} ${axis.rightValue}</div>
-            <div class="bar"><div class="fill" style="width:${Math.max(axis.leftValue, axis.rightValue) * 20}%"></div></div>
-          </div>
-        `).join("")}
-      </div>
-    </div>
-  </body>
+<head>
+<meta charset="utf-8" />
+<title>학습성향 리포트</title>
+<style>
+body{margin:0;font-family:'Pretendard',Arial;background:#f1f5f9;color:#0f172a}
+.page{max-width:900px;margin:0 auto;padding:40px}
+.cover{background:linear-gradient(135deg, ${report.color}, #0f172a);color:white;border-radius:28px;padding:40px}
+.cover h1{font-size:36px;margin:0}
+.cover p{opacity:0.9;margin-top:10px}
+.card{background:white;border-radius:20px;padding:24px;margin-top:20px;box-shadow:0 10px 30px rgba(0,0,0,0.08)}
+h2{margin:0 0 10px;font-size:18px}
+.text{line-height:1.8;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.item{background:#f8fafc;border-radius:12px;padding:12px}
+.axis{margin-top:10px}
+.bar{height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.fill{height:100%;background:${report.color}}
+.footer{text-align:center;margin-top:30px;font-size:12px;color:#64748b}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="cover">
+<h1>${escapeHtml(report.title)}</h1>
+<p>${escapeHtml(report.subtitle)} · ${escapeHtml(resultCode)}</p>
+</div>
+
+<div class="card">
+<h2>학생 정보</h2>
+<div class="grid">
+<div class="item">이름: ${escapeHtml(student.name || "-")}</div>
+<div class="item">학년: ${escapeHtml(student.grade || "-")}</div>
+<div class="item">학교: ${escapeHtml(student.school || "-")}</div>
+<div class="item">전화: ${escapeHtml(student.phone || "-")}</div>
+</div>
+</div>
+
+<div class="card"><h2>핵심 설명</h2><div class="text">${escapeHtml(report.summary)}</div></div>
+<div class="card"><h2>학습 전략</h2><div class="text">${escapeHtml(report.strategy)}</div></div>
+<div class="card"><h2>부모 코칭</h2><div class="text">${escapeHtml(report.parent)}</div></div>
+<div class="card"><h2>진로 방향</h2><div class="text">${escapeHtml(report.path)}</div></div>
+<div class="card"><h2>주의 패턴</h2><div class="text">${escapeHtml(report.danger)}</div></div>
+<div class="card"><h2>대화 제안</h2><div class="text">${escapeHtml(report.talk)}</div></div>
+
+<div class="card">
+<h2>축 분석</h2>
+${axes.map(a=>`
+<div class="axis">
+<div>${escapeHtml(a.name)}</div>
+<div class="bar"><div class="fill" style="width:${Math.max(a.leftValue,a.rightValue)*20}%"></div></div>
+</div>
+`).join("")}
+</div>
+
+<div class="footer">학습성향검사 리포트 ©</div>
+
+</div>
+</body>
 </html>`;
+}
 }
 
 function Shell({ children }: { children: ReactNode }) {
