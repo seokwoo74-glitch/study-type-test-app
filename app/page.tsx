@@ -227,11 +227,6 @@ const CHOICES = [
   { label: "아니다", value: 0 },
 ];
 
-/**
- * 세부 유형군 확장판
- * - key: 내부 대표키
- * - aliases: buildDisplayCode 결과에서 나올 수 있는 다양한 코드 변형
- */
 const RESULT_DEFINITIONS: Array<{
   key: string;
   aliases: string[];
@@ -240,7 +235,7 @@ const RESULT_DEFINITIONS: Array<{
 }> = [
   {
     key: "ERMS",
-    aliases: ["ERMS", "ERMs", "eRMS", "eRMs"],
+    aliases: ["ERMS", "ERMs", "eRMS", "eRMs", "ErMS", "ErMs", "erMS", "erMs"],
     report: {
       title: "이과 창의적영재형",
       subtitle: "1% 미만",
@@ -264,7 +259,9 @@ const RESULT_DEFINITIONS: Array<{
   },
   {
     key: "ERMF",
-    aliases: ["ERMF", "ERMf", "ERmF", "ERmf", "eRMF", "eRMf", "eRmF", "eRmf"],
+    aliases: [
+      "ERMF", "ERMf", "ERmF", "ERmf", "eRMF", "eRMf", "eRmF", "eRmf", "ErMF", "ErMf", "ErmF", "Ermf",
+    ],
     report: {
       title: "이과 영재형",
       subtitle: "3% 미만",
@@ -315,8 +312,7 @@ const RESULT_DEFINITIONS: Array<{
     report: {
       title: "(수동적) 이과 모범형",
       subtitle: "4%~10% 미만",
-      summary:
-        "성실함과 인내심을 바탕으로 상위권을 안정적으로 유지하는 유형입니다.",
+      summary: "성실함과 인내심을 바탕으로 상위권을 안정적으로 유지하는 유형입니다.",
       strategy:
         "개념 정리와 실수 관리, 시험 불안 조절이 중요하며 보다 적극적인 활동 경험과 리더십 기회를 함께 쌓으면 성장 폭이 커집니다.",
       parent:
@@ -335,19 +331,7 @@ const RESULT_DEFINITIONS: Array<{
   },
   {
     key: "PRMF",
-    aliases: [
-      "PRMF",
-      "PRMf",
-      "PRmF",
-      "PRmf",
-      "PRMs",
-      "pRMs",
-      "pRMF",
-      "pRMf",
-      "pRmF",
-      "pRmf",
-      "pRoF",
-    ],
+    aliases: ["PRMF", "PRMf", "PRmF", "PRmf", "PRMs", "pRMs", "pRMF", "pRMf", "pRmF", "pRmf", "pRoF"],
     report: {
       title: "이과 뺀질이형",
       subtitle: "20% 미만",
@@ -396,25 +380,7 @@ const RESULT_DEFINITIONS: Array<{
   {
     key: "PROS",
     aliases: [
-      "PROF",
-      "PROf",
-      "PROS",
-      "PROs",
-      "PRoF",
-      "PRof",
-      "PRoS",
-      "PRos",
-      "PRMS",
-      "PRmS",
-      "PRms",
-      "pROF",
-      "pROf",
-      "pROs",
-      "pRos",
-      "pRof",
-      "pRms",
-      "eROs",
-      "eRos",
+      "PROF", "PROf", "PROS", "PROs", "PRoF", "PRof", "PRoS", "PRos", "PRMS", "PRmS", "PRms", "pROF", "pROf", "pROs", "pRos", "pRof", "pRms", "eROs", "eRos",
     ],
     report: {
       title: "이과 잠재성장형",
@@ -446,8 +412,7 @@ const RESULT_DEFINITIONS: Array<{
       summary:
         "문과 성향의 창의성과 표현력이 매우 강하며 차별화된 결과물을 만들 가능성이 높은 유형입니다.",
       strategy: "관심 분야 심화 학습과 결과물 축적이 잘 맞습니다.",
-      parent:
-        "다름을 교정하기보다 강점이 성과로 연결되게 도와주는 것이 중요합니다.",
+      parent: "다름을 교정하기보다 강점이 성과로 연결되게 도와주는 것이 중요합니다.",
       path: "어문, 언론정보, 연극영화, 광고, 방송PD, 게임기획 계열과 잘 맞습니다.",
       danger: "실행 리듬이 무너지면 결과가 불안정해질 수 있습니다.",
       talk: "‘네 생각을 결과물로 보여줄 방법을 같이 찾아보자’는 접근이 좋습니다.",
@@ -462,14 +427,12 @@ const RESULT_DEFINITIONS: Array<{
   },
   {
     key: "ECMS",
-    aliases: ["ECMS", "eCMS"],
+    aliases: ["ECMS", "eCMS", "EcMS", "EcMs", "ecMS", "ecMs"],
     report: {
       title: "문과 모범형 영재형",
       subtitle: "2% 미만",
-      summary:
-        "안정된 성과와 자기관리 능력을 함께 갖춘 이상적인 문과 영재형입니다.",
-      strategy:
-        "신뢰를 기반으로 하되 체력·멘탈 관리까지 함께 챙기면 좋습니다.",
+      summary: "안정된 성과와 자기관리 능력을 함께 갖춘 이상적인 문과 영재형입니다.",
+      strategy: "신뢰를 기반으로 하되 체력·멘탈 관리까지 함께 챙기면 좋습니다.",
       parent: "과한 개입보다 신뢰와 점검이 적합합니다.",
       path: "SKY, 경영·행정·신문방송·법조·외교관 계열과 잘 맞습니다.",
       danger: "완벽주의와 부담감이 누적될 수 있습니다.",
@@ -485,30 +448,14 @@ const RESULT_DEFINITIONS: Array<{
   },
   {
     key: "ECOS",
-    aliases: [
-      "ECOS",
-      "ECOs",
-      "ECoS",
-      "ECos",
-      "ECmS",
-      "ECms",
-      "eCmS",
-      "eCms",
-      "pCMS",
-      "ECoF",
-      "ECmf",
-      "ECMs",
-      "eCMs",
-    ],
+    aliases: ["ECOS", "ECOs", "ECoS", "ECos", "ECmS", "ECms", "eCmS", "eCms", "pCMS", "ECoF", "ECmf", "ECMs", "eCMs"],
     report: {
       title: "내성적 문과영재형",
       subtitle: "3% 미만",
       summary:
         "언어·외국어 영역의 강점과 깊이 있는 사고를 함께 지닌 문과 상위권 유형입니다.",
-      strategy:
-        "심화 학습과 실천 습관을 함께 보완하는 것이 중요합니다.",
-      parent:
-        "겉으로 드러나지 않는 실행 부족을 세심하게 관리해주면 크게 성장할 수 있습니다.",
+      strategy: "심화 학습과 실천 습관을 함께 보완하는 것이 중요합니다.",
+      parent: "겉으로 드러나지 않는 실행 부족을 세심하게 관리해주면 크게 성장할 수 있습니다.",
       path: "정치외교, 신문방송, 법조, 언론, 외교관 계열과 잘 맞습니다.",
       danger: "실행력이 떨어지면 결과가 기대만큼 드러나지 않을 수 있습니다.",
       talk: "‘깊이는 충분하니 이제 실천으로 연결해보자’는 대화가 효과적입니다.",
@@ -527,10 +474,8 @@ const RESULT_DEFINITIONS: Array<{
     report: {
       title: "(내성적) 문과 모범형",
       subtitle: "4%~10% 미만",
-      summary:
-        "자기주도성과 계획 실행의 균형이 좋은 내성적 상위권 문과형입니다.",
-      strategy:
-        "내신 최상위권 유지, 시험 불안 관리, 개념 정리, 규칙적인 멘토링이 효과적입니다.",
+      summary: "자기주도성과 계획 실행의 균형이 좋은 내성적 상위권 문과형입니다.",
+      strategy: "내신 최상위권 유지, 시험 불안 관리, 개념 정리, 규칙적인 멘토링이 효과적입니다.",
       parent: "지나친 간섭보다 정기적인 대화와 점검이 적합합니다.",
       path: "경영, 경제, 행정, 교대, 법조 계열과 잘 맞습니다.",
       danger: "도움 요청 시점을 놓칠 수 있습니다.",
@@ -550,12 +495,9 @@ const RESULT_DEFINITIONS: Array<{
     report: {
       title: "문과모범형B",
       subtitle: "4%~10% 미만",
-      summary:
-        "상위권 성적을 안정적으로 유지하면서 리더십과 대외 활동 역량도 함께 갖춘 유형입니다.",
-      strategy:
-        "내신 유지와 활동 경험을 균형 있게 관리하면 강점이 잘 살아납니다.",
-      parent:
-        "학습 방식은 비교적 안정적이므로 멘탈과 리듬 유지에 집중해서 도와주는 것이 좋습니다.",
+      summary: "상위권 성적을 안정적으로 유지하면서 리더십과 대외 활동 역량도 함께 갖춘 유형입니다.",
+      strategy: "내신 유지와 활동 경험을 균형 있게 관리하면 강점이 잘 살아납니다.",
+      parent: "학습 방식은 비교적 안정적이므로 멘탈과 리듬 유지에 집중해서 도와주는 것이 좋습니다.",
       path: "정치외교, 경영, 신문방송, 기자, PD, 외교관 계열과 잘 맞습니다.",
       danger: "관계와 활동 에너지가 큰 만큼 자신의 학습 리듬이 흐트러질 수 있습니다.",
       talk: "‘네 페이스를 먼저 지키는 게 중요해’라는 식의 대화가 효과적입니다.",
@@ -570,30 +512,13 @@ const RESULT_DEFINITIONS: Array<{
   },
   {
     key: "PCMS",
-    aliases: [
-      "PCMF",
-      "PCMf",
-      "pCMF",
-      "pCMf",
-      "pCMs",
-      "PCMs",
-      "ECmF",
-      "ECOF",
-      "ECof",
-      "eCOF",
-      "eCOf",
-      "eCoF",
-      "eCof",
-    ],
+    aliases: ["PCMF", "PCMf", "pCMF", "pCMf", "pCMs", "PCMs", "ECmF", "ECOF", "ECof", "eCOF", "eCOf", "eCoF", "eCof"],
     report: {
       title: "(외향적) 문과뺀질이형",
       subtitle: "20% 미만",
-      summary:
-        "관심 과목에서는 강점을 보이지만 관계 에너지와 분위기의 영향을 크게 받는 유형입니다.",
-      strategy:
-        "관심 과목 결과물을 동기로 삼고 균형 잡힌 과목 관리와 절대 학습시간 확보가 필요합니다.",
-      parent:
-        "분위기에 휩쓸리지 않도록 관리형 환경을 만들어 주는 것이 중요합니다.",
+      summary: "관심 과목에서는 강점을 보이지만 관계 에너지와 분위기의 영향을 크게 받는 유형입니다.",
+      strategy: "관심 과목 결과물을 동기로 삼고 균형 잡힌 과목 관리와 절대 학습시간 확보가 필요합니다.",
+      parent: "분위기에 휩쓸리지 않도록 관리형 환경을 만들어 주는 것이 중요합니다.",
       path: "신문방송, 정치, 호텔경영, PD, 엔터테인먼트 계열과 잘 맞습니다.",
       danger: "공부보다 관계와 분위기에 에너지를 더 쓸 수 있습니다.",
       talk: "‘얼마나 했는지 숫자와 결과로 확인해보자’는 방식이 좋습니다.",
@@ -612,12 +537,9 @@ const RESULT_DEFINITIONS: Array<{
     report: {
       title: "(내향적) 문과 뺀질이",
       subtitle: "20% 미만",
-      summary:
-        "조용하지만 관심 분야에는 강하게 몰입하며, 학습 균형과 마무리 능력이 핵심인 유형입니다.",
-      strategy:
-        "통제적 환경, 절대 학습시간 확보, 관심 분야 성과물을 전체 성적 향상의 발판으로 활용하는 것이 중요합니다.",
-      parent:
-        "겉으로 드러나지 않아 방심하기 쉽지만 조용히 흐트러질 수 있어 세심한 관찰이 필요합니다.",
+      summary: "조용하지만 관심 분야에는 강하게 몰입하며, 학습 균형과 마무리 능력이 핵심인 유형입니다.",
+      strategy: "통제적 환경, 절대 학습시간 확보, 관심 분야 성과물을 전체 성적 향상의 발판으로 활용하는 것이 중요합니다.",
+      parent: "겉으로 드러나지 않아 방심하기 쉽지만 조용히 흐트러질 수 있어 세심한 관찰이 필요합니다.",
       path: "자유전공, 철학, 애니메이션, 사학, 문헌정보 계열과 잘 맞습니다.",
       danger: "마무리가 약해 성과로 연결되지 못할 수 있습니다.",
       talk: "‘끝까지 간 걸 함께 확인하자’는 식의 대화가 좋습니다.",
@@ -632,30 +554,12 @@ const RESULT_DEFINITIONS: Array<{
   },
   {
     key: "PCOF",
-    aliases: [
-      "PCOF",
-      "PCOf",
-      "PCOS",
-      "PCOs",
-      "PCoS",
-      "PCos",
-      "PCMS",
-      "PCmS",
-      "pCOF",
-      "pCOf",
-      "pCOs",
-      "pCos",
-      "pCms",
-      "pCof",
-      "eCOs",
-    ],
+    aliases: ["PCOF", "PCOf", "PCOS", "PCOs", "PCoS", "PCos", "PCMS", "PCmS", "pCOF", "pCOf", "pCOs", "pCos", "pCms", "pCof", "eCOs", "pCOS", "pCoS"],
     report: {
       title: "문과 잠재성장형",
       subtitle: "70% 내외",
-      summary:
-        "차분한 기반 위에서 성장 가능성이 큰 유형입니다.",
-      strategy:
-        "선행보다 내신 중심 학습이 적합하며 작은 성취를 반복적으로 만드는 것이 중요합니다.",
+      summary: "차분한 기반 위에서 성장 가능성이 큰 유형입니다.",
+      strategy: "선행보다 내신 중심 학습이 적합하며 작은 성취를 반복적으로 만드는 것이 중요합니다.",
       parent: "비교보다 성취 경험의 축적이 우선입니다.",
       path: "아동, 심리, 사범, 사회복지, 상담, 교육 관련 계열과 잘 맞습니다.",
       danger: "막연한 계획만 세우고 쉽게 지칠 수 있습니다.",
@@ -672,34 +576,14 @@ const RESULT_DEFINITIONS: Array<{
   {
     key: "HYB_ERMS",
     aliases: [
-      "ErMS",
-      "ErMs",
-      "EcMS",
-      "EcMs",
-      "erMS",
-      "ecMS",
-      "ErMF",
-      "ErMf",
-      "ErmF",
-      "Ermf",
-      "EcMF",
-      "EcMf",
-      "EcmF",
-      "Ecmf",
-      "erMF",
-      "erMf",
-      "ecMF",
-      "ecMf",
+      "ErMS", "ErMs", "EcMS", "EcMs", "erMS", "ecMS", "ErMF", "ErMf", "ErmF", "Ermf", "EcMF", "EcMf", "EcmF", "Ecmf", "erMF", "erMf", "ecMF", "ecMf",
     ],
     report: {
       title: "문·이과 혼합 영재형",
       subtitle: "4% 미만",
-      summary:
-        "문·이과 전 영역을 두루 소화할 수 있는 융합형 상위권 영재입니다.",
-      strategy:
-        "전 과목을 고르게 유지하면서도 시작한 일을 결과물로 연결하는 훈련이 중요합니다.",
-      parent:
-        "산만함과 독특함을 약점으로 보기보다 강점으로 연결될 수 있도록 마무리와 집중을 도와주는 것이 좋습니다.",
+      summary: "문·이과 전 영역을 두루 소화할 수 있는 융합형 상위권 영재입니다.",
+      strategy: "전 과목을 고르게 유지하면서도 시작한 일을 결과물로 연결하는 훈련이 중요합니다.",
+      parent: "산만함과 독특함을 약점으로 보기보다 강점으로 연결될 수 있도록 마무리와 집중을 도와주는 것이 좋습니다.",
       path: "자유전공, 국제통상, 통계, 건축, 행정, 외교, 예술 융합 계열과 잘 맞습니다.",
       danger: "관심사가 넓어 선택과 집중이 흐려질 수 있습니다.",
       talk: "‘우선순위를 같이 정해보자’는 식의 대화가 효과적입니다.",
@@ -715,38 +599,14 @@ const RESULT_DEFINITIONS: Array<{
   {
     key: "HYB_EROS",
     aliases: [
-      "ErOS",
-      "ErOs",
-      "EroS",
-      "Eros",
-      "EcOS",
-      "EcOs",
-      "EcoS",
-      "Ecos",
-      "erOS",
-      "eroS",
-      "ecOS",
-      "ecoS",
-      "ErmS",
-      "Erms",
-      "ermS",
-      "erms",
-      "EcmS",
-      "Ecms",
-      "ecmS",
-      "ecms",
-      "ErOf",
-      "EcOf",
+      "ErOS", "ErOs", "EroS", "Eros", "EcOS", "EcOs", "EcoS", "Ecos", "erOS", "eroS", "ecOS", "ecoS", "ErmS", "Erms", "ermS", "erms", "EcmS", "Ecms", "ecmS", "ecms", "ErOf", "EcOf",
     ],
     report: {
       title: "문·이과 혼합 모범형",
       subtitle: "10% 미만",
-      summary:
-        "문·이과를 모두 무난하게 해내며 실리적으로 성과를 쌓는 안정형 상위권입니다.",
-      strategy:
-        "내신, 활동, 시험 리듬을 균형 있게 유지하면 가장 효율적으로 성장할 수 있습니다.",
-      parent:
-        "활동과 관계 에너지가 커질 수 있으니 학습 리듬만 잘 잡아주면 좋습니다.",
+      summary: "문·이과를 모두 무난하게 해내며 실리적으로 성과를 쌓는 안정형 상위권입니다.",
+      strategy: "내신, 활동, 시험 리듬을 균형 있게 유지하면 가장 효율적으로 성장할 수 있습니다.",
+      parent: "활동과 관계 에너지가 커질 수 있으니 학습 리듬만 잘 잡아주면 좋습니다.",
       path: "사회과학, 경제, 자연과학, 통계, 공무원, 교사, 변호사 계열과 잘 맞습니다.",
       danger: "다 잘하려다 체력과 집중력이 먼저 떨어질 수 있습니다.",
       talk: "‘잘하고 있는 것 중 꼭 챙길 것만 남기자’는 정리형 대화가 좋습니다.",
@@ -765,12 +625,9 @@ const RESULT_DEFINITIONS: Array<{
     report: {
       title: "문·이과 혼합 수동적모범형",
       subtitle: "10% 미만",
-      summary:
-        "성실성과 안정감으로 꾸준한 상위권을 지키는 혼합형 학생입니다.",
-      strategy:
-        "개념 정리, 시험 불안 관리, 보다 적극적인 대외 활동 경험이 성장 포인트입니다.",
-      parent:
-        "실력은 있으나 자기주장이 약할 수 있어 발표 경험을 조금씩 쌓게 해주는 것이 좋습니다.",
+      summary: "성실성과 안정감으로 꾸준한 상위권을 지키는 혼합형 학생입니다.",
+      strategy: "개념 정리, 시험 불안 관리, 보다 적극적인 대외 활동 경험이 성장 포인트입니다.",
+      parent: "실력은 있으나 자기주장이 약할 수 있어 발표 경험을 조금씩 쌓게 해주는 것이 좋습니다.",
       path: "경영, 경제, 응용통계, 회계, 간호, 교대 계열과 잘 맞습니다.",
       danger: "실력에 비해 존재감이 약해 기회를 놓칠 수 있습니다.",
       talk: "‘드러내는 연습도 중요한 실력이다’라고 말해주는 것이 좋습니다.",
@@ -789,12 +646,9 @@ const RESULT_DEFINITIONS: Array<{
     report: {
       title: "문·이과 혼합 뺀질이형",
       subtitle: "20% 미만",
-      summary:
-        "관심 과목만 잘하는 편차형이지만 융합적 재능과 아이디어가 살아 있는 유형입니다.",
-      strategy:
-        "균형 잡힌 과목 관리, 감독이 있는 환경, 관심 분야 결과물을 전체 성적으로 연결하는 전략이 중요합니다.",
-      parent:
-        "통제적 환경과 마무리 점검이 필요합니다. 시작은 빠르지만 끝까지 가는 힘을 만들어주는 것이 핵심입니다.",
+      summary: "관심 과목만 잘하는 편차형이지만 융합적 재능과 아이디어가 살아 있는 유형입니다.",
+      strategy: "균형 잡힌 과목 관리, 감독이 있는 환경, 관심 분야 결과물을 전체 성적으로 연결하는 전략이 중요합니다.",
+      parent: "통제적 환경과 마무리 점검이 필요합니다. 시작은 빠르지만 끝까지 가는 힘을 만들어주는 것이 핵심입니다.",
       path: "자유전공, 건축, 자연과학, 철학, 어문, 방송 관련 계열과 잘 맞습니다.",
       danger: "넓은 재능이 오히려 산만함으로 보일 수 있습니다.",
       talk: "‘재능은 충분하니 끝까지 연결하는 힘을 만들자’는 대화가 효과적입니다.",
@@ -809,29 +663,13 @@ const RESULT_DEFINITIONS: Array<{
   },
   {
     key: "HYB_PROS",
-    aliases: [
-      "PrOF",
-      "PrOf",
-      "ProF",
-      "Prof",
-      "prOF",
-      "prOf",
-      "proF",
-      "prof",
-      "erOF",
-      "erOf",
-      "eroF",
-      "erof",
-    ],
+    aliases: ["PrOF", "PrOf", "ProF", "Prof", "prOF", "prOf", "proF", "prof", "erOF", "erOf", "eroF", "erof"],
     report: {
       title: "융합 잠재성장형",
       subtitle: "70% 내외",
-      summary:
-        "현재 특별히 두드러진 과목이 없더라도 생활 속 훈련과 경험에 따라 성장 폭이 크게 달라질 수 있는 유형입니다.",
-      strategy:
-        "선행보다 내신 중심으로 접근하고 선택과 집중을 통해 작은 성취 경험을 반복적으로 만드는 것이 중요합니다.",
-      parent:
-        "막연한 기대보다 단계적 목표가 필요합니다. 선호 과목에서 자신감을 얻으면 다른 과목으로 확장될 수 있습니다.",
+      summary: "현재 특별히 두드러진 과목이 없더라도 생활 속 훈련과 경험에 따라 성장 폭이 크게 달라질 수 있는 유형입니다.",
+      strategy: "선행보다 내신 중심으로 접근하고 선택과 집중을 통해 작은 성취 경험을 반복적으로 만드는 것이 중요합니다.",
+      parent: "막연한 기대보다 단계적 목표가 필요합니다. 선호 과목에서 자신감을 얻으면 다른 과목으로 확장될 수 있습니다.",
       path: "심리, 사범, 사회복지, 건축, 간호, 상담 관련 계열과 잘 맞습니다.",
       danger: "구체적 목표가 없으면 쉽게 무기력해질 수 있습니다.",
       talk: "‘오늘은 이 한 가지를 끝내보자’처럼 작은 목표가 효과적입니다.",
@@ -850,12 +688,9 @@ const RESULT_DEFINITIONS: Array<{
     report: {
       title: "학습성향 분석 결과",
       subtitle: "기본 리포트",
-      summary:
-        "현재 입력된 응답을 바탕으로 가장 가까운 학습 성향으로 분류한 결과입니다.",
-      strategy:
-        "기본 학습 루틴을 먼저 안정화하고 강점 과목 중심으로 성취 경험을 늘리는 것이 좋습니다.",
-      parent:
-        "현재 방식에 맞는 환경과 전략을 함께 찾는 접근이 효과적입니다.",
+      summary: "현재 입력된 응답을 바탕으로 가장 가까운 학습 성향으로 분류한 결과입니다.",
+      strategy: "기본 학습 루틴을 먼저 안정화하고 강점 과목 중심으로 성취 경험을 늘리는 것이 좋습니다.",
+      parent: "현재 방식에 맞는 환경과 전략을 함께 찾는 접근이 효과적입니다.",
       path: "상세 결과 DB 확장에 따라 더 정밀한 추천으로 연결될 수 있습니다.",
       danger: "강점이 선명하지 않을수록 비교의 영향을 더 크게 받을 수 있습니다.",
       talk: "‘네 방식에 맞는 방법을 같이 찾아가자’는 접근이 좋습니다.",
@@ -883,6 +718,7 @@ const RESULT_ALIAS_MAP: Record<string, string> = RESULT_DEFINITIONS.reduce(
     acc[item.key] = item.key;
     item.aliases.forEach((alias) => {
       acc[alias] = item.key;
+      acc[alias.toUpperCase()] = item.key;
     });
     return acc;
   },
@@ -949,8 +785,7 @@ function buildDisplayCode(scores: Record<string, number>) {
   const trackLetter = scores.M >= scores.O ? "M" : "O";
   const styleLetter = scores.S >= scores.F ? "S" : "F";
 
-  const formatLetter = (letter: string, diff: number) =>
-    diff <= 1 ? letter.toLowerCase() : letter.toUpperCase();
+  const formatLetter = (letter: string, diff: number) => (diff <= 1 ? letter.toLowerCase() : letter.toUpperCase());
 
   const code =
     formatLetter(socialLetter, socialDiff) +
@@ -971,46 +806,66 @@ function normalizeResultCode(code: string) {
   const clean = code.replace(/[^A-Za-z]/g, "");
   if (!clean) return "DEFAULT";
 
-  // 1) exact mixed-case alias
-  if (RESULT_ALIAS_MAP[clean]) {
-    return RESULT_ALIAS_MAP[clean];
-  }
+  if (RESULT_ALIAS_MAP[clean]) return RESULT_ALIAS_MAP[clean];
 
-  // 2) upper fallback
   const upper = clean.toUpperCase();
-  if (RESULT_ALIAS_MAP[upper]) {
-    return RESULT_ALIAS_MAP[upper];
+  if (RESULT_ALIAS_MAP[upper]) return RESULT_ALIAS_MAP[upper];
+
+  const chars = upper.split("");
+  const social = chars[0] === "P" ? "P" : "E";
+  const judgment = chars[1] === "C" ? "C" : "R";
+  const track = chars[2] === "O" ? "O" : "M";
+  const style = chars[3] === "F" ? "F" : "S";
+  const normalized4 = `${social}${judgment}${track}${style}`;
+
+  if (RESULT_ALIAS_MAP[normalized4]) return RESULT_ALIAS_MAP[normalized4];
+
+  const fallbackCandidates = [
+    normalized4,
+    `${social}${judgment}${track}S`,
+    `${social}${judgment}${track}F`,
+    `${social}${judgment}M${style}`,
+    `${social}${judgment}O${style}`,
+    `${social}${judgment}MS`,
+    `${social}${judgment}MF`,
+    `${social}${judgment}OS`,
+    `${social}${judgment}OF`,
+    normalized4.toLowerCase(),
+  ];
+
+  for (const candidate of fallbackCandidates) {
+    if (RESULT_ALIAS_MAP[candidate]) return RESULT_ALIAS_MAP[candidate];
+    const candidateUpper = candidate.toUpperCase();
+    if (RESULT_ALIAS_MAP[candidateUpper]) return RESULT_ALIAS_MAP[candidateUpper];
   }
 
-  // 3) heuristic fallback
-  const base4 = upper.slice(0, 4);
-
-  switch (base4) {
+  switch (normalized4) {
     case "ERMS":
-      // ErMS 계열은 exact alias에서 먼저 잡히므로, 여기선 일반 ERMS
       return "ERMS";
     case "ERMF":
       return "ERMF";
     case "EROS":
       return "EROS";
-    case "PROF":
-    case "PROS":
-    case "PRMS":
-      return "PROS";
-    case "PRMF":
-      return "PRMF";
     case "EROF":
       return "EROF";
-    case "ECMF":
-      return "ECMF";
+    case "PRMS":
+      return "PROS_PASSIVE";
+    case "PRMF":
+      return "PRMF";
+    case "PROS":
+    case "PROF":
+      return "PROS";
     case "ECMS":
       return "ECMS";
+    case "ECMF":
+      return "ECMF";
     case "ECOS":
+    case "ECOF":
       return "ECOS";
     case "PCOS":
       return "PCOS";
     case "PCMS":
-      return "PCMS";
+      return "PCOF";
     case "PCMF":
       return "PCMF";
     case "PCOF":
@@ -1034,31 +889,19 @@ function resolveResult(scores: Record<string, number>): ResolvedResult {
 
 function hexToRgba(hex: string, alpha: number) {
   const normalized = hex.replace("#", "");
-  const full =
-    normalized.length === 3
-      ? normalized
-          .split("")
-          .map((c) => c + c)
-          .join("")
-      : normalized;
-
+  const full = normalized.length === 3 ? normalized.split("").map((c) => c + c).join("") : normalized;
   const num = parseInt(full, 16);
   const r = (num >> 16) & 255;
   const g = (num >> 8) & 255;
   const b = num & 255;
-
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function toFiveScalePair(left: number, right: number) {
   const total = left + right;
-  if (total === 0) {
-    return { leftValue: 2.5, rightValue: 2.5 };
-  }
-
+  if (total === 0) return { leftValue: 2.5, rightValue: 2.5 };
   const leftValue = (left / total) * 5;
   const rightValue = (right / total) * 5;
-
   return {
     leftValue: Number(leftValue.toFixed(1)),
     rightValue: Number(rightValue.toFixed(1)),
@@ -1071,6 +914,16 @@ function saveSubmission(record: SubmissionRecord) {
   const parsed: SubmissionRecord[] = raw ? JSON.parse(raw) : [];
   parsed.unshift(record);
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+}
+
+function printReport(html: string) {
+  const win = window.open("", "_blank", "width=960,height=1200");
+  if (!win) return;
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 250);
 }
 
 function generatePrintableReport({
@@ -1095,805 +948,333 @@ function generatePrintableReport({
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
+      .replace(/\"/g, "&quot;")
       .replace(/'/g, "&#039;");
 
-  return `
-    <!doctype html>
-    <html lang="ko">
-      <head>
-        <meta charset="utf-8" />
-        <title>학습성향 리포트</title>
-        <style>
-          * { box-sizing: border-box; }
-          body { margin: 0; font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; background: #f8fafc; color: #0f172a; }
-          .wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px 56px; }
-          .hero { border-radius: 28px; padding: 32px; color: white; background: linear-gradient(135deg, ${report.color} 0%, #0f172a 85%); }
-          .badge { display:inline-block; padding:8px 14px; border-radius:999px; font-size:12px; font-weight:800; letter-spacing:.14em; background:rgba(255,255,255,.14); margin-right:8px; }
-          .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:22px; }
-          .card { background:white; border:1px solid #e2e8f0; border-radius:22px; padding:20px; margin-top:18px; }
-          .card h3 { font-size:14px; letter-spacing:.16em; color:#64748b; margin-bottom:10px; }
-          .card p { font-size:15px; line-height:1.8; color:#334155; margin:0; }
-        </style>
-      </head>
-      <body>
-        <div class="wrap">
-          <div class="hero">
-            <div>
-              <span class="badge">LEARNING REPORT</span>
-              <span class="badge">${escapeHtml(resultCode)}</span>
-            </div>
-            <h1 style="margin:18px 0 0; font-size:34px;">${escapeHtml(report.title)}</h1>
-            <p style="margin-top:10px; font-size:16px;">${escapeHtml(report.subtitle)}</p>
-            <p style="margin-top:18px; line-height:1.9; font-size:15px; opacity:.94;">${escapeHtml(report.summary)}</p>
-            <p style="margin-top:18px; line-height:1.8; font-size:14px; opacity:.9;">이름: ${escapeHtml(student.name)} / 학년: ${escapeHtml(student.grade)} / 전화번호: ${escapeHtml(student.phone)}</p>
-          </div>
-
-          <div class="grid">
-            <div class="card"><h3>학습 전략</h3><p>${escapeHtml(report.strategy)}</p></div>
-            <div class="card"><h3>부모 코칭</h3><p>${escapeHtml(report.parent)}</p></div>
-            <div class="card"><h3>진로 방향</h3><p>${escapeHtml(report.path)}</p></div>
-            <div class="card"><h3>주의 패턴</h3><p>${escapeHtml(report.danger)}</p></div>
-          </div>
-
-          <div class="card">
-            <h3>대화 제안</h3>
-            <p>${escapeHtml(report.talk)}</p>
-          </div>
-
-          <div class="card">
-            <h3>축 분석 요약</h3>
-            ${axes
-              .map(
-                (axis) =>
-                  `<p style="margin-bottom:10px;">${escapeHtml(axis.name)} · ${escapeHtml(axis.left)} ${axis.leftValue} / ${escapeHtml(axis.right)} ${axis.rightValue}</p>`
-              )
-              .join("")}
-          </div>
+  return `<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>학습성향 리포트</title>
+    <style>
+      *{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#f8fafc;color:#0f172a}
+      .page{max-width:900px;margin:0 auto;padding:40px}
+      .card{background:white;border:1px solid #e2e8f0;border-radius:24px;padding:24px;margin-bottom:20px}
+      .badge{display:inline-block;padding:8px 14px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:700;font-size:12px}
+      h1{font-size:32px;margin:16px 0 8px} h2{font-size:18px;margin:0 0 12px}
+      .muted{color:#475569;line-height:1.8}
+      .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+      .row{padding:14px;border-radius:16px;background:#f8fafc;border:1px solid #e2e8f0}
+      .label{font-size:12px;color:#64748b;font-weight:700;margin-bottom:8px}
+      .value{font-size:15px;line-height:1.7;white-space:pre-wrap}
+      .axis{margin-top:10px}
+      .bar{height:10px;border-radius:999px;background:#e2e8f0;overflow:hidden}
+      .fill{height:100%;background:${report.color}}
+      @media print{body{background:#fff}.page{padding:0}.card{break-inside:avoid}}
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="card">
+        <span class="badge">학습성향검사 리포트</span>
+        <h1>${escapeHtml(report.title)}</h1>
+        <p class="muted">${escapeHtml(report.subtitle)} · 결과코드 ${escapeHtml(resultCode)}</p>
+      </div>
+      <div class="card">
+        <h2>학생 정보</h2>
+        <div class="grid">
+          <div class="row"><div class="label">이름</div><div class="value">${escapeHtml(student.name || "-")}</div></div>
+          <div class="row"><div class="label">학년</div><div class="value">${escapeHtml(student.grade || "-")}</div></div>
+          <div class="row"><div class="label">전화번호</div><div class="value">${escapeHtml(student.phone || "-")}</div></div>
+          <div class="row"><div class="label">유형명</div><div class="value">${escapeHtml(report.title)} · ${escapeHtml(report.subtitle)}</div></div>
         </div>
-      </body>
-    </html>
-  `;
-}
-
-function printReport(html: string) {
-  const win = window.open("", "_blank", "width=1100,height=900");
-  if (!win) {
-    window.alert("팝업이 차단되어 있어요. 팝업 허용 후 다시 시도해 주세요.");
-    return;
-  }
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
-  win.focus();
-  setTimeout(() => {
-    win.print();
-  }, 250);
+      </div>
+      <div class="card"><h2>핵심 설명</h2><div class="value">${escapeHtml(report.summary)}</div></div>
+      <div class="card"><h2>학습 전략</h2><div class="value">${escapeHtml(report.strategy)}</div></div>
+      <div class="card"><h2>부모 코칭</h2><div class="value">${escapeHtml(report.parent)}</div></div>
+      <div class="card"><h2>진로 방향</h2><div class="value">${escapeHtml(report.path)}</div></div>
+      <div class="card"><h2>주의 패턴</h2><div class="value">${escapeHtml(report.danger)}</div></div>
+      <div class="card"><h2>대화 제안</h2><div class="value">${escapeHtml(report.talk)}</div></div>
+      <div class="card"><h2>축 분석</h2>
+        ${axes.map((axis) => `
+          <div class="axis">
+            <div class="label">${escapeHtml(axis.name)} · ${escapeHtml(axis.left)} ${axis.leftValue} / ${escapeHtml(axis.right)} ${axis.rightValue}</div>
+            <div class="bar"><div class="fill" style="width:${Math.max(axis.leftValue, axis.rightValue) * 20}%"></div></div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  </body>
+</html>`;
 }
 
 function Shell({ children }: { children: ReactNode }) {
-  return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#f8fafc_44%,#eef2ff_100%)] text-slate-900">
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {children}
-      </div>
-    </main>
-  );
+  return <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_35%),linear-gradient(180deg,#f8fbff_0%,#f8fafc_100%)] text-slate-900">{children}</main>;
 }
 
-function HeroBadge({ children }: { children: ReactNode }) {
-  return (
-    <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-extrabold tracking-[0.16em] text-white/85 backdrop-blur">
-      {children}
-    </span>
-  );
-}
-
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-      <div
-        className="h-full rounded-full bg-gradient-to-r from-sky-500 to-slate-900 transition-all duration-300"
-        style={{ width: `${value}%` }}
-      />
-    </div>
-  );
-}
-
-function ChoiceButton({
-  label,
-  active,
-  onClick,
-  disabled = false,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={`rounded-[24px] border px-5 py-5 text-left transition-all ${
-        active
-          ? "border-slate-900 bg-slate-900 text-white shadow-[0_18px_40px_rgba(15,23,42,0.22)]"
-          : "border-slate-200 bg-white text-slate-800 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50"
-      } ${disabled ? "pointer-events-none opacity-70" : ""}`}
-    >
-      <div className="text-lg font-black tracking-tight">{label}</div>
-      <div className={`mt-2 text-sm ${active ? "text-white/80" : "text-slate-500"}`}>
-        가장 가까운 응답을 선택해 주세요.
-      </div>
-    </button>
-  );
-}
-
-function SectionCard({
-  title,
-  desc,
-  children,
-  accentColor,
-}: {
-  title: string;
-  desc?: string;
-  children: ReactNode;
-  accentColor?: string;
-}) {
+function SectionCard({ title, desc, accentColor, children }: { title: string; desc?: string; accentColor: string; children: ReactNode }) {
   return (
     <section
-      className="rounded-[30px] border bg-white/90 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)] backdrop-blur"
+      className="rounded-[28px] border bg-white/85 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur"
       style={{
-        borderColor: accentColor ? hexToRgba(accentColor, 0.16) : "rgba(226,232,240,1)",
+        borderColor: accentColor ? hexToRgba(accentColor, 0.18) : "rgba(255,255,255,0.8)",
+        boxShadow: accentColor ? `0 18px 60px ${hexToRgba(accentColor, 0.1)}` : "0 18px 60px rgba(15,23,42,0.08)",
       }}
     >
-      <div className="mb-5">
-        <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
-          SECTION
-        </div>
-        <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-900">
-          {title}
-        </h3>
-        {desc ? <p className="mt-2 text-sm leading-7 text-slate-500">{desc}</p> : null}
+      <div className="mb-4">
+        <h3 className="text-lg font-black text-slate-900">{title}</h3>
+        {desc ? <p className="mt-1 text-sm leading-6 text-slate-500">{desc}</p> : null}
       </div>
       {children}
     </section>
   );
 }
 
-function AxisCard({
-  name,
-  left,
-  right,
-  leftValue,
-  rightValue,
-  color,
-}: {
-  name: string;
-  left: string;
-  right: string;
-  leftValue: number;
-  rightValue: number;
-  color: string;
-}) {
-  const total = leftValue + rightValue || 5;
-  const leftPercent = `${(leftValue / total) * 100}%`;
-  const rightPercent = `${(rightValue / total) * 100}%`;
-
+function InfoItem({ title, value }: { title: string; value: string }) {
   return (
-    <div className="rounded-[24px] border border-slate-200 bg-slate-50/70 p-5">
-      <div className="text-sm font-black tracking-tight text-slate-900">{name}</div>
-
-      <div className="mt-4 flex items-center justify-between text-sm font-bold text-slate-500">
-        <span>{left}</span>
-        <span>{right}</span>
-      </div>
-
-      <div className="mt-3 grid grid-cols-[1fr_10px_1fr] items-center">
-        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="ml-auto h-full rounded-full"
-            style={{
-              width: leftPercent,
-              background: `linear-gradient(90deg, #cbd5e1 0%, ${color} 100%)`,
-            }}
-          />
-        </div>
-        <div className="relative h-3">
-          <div className="absolute left-1/2 top-[-2px] h-4 w-[2px] -translate-x-1/2 rounded-full bg-slate-300" />
-        </div>
-        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: rightPercent,
-              background: `linear-gradient(90deg, ${color} 0%, #0f172a 100%)`,
-            }}
-          />
-        </div>
-      </div>
-
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
-          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">
-            LEFT
-          </div>
-          <div className="mt-1 text-sm font-black text-slate-900">
-            {scoreLabel(leftValue)}
-          </div>
-        </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-3 text-center">
-          <div className="text-[11px] font-extrabold tracking-[0.16em] text-slate-400">
-            RIGHT
-          </div>
-          <div className="mt-1 text-sm font-black text-slate-900">
-            {scoreLabel(rightValue)}
-          </div>
-        </div>
-      </div>
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">{title}</div>
+      <div className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">{value}</div>
     </div>
   );
 }
 
-function CharacterSpotlight({
-  report,
-  meta,
-  code,
-  student,
-}: {
-  report: Report;
-  meta: CharacterMeta;
-  code: string;
-  student: StudentInfo;
-}) {
-  return (
-    <div
-      className="relative overflow-hidden rounded-[32px] border p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.16)]"
-      style={{
-        background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 88%)`,
-        borderColor: "rgba(255,255,255,0.12)",
-      }}
-    >
-      <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${meta.aura}`} />
-
-      <div className="relative z-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-        <div>
-          <div className="flex flex-wrap gap-3">
-            <HeroBadge>RESULT TYPE</HeroBadge>
-            <HeroBadge>코드 {code}</HeroBadge>
-            <HeroBadge>{meta.label}</HeroBadge>
-          </div>
-
-          <div className="mt-5 flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/14 text-3xl">
-              {meta.emoji}
-            </div>
-            <div>
-              <div className="text-sm font-bold uppercase tracking-[0.2em] text-white/65">
-                학습성향 결과
-              </div>
-              <h2 className="mt-1 text-3xl font-black tracking-tight sm:text-4xl">
-                {report.title}
-              </h2>
-            </div>
-          </div>
-
-          <p className="mt-5 text-lg font-bold leading-8 text-white/90">
-            {meta.tagline}
-          </p>
-
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/78">
-            {report.summary}
-          </p>
-
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[22px] border border-white/12 bg-white/10 p-4 backdrop-blur">
-              <div className="text-[11px] font-extrabold tracking-[0.16em] text-white/55">
-                학생 정보
-              </div>
-              <div className="mt-2 text-base font-black text-white">
-                {student.name}
-              </div>
-              <div className="mt-1 text-sm font-semibold text-white/70">
-                {student.grade} / {student.phone}
-              </div>
-            </div>
-
-            <div className="rounded-[22px] border border-white/12 bg-white/10 p-4 backdrop-blur">
-              <div className="text-[11px] font-extrabold tracking-[0.16em] text-white/55">
-                결과 코드
-              </div>
-              <div className="mt-2 text-base font-black text-white">
-                {code}
-              </div>
-              <div className="mt-1 text-sm font-semibold text-white/70">
-                {report.subtitle}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center lg:justify-end">
-          <div className="flex h-[280px] w-full max-w-[280px] flex-col items-center justify-center rounded-[30px] border border-white/12 bg-white/10 p-4 text-center backdrop-blur">
-            <div className="text-6xl">{meta.emoji}</div>
-            <div className="mt-4 text-lg font-black text-white">{meta.label}</div>
-            <div className="mt-2 px-4 text-sm leading-6 text-white/70">
-              {meta.tagline}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ScoreSummary({
-  scores,
-}: {
-  scores: Record<string, number>;
-}) {
-  const items = [
-    { label: "E", value: scores.E },
-    { label: "P", value: scores.P },
-    { label: "R", value: scores.R },
-    { label: "C", value: scores.C },
-    { label: "M", value: scores.M },
-    { label: "O", value: scores.O },
-    { label: "S", value: scores.S },
-    { label: "F", value: scores.F },
-  ];
-
+function ScoreSummary({ scores }: { scores: Record<string, number> }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      {items.map((item) => (
-        <div
-          key={item.label}
-          className="rounded-[20px] border border-slate-200 bg-slate-50/70 p-4 text-center"
-        >
-          <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
-            {item.label}
-          </div>
-          <div className="mt-2 text-xl font-black text-slate-900">
-            {item.value}
-          </div>
+      {(["E", "P", "R", "C", "M", "O", "S", "F"] as const).map((key) => (
+        <div key={key} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center">
+          <div className="text-xs font-black tracking-[0.2em] text-slate-400">{key}</div>
+          <div className="mt-2 text-2xl font-black text-slate-900">{scores[key]}</div>
         </div>
       ))}
     </div>
   );
 }
 
-function LandingScreen({ onStart }: { onStart: () => void }) {
+function AxisBars({ scores }: { scores: Record<string, number> }) {
+  const axes = [
+    { name: "외향 ↔ 내향", left: "P", right: "E", leftLabel: "내향", rightLabel: "외향" },
+    { name: "논리 ↔ 창의", left: "R", right: "C", leftLabel: "논리", rightLabel: "창의" },
+    { name: "모범 ↔ 자율", left: "M", right: "O", leftLabel: "모범", rightLabel: "자율" },
+    { name: "안정 ↔ 도전", left: "S", right: "F", leftLabel: "안정", rightLabel: "도전" },
+  ] as const;
+
   return (
-    <Shell>
-      <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
-        <div className="relative overflow-hidden rounded-[36px] border border-slate-200 bg-white px-7 py-8 shadow-[0_28px_90px_rgba(15,23,42,0.08)] sm:px-10 sm:py-10">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.12),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.08),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,250,252,0.94))]" />
-
-          <div className="relative">
-            <div className="flex flex-wrap gap-3">
-              <span className="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-[11px] font-extrabold tracking-[0.16em] text-sky-700">
-                STUDY TYPE ANALYSIS
-              </span>
-              <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-[11px] font-extrabold tracking-[0.16em] text-slate-600">
-                학부모 신뢰형 리포트
-              </span>
+    <div className="grid gap-4">
+      {axes.map((axis) => {
+        const pair = toFiveScalePair(scores[axis.left], scores[axis.right]);
+        return (
+          <div key={axis.name} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <div className="flex items-center justify-between gap-4 text-sm font-bold text-slate-700">
+              <span>{axis.leftLabel}</span>
+              <span className="text-slate-400">{axis.name}</span>
+              <span>{axis.rightLabel}</span>
             </div>
-
-            <div className="mt-7 max-w-3xl">
-              <p className="text-sm font-extrabold tracking-[0.18em] text-slate-400">
-                LEARNING PROFILE TEST
-              </p>
-
-              <h1 className="mt-3 text-4xl font-black leading-[1.12] tracking-[-0.03em] text-slate-950 sm:text-5xl">
-                학습성향
-                <br />
-                정밀 진단 검사
-              </h1>
-
-              <p className="mt-5 max-w-2xl text-[16px] leading-8 text-slate-600 sm:text-[17px]">
-                학생의 응답을 바탕으로 학습 방식, 판단 습관, 실행 패턴,
-                성장 가능성을 분석하고
-                <span className="font-bold text-slate-900">
-                  {" "}
-                  결과 해석 · 학습 전략 · 부모 코칭 포인트
-                </span>
-                를 한눈에 정리한 리포트로 제공합니다.
-              </p>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={onStart}
-                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-7 py-3.5 text-sm font-black text-white shadow-[0_16px_40px_rgba(15,23,42,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800"
-              >
-                검사 시작하기
-              </button>
-
-              <div className="text-sm font-semibold text-slate-500">
-                먼저 학생 기본 정보를 입력한 뒤 검사를 시작합니다.
+            <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+              <div>
+                <div className="h-2 rounded-full bg-slate-200">
+                  <div className="h-2 rounded-full bg-slate-700" style={{ width: `${pair.leftValue * 20}%` }} />
+                </div>
+                <div className="mt-2 text-xs font-bold text-slate-500">{pair.leftValue} / 5 · {scoreLabel(pair.leftValue)}</div>
+              </div>
+              <div className="text-xs font-black text-slate-400">VS</div>
+              <div>
+                <div className="h-2 rounded-full bg-slate-200">
+                  <div className="ml-auto h-2 rounded-full bg-indigo-500" style={{ width: `${pair.rightValue * 20}%` }} />
+                </div>
+                <div className="mt-2 text-right text-xs font-bold text-slate-500">{pair.rightValue} / 5 · {scoreLabel(pair.rightValue)}</div>
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="grid gap-6">
-          <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-900 p-7 text-white shadow-[0_24px_80px_rgba(2,6,23,0.18)]">
-            <div className="text-xs font-extrabold tracking-[0.18em] text-white/55">
-              REPORT PREVIEW
-            </div>
-
-            <h2 className="mt-3 text-[28px] font-black leading-[1.25] tracking-[-0.03em]">
-              결과는 단순한 유형명이 아니라
-              <br />
-              해석 중심 리포트입니다
-            </h2>
-
-            <p className="mt-4 text-sm leading-7 text-white/75">
-              학생의 성향을 이해하기 쉽게 정리하고, 실제 학습 상황에서
-              적용할 수 있는 방향까지 함께 제안합니다.
-            </p>
-          </div>
-        </div>
-      </div>
-    </Shell>
+        );
+      })}
+    </div>
   );
 }
 
-function StudentFormScreen({
-  student,
-  onChange,
-  onBack,
-  onSubmit,
-}: {
-  student: StudentInfo;
-  onChange: (field: keyof StudentInfo, value: string) => void;
-  onBack: () => void;
-  onSubmit: () => void;
-}) {
-  const isValid =
-    student.name.trim().length > 0 &&
-    student.grade.trim().length > 0 &&
-    student.phone.trim().length > 0;
-
+function ProgressBar({ current, total, color }: { current: number; total: number; color: string }) {
+  const progress = Math.round((current / total) * 100);
   return (
-    <Shell>
-      <div className="mx-auto max-w-3xl">
-        <SectionCard
-          title="학생 정보 입력"
-          desc="검사 시작 전 이름, 학년, 전화번호를 입력해 주세요."
-        >
-          <div className="grid gap-4">
-            <div>
-              <label className="mb-2 block text-sm font-black text-slate-700">
-                이름
-              </label>
-              <input
-                value={student.name}
-                onChange={(e) => onChange("name", e.target.value)}
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition focus:border-slate-400"
-                placeholder="예: 김민준"
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-black text-slate-700">
-                학년
-              </label>
-              <input
-                value={student.grade}
-                onChange={(e) => onChange("grade", e.target.value)}
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition focus:border-slate-400"
-                placeholder="예: 중2 / 고1"
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-black text-slate-700">
-                전화번호
-              </label>
-              <input
-                value={student.phone}
-                onChange={(e) => onChange("phone", e.target.value)}
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition focus:border-slate-400"
-                placeholder="예: 010-1234-5678"
-              />
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={onBack}
-              className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
-            >
-              이전으로
-            </button>
-
-            <button
-              type="button"
-              onClick={onSubmit}
-              disabled={!isValid}
-              className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              검사 시작하기
-            </button>
-          </div>
-        </SectionCard>
+    <div>
+      <div className="mb-2 flex items-center justify-between text-xs font-black tracking-[0.16em] text-slate-400">
+        <span>PROGRESS</span>
+        <span>{progress}%</span>
       </div>
-    </Shell>
-  );
-}
-
-function InfoItem({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
-      <div className="text-xs font-extrabold tracking-[0.16em] text-slate-400">
-        {title}
-      </div>
-      <div className="mt-2 text-sm font-semibold leading-6 text-slate-700">
-        {value}
+      <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+        <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${color}, #0f172a)` }} />
       </div>
     </div>
   );
 }
 
-function TestScreen({
-  currentIndex,
-  answers,
-  onAnswer,
-  onPrev,
-  isTransitioning,
-  student,
-}: {
-  currentIndex: number;
-  answers: number[];
-  onAnswer: (value: number) => void;
-  onPrev: () => void;
-  isTransitioning: boolean;
-  student: StudentInfo;
-}) {
-  const safeIndex = Math.min(Math.max(currentIndex, 0), QUESTIONS.length - 1);
-  const progress = Math.round(((safeIndex + 1) / QUESTIONS.length) * 100);
-  const selected = answers[safeIndex] ?? null;
-
+function LandingScreen({ onStart }: { onStart: () => void }) {
   return (
-    <Shell>
-      <div className="mx-auto max-w-3xl">
-        <div className="mb-4 rounded-[24px] border border-slate-200 bg-white/90 px-5 py-4 text-sm font-semibold text-slate-700 shadow-[0_8px_30px_rgba(15,23,42,0.06)]">
-          {student.name} / {student.grade} / {student.phone}
+    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:p-12">
+        <span className="inline-flex rounded-full bg-indigo-100 px-4 py-1 text-sm font-black text-indigo-700">학생 중심 · 학부모 신뢰형 리포트</span>
+        <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 sm:text-6xl">학습성향검사</h1>
+        <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+          학생의 학습 태도와 사고 방식, 실행 습관을 바탕으로 가장 가까운 학습성향을 분석합니다.
+          결과는 유형 해설, 학습 전략, 부모 코칭, 진로 방향까지 포함된 리포트로 제공됩니다.
+        </p>
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5"><h2 className="font-black">문항 수</h2><p className="mt-2 text-sm leading-6 text-slate-600">총 {QUESTIONS.length}문항의 2지선다 검사</p></div>
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5"><h2 className="font-black">분석 축</h2><p className="mt-2 text-sm leading-6 text-slate-600">E/P · R/C · M/O · S/F 4축 기반</p></div>
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5"><h2 className="font-black">결과 형식</h2><p className="mt-2 text-sm leading-6 text-slate-600">유형명 + 축 분석 + 인쇄용 리포트</p></div>
         </div>
-
-        <div className="rounded-[34px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:p-7">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div className="text-xs font-extrabold tracking-[0.18em] text-slate-400">
-                QUESTION
-              </div>
-              <div className="mt-2 text-lg font-black text-slate-900">
-                {safeIndex + 1} / {QUESTIONS.length}
-              </div>
-            </div>
-
-            <div className="min-w-[180px] flex-1 sm:max-w-xs">
-              <ProgressBar value={progress} />
-              <div className="mt-2 text-right text-xs font-bold text-slate-500">
-                {progress}% 진행
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 rounded-[30px] bg-gradient-to-br from-slate-50 to-sky-50 p-6 sm:p-8">
-            <div className="text-sm font-bold uppercase tracking-[0.2em] text-sky-600">
-              문항
-            </div>
-            <p className="mt-4 text-2xl font-black leading-[1.55] tracking-tight text-slate-900 sm:text-[30px]">
-              {QUESTIONS[safeIndex] ?? "문항을 불러오는 중입니다."}
-            </p>
-          </div>
-
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {CHOICES.map((choice) => (
-              <ChoiceButton
-                key={choice.label}
-                active={selected === choice.value}
-                label={choice.label}
-                disabled={isTransitioning}
-                onClick={() => onAnswer(choice.value)}
-              />
-            ))}
-          </div>
-
-          <div className="mt-6 flex items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={onPrev}
-              disabled={safeIndex === 0 || isTransitioning}
-              className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              이전 문항
-            </button>
-
-            <div className="text-sm font-semibold text-slate-500">
-              가장 가까운 응답을 선택해 주세요.
-            </div>
-          </div>
-        </div>
+        <button type="button" onClick={onStart} className="mt-10 rounded-full bg-slate-900 px-7 py-4 text-base font-black text-white transition hover:-translate-y-0.5 hover:bg-slate-800">검사 시작하기</button>
       </div>
-    </Shell>
+    </div>
   );
 }
 
-function ResultScreen({
-  answers,
-  onRestart,
-  student,
-}: {
-  answers: number[];
-  onRestart: () => void;
-  student: StudentInfo;
-}) {
-  const scores = useMemo(() => makeScores(answers), [answers]);
-  const axisProfile = useMemo(() => getAxisProfile(scores), [scores]);
-  const resolved = useMemo(() => resolveResult(scores), [scores]);
-  const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
-  const characterMeta = CHARACTER_META[resolved.key] || CHARACTER_META.DEFAULT;
-
-  const axes = useMemo(() => {
-    const social = toFiveScalePair(scores.P, scores.E);
-    const judgment = toFiveScalePair(scores.R, scores.C);
-    const track = toFiveScalePair(scores.M, scores.O);
-    const style = toFiveScalePair(scores.F, scores.S);
-
-    return [
-      {
-        name: "대인 성향",
-        left: "수동적",
-        right: "외향적",
-        leftValue: social.leftValue,
-        rightValue: social.rightValue,
-      },
-      {
-        name: "판단 방식",
-        left: "원리형",
-        right: "규범형",
-        leftValue: judgment.leftValue,
-        rightValue: judgment.rightValue,
-      },
-      {
-        name: "진행 성향",
-        left: "자유형",
-        right: "계획형",
-        leftValue: track.leftValue,
-        rightValue: track.rightValue,
-      },
-      {
-        name: "실행 스타일",
-        left: "유연형",
-        right: "완수형",
-        leftValue: style.leftValue,
-        rightValue: style.rightValue,
-      },
-    ];
-  }, [scores]);
-
-  const printableHtml = useMemo(
-    () =>
-      generatePrintableReport({
-        report,
-        resultCode: resolved.fullCode,
-        student,
-        axes,
-      }),
-    [report, resolved.fullCode, student, axes]
-  );
+function FormScreen({ student, onChange, onNext, onBack }: { student: StudentInfo; onChange: (field: keyof StudentInfo, value: string) => void; onNext: () => void; onBack: () => void }) {
+  const isValid = student.name.trim() && student.grade.trim() && student.phone.trim();
+  const fields: Array<{ key: keyof StudentInfo; label: string; placeholder: string }> = [
+    { key: "name", label: "학생 이름", placeholder: "예: 홍길동" },
+    { key: "grade", label: "학년", placeholder: "예: 중2 / 고1" },
+    { key: "phone", label: "전화번호", placeholder: "예: 010-1234-5678" },
+  ];
 
   return (
-    <Shell>
-      <div className="grid gap-6">
-        <CharacterSpotlight
-          report={report}
-          meta={characterMeta}
-          code={resolved.code}
-          student={student}
-        />
-
-        <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-          <div className="grid gap-6">
-            <SectionCard
-              title="핵심 축 분석"
-              desc="성향의 방향성과 강도를 보기 쉽게 정리했어요."
-              accentColor={report.color}
-            >
-              <div className="grid gap-4">
-                {axes.map((axis) => (
-                  <AxisCard
-                    key={axis.name}
-                    name={axis.name}
-                    left={axis.left}
-                    right={axis.right}
-                    leftValue={axis.leftValue}
-                    rightValue={axis.rightValue}
-                    color={report.color}
-                  />
-                ))}
-              </div>
-
-              <div
-                className="mt-5 rounded-[22px] border p-4 text-sm leading-7"
-                style={{
-                  background: hexToRgba(report.color, 0.08),
-                  borderColor: hexToRgba(report.color, 0.15),
-                }}
-              >
-                <div className="font-black text-slate-900">프로파일 요약</div>
-                <div className="mt-2 text-slate-700">
-                  사회성 {axisProfile.social.toFixed(2)} · 판단 {axisProfile.judgment.toFixed(2)} · 진행{" "}
-                  {axisProfile.track.toFixed(2)} · 실행 {axisProfile.style.toFixed(2)}
-                </div>
-              </div>
-            </SectionCard>
-
-            <SectionCard
-              title="원점수 요약"
-              desc="엑셀 채점표 기준 축별 합산 점수예요."
-              accentColor={report.color}
-            >
-              <ScoreSummary scores={scores} />
-            </SectionCard>
-          </div>
-
-          <div className="grid gap-6">
-            <SectionCard
-              title="결과 해석"
-              desc="유형 설명과 실제 적용 방향을 함께 확인해 보세요."
-              accentColor={report.color}
-            >
-              <div className="grid gap-4">
-                <InfoItem title="이름" value={student.name} />
-                <InfoItem title="학년" value={student.grade} />
-                <InfoItem title="전화번호" value={student.phone} />
-                <InfoItem title="유형명" value={`${report.title} · ${report.subtitle}`} />
-                <InfoItem title="핵심 설명" value={report.summary} />
-                <InfoItem title="학습 전략" value={report.strategy} />
-                <InfoItem title="부모 코칭" value={report.parent} />
-                <InfoItem title="진로 방향" value={report.path} />
-                <InfoItem title="주의 패턴" value={report.danger} />
-                <InfoItem title="대화 제안" value={report.talk} />
-              </div>
-            </SectionCard>
-
-            <SectionCard
-              title="활용하기"
-              desc="출력하거나 다시 검사할 수 있어요."
-              accentColor={report.color}
-            >
-              <div className="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => printReport(printableHtml)}
-                  className="rounded-full px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
-                  style={{
-                    background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)`,
-                  }}
-                >
-                  PDF / 인쇄하기
-                </button>
-
-                <button
-                  type="button"
-                  onClick={onRestart}
-                  className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
-                >
-                  처음부터 다시하기
-                </button>
-              </div>
-            </SectionCard>
-          </div>
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="rounded-[32px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
+        <h2 className="text-3xl font-black text-slate-900">기본 정보 입력</h2>
+        <p className="mt-3 text-slate-600">검사 결과 리포트에 표시될 학생 정보를 입력해 주세요.</p>
+        <div className="mt-8 grid gap-5">
+          {fields.map((field) => (
+            <label key={field.key} className="grid gap-2">
+              <span className="text-sm font-black text-slate-700">{field.label}</span>
+              <input
+                value={student[field.key]}
+                onChange={(e) => onChange(field.key, e.target.value)}
+                placeholder={field.placeholder}
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-4 text-base font-semibold text-slate-900 outline-none ring-0 placeholder:text-slate-400 focus:border-slate-400"
+              />
+            </label>
+          ))}
+        </div>
+        <div className="mt-8 flex items-center justify-between gap-3">
+          <button type="button" onClick={onBack} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700">이전</button>
+          <button type="button" disabled={!isValid} onClick={onNext} className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40">검사하러 가기</button>
         </div>
       </div>
-    </Shell>
+    </div>
+  );
+}
+
+function TestScreen({ currentIndex, answers, onAnswer, onNext, onPrev }: { currentIndex: number; answers: number[]; onAnswer: (value: number) => void; onNext: () => void; onPrev: () => void }) {
+  const question = QUESTIONS[currentIndex];
+  const currentAnswer = answers[currentIndex];
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="rounded-[32px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <div className="text-sm font-black tracking-[0.16em] text-indigo-600">QUESTION {currentIndex + 1} / {QUESTIONS.length}</div>
+            <h2 className="mt-2 text-3xl font-black leading-tight text-slate-900">{question}</h2>
+          </div>
+        </div>
+        <ProgressBar current={currentIndex + 1} total={QUESTIONS.length} color="#4f46e5" />
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {CHOICES.map((choice) => {
+            const active = currentAnswer === choice.value;
+            return (
+              <button
+                key={choice.label}
+                type="button"
+                onClick={() => onAnswer(choice.value)}
+                className={`rounded-[28px] border px-6 py-6 text-left transition ${active ? "border-slate-900 bg-slate-900 text-white shadow-xl" : "border-slate-200 bg-white text-slate-900 hover:border-slate-300 hover:bg-slate-50"}`}
+              >
+                <div className="text-xl font-black">{choice.label}</div>
+                <div className={`mt-2 text-sm ${active ? "text-slate-200" : "text-slate-500"}`}>{choice.value === 1 ? "해당 문항에 동의합니다." : "해당 문항에 동의하지 않습니다."}</div>
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-8 flex items-center justify-between gap-3">
+          <button type="button" onClick={onPrev} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700">이전</button>
+          <button type="button" onClick={onNext} disabled={currentAnswer === -1} className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40">{currentIndex === QUESTIONS.length - 1 ? "결과 보기" : "다음"}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ResultScreen({ student, scores, resolved, report, onRestart }: { student: StudentInfo; scores: Record<string, number>; resolved: ResolvedResult; report: Report; onRestart: () => void }) {
+  const character = CHARACTER_META[resolved.key] || CHARACTER_META.DEFAULT;
+  const axes = [
+    { name: "외향·내향", left: "내향", right: "외향", ...toFiveScalePair(scores.P, scores.E) },
+    { name: "논리·창의", left: "논리", right: "창의", ...toFiveScalePair(scores.R, scores.C) },
+    { name: "모범·자율", left: "모범", right: "자율", ...toFiveScalePair(scores.M, scores.O) },
+    { name: "안정·도전", left: "안정", right: "도전", ...toFiveScalePair(scores.S, scores.F) },
+  ];
+  const printableHtml = generatePrintableReport({ report, resultCode: resolved.fullCode, student, axes });
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="grid gap-6 lg:grid-cols-[1.12fr_0.88fr]">
+        <div className="grid gap-6">
+          <section className="relative overflow-hidden rounded-[32px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
+            <div className={`absolute inset-0 bg-gradient-to-br ${character.aura}`} />
+            <div className="relative">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-black text-slate-700 shadow-sm">
+                <span>{character.emoji}</span>
+                <span>{character.label}</span>
+              </div>
+              <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">{report.title}</h1>
+              <p className="mt-3 text-lg font-bold text-slate-600">{report.subtitle}</p>
+              <p className="mt-5 max-w-3xl text-base leading-8 text-slate-700">{character.tagline}</p>
+              <div className="mt-6 flex flex-wrap gap-3 text-sm font-black text-slate-600">
+                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">결과코드 {resolved.code}</span>
+                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">차이값 {resolved.diffText}</span>
+                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">학생 {student.name || "미입력"}</span>
+              </div>
+            </div>
+          </section>
+
+          <SectionCard title="축 분석" desc="네 가지 축에서 현재 응답의 균형을 확인해 보세요." accentColor={report.color}>
+            <AxisBars scores={scores} />
+          </SectionCard>
+
+          <SectionCard title="원점수 요약" desc="엑셀 채점표 기준 축별 합산 점수예요." accentColor={report.color}>
+            <ScoreSummary scores={scores} />
+          </SectionCard>
+        </div>
+
+        <div className="grid gap-6">
+          <SectionCard title="결과 해석" desc="유형 설명과 실제 적용 방향을 함께 확인해 보세요." accentColor={report.color}>
+            <div className="grid gap-4">
+              <InfoItem title="이름" value={student.name} />
+              <InfoItem title="학년" value={student.grade} />
+              <InfoItem title="전화번호" value={student.phone} />
+              <InfoItem title="유형명" value={`${report.title} · ${report.subtitle}`} />
+              <InfoItem title="핵심 설명" value={report.summary} />
+              <InfoItem title="학습 전략" value={report.strategy} />
+              <InfoItem title="부모 코칭" value={report.parent} />
+              <InfoItem title="진로 방향" value={report.path} />
+              <InfoItem title="주의 패턴" value={report.danger} />
+              <InfoItem title="대화 제안" value={report.talk} />
+            </div>
+          </SectionCard>
+
+          <SectionCard title="활용하기" desc="출력하거나 다시 검사할 수 있어요." accentColor={report.color}>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => printReport(printableHtml)}
+                className="rounded-full px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+                style={{ background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)` }}
+              >
+                PDF / 인쇄하기
+              </button>
+              <button type="button" onClick={onRestart} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50">처음부터 다시하기</button>
+            </div>
+          </SectionCard>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -1902,144 +1283,102 @@ export default function Page() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [hasSavedResult, setHasSavedResult] = useState(false);
+  const [student, setStudent] = useState<StudentInfo>({ name: "", grade: "", phone: "" });
+  const [answers, setAnswers] = useState<number[]>(() => Array(QUESTIONS.length).fill(-1));
 
-  const [student, setStudent] = useState<StudentInfo>({
-    name: "",
-    grade: "",
-    phone: "",
-  });
-
-  const [answers, setAnswers] = useState<number[]>(() =>
-    Array(QUESTIONS.length).fill(-1)
-  );
-
-  const answeredCount = useMemo(
-    () => answers.filter((answer) => answer !== -1).length,
-    [answers]
-  );
+  const answeredCount = useMemo(() => answers.filter((answer) => answer !== -1).length, [answers]);
   const isComplete = answeredCount === QUESTIONS.length;
-
   const scores = useMemo(() => makeScores(answers), [answers]);
   const resolved = useMemo(() => resolveResult(scores), [scores]);
   const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
+  const axisProfile = useMemo(() => getAxisProfile(scores), [scores]);
 
   useEffect(() => {
-    if (step !== "result" || hasSavedResult) return;
-    if (!isComplete) return;
-
+    if (step !== "result" || hasSavedResult || !isComplete) return;
     const record: SubmissionRecord = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
       createdAt: new Date().toISOString(),
       student,
       answers,
       resultKey: resolved.key,
-      resultCode: resolved.code,
+      resultCode: resolved.fullCode,
       reportTitle: report.title,
       scores,
     };
-
     saveSubmission(record);
     setHasSavedResult(true);
   }, [step, hasSavedResult, isComplete, student, answers, resolved, report, scores]);
 
-  const handleStart = () => {
-    setStep("form");
+  const moveSafely = (next: () => void) => {
+    setIsTransitioning(true);
+    window.setTimeout(() => {
+      next();
+      setIsTransitioning(false);
+    }, 120);
   };
 
   const handleStudentChange = (field: keyof StudentInfo, value: string) => {
-    setStudent((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleFormSubmit = () => {
-    if (!student.name.trim() || !student.grade.trim() || !student.phone.trim()) {
-      window.alert("이름, 학년, 전화번호를 모두 입력해 주세요.");
-      return;
-    }
-    setStep("test");
+    setStudent((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleAnswer = (value: number) => {
-    if (isTransitioning) return;
-    if (currentIndex < 0 || currentIndex >= QUESTIONS.length) return;
-
-    setIsTransitioning(true);
-
     setAnswers((prev) => {
       const next = [...prev];
       next[currentIndex] = value;
       return next;
     });
+  };
 
-    const isLastQuestion = currentIndex === QUESTIONS.length - 1;
-
-    if (isLastQuestion) {
-      setTimeout(() => {
-        setStep("result");
-        setIsTransitioning(false);
-      }, 120);
+  const goNext = () => {
+    if (step === "test" && currentIndex === QUESTIONS.length - 1) {
+      moveSafely(() => setStep("result"));
       return;
     }
 
-    setTimeout(() => {
-      setCurrentIndex((prev) => Math.min(prev + 1, QUESTIONS.length - 1));
-      setIsTransitioning(false);
-    }, 120);
+    if (step === "test") {
+      moveSafely(() => setCurrentIndex((prev) => prev + 1));
+    }
   };
 
-  const handlePrev = () => {
-    if (isTransitioning) return;
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  const goPrev = () => {
+    if (step === "form") {
+      moveSafely(() => setStep("landing"));
+      return;
+    }
+    if (step === "test" && currentIndex === 0) {
+      moveSafely(() => setStep("form"));
+      return;
+    }
+    if (step === "test") {
+      moveSafely(() => setCurrentIndex((prev) => prev - 1));
+    }
   };
 
-  const handleRestart = () => {
+  const restart = () => {
+    setStudent({ name: "", grade: "", phone: "" });
     setAnswers(Array(QUESTIONS.length).fill(-1));
     setCurrentIndex(0);
-    setIsTransitioning(false);
     setHasSavedResult(false);
-    setStudent({
-      name: "",
-      grade: "",
-      phone: "",
-    });
     setStep("landing");
   };
 
-  if (step === "landing") {
-    return <LandingScreen onStart={handleStart} />;
-  }
-
-  if (step === "form") {
-    return (
-      <StudentFormScreen
-        student={student}
-        onChange={handleStudentChange}
-        onBack={() => setStep("landing")}
-        onSubmit={handleFormSubmit}
-      />
-    );
-  }
-
-  if (step === "test" || !isComplete) {
-    return (
-      <TestScreen
-        currentIndex={currentIndex}
-        answers={answers}
-        onAnswer={handleAnswer}
-        onPrev={handlePrev}
-        isTransitioning={isTransitioning}
-        student={student}
-      />
-    );
-  }
-
   return (
-    <ResultScreen
-      answers={answers}
-      onRestart={handleRestart}
-      student={student}
-    />
+    <Shell>
+      <div className={`transition-opacity duration-200 ${isTransitioning ? "opacity-40" : "opacity-100"}`}>
+        {step === "landing" && <LandingScreen onStart={() => moveSafely(() => setStep("form"))} />}
+        {step === "form" && <FormScreen student={student} onChange={handleStudentChange} onNext={() => moveSafely(() => setStep("test"))} onBack={() => moveSafely(() => setStep("landing"))} />}
+        {step === "test" && <TestScreen currentIndex={currentIndex} answers={answers} onAnswer={handleAnswer} onNext={goNext} onPrev={goPrev} />}
+        {step === "result" && <ResultScreen student={student} scores={scores} resolved={resolved} report={report} onRestart={restart} />}
+      </div>
+
+      <div className="fixed bottom-4 left-1/2 z-20 w-[min(92vw,720px)] -translate-x-1/2 rounded-full border border-white/70 bg-white/90 px-4 py-3 shadow-lg backdrop-blur">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-black tracking-[0.08em] text-slate-500">
+          <span>STEP {step.toUpperCase()}</span>
+          <span>응답 {answeredCount} / {QUESTIONS.length}</span>
+          <span>예상 코드 {resolved.code}</span>
+          <span>축 {axisProfile.social.toFixed(1)} / {axisProfile.judgment.toFixed(1)} / {axisProfile.track.toFixed(1)} / {axisProfile.style.toFixed(1)}</span>
+        </div>
+      </div>
+    </Shell>
   );
 }
