@@ -7,6 +7,7 @@ type Step = "landing" | "form" | "test" | "result";
 type StudentInfo = {
   name: string;
   grade: string;
+  school: string;
   phone: string;
 };
 
@@ -1061,30 +1062,27 @@ function AxisBars({ scores }: { scores: Record<string, number> }) {
   ] as const;
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-6">
       {axes.map((axis) => {
         const pair = toFiveScalePair(scores[axis.left], scores[axis.right]);
         return (
-          <div key={axis.name} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="flex items-center justify-between gap-4 text-sm font-bold text-slate-700">
+          <div key={axis.name} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-3 flex items-center justify-between text-sm font-bold text-slate-700">
               <span>{axis.leftLabel}</span>
               <span className="text-slate-400">{axis.name}</span>
               <span>{axis.rightLabel}</span>
             </div>
-            <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-              <div>
-                <div className="h-2 rounded-full bg-slate-200">
-                  <div className="h-2 rounded-full bg-slate-700" style={{ width: `${pair.leftValue * 20}%` }} />
-                </div>
-                <div className="mt-2 text-xs font-bold text-slate-500">{pair.leftValue} / 5 · {scoreLabel(pair.leftValue)}</div>
-              </div>
-              <div className="text-xs font-black text-slate-400">VS</div>
-              <div>
-                <div className="h-2 rounded-full bg-slate-200">
-                  <div className="ml-auto h-2 rounded-full bg-indigo-500" style={{ width: `${pair.rightValue * 20}%` }} />
-                </div>
-                <div className="mt-2 text-right text-xs font-bold text-slate-500">{pair.rightValue} / 5 · {scoreLabel(pair.rightValue)}</div>
-              </div>
+
+            <div className="relative h-4 w-full rounded-full bg-slate-200">
+              <div
+                className="absolute top-0 left-0 h-4 rounded-full bg-gradient-to-r from-slate-700 to-indigo-500 transition-all"
+                style={{ width: `${pair.rightValue * 20}%` }}
+              />
+            </div>
+
+            <div className="mt-3 flex justify-between text-xs font-bold text-slate-500">
+              <span>{pair.leftValue} / 5</span>
+              <span>{pair.rightValue} / 5</span>
             </div>
           </div>
         );
@@ -1134,6 +1132,7 @@ function FormScreen({ student, onChange, onNext, onBack }: { student: StudentInf
   const fields: Array<{ key: keyof StudentInfo; label: string; placeholder: string }> = [
     { key: "name", label: "학생 이름", placeholder: "예: 홍길동" },
     { key: "grade", label: "학년", placeholder: "예: 중2 / 고1" },
+    { key: "school", label: "학교명", placeholder: "예: OO중학교" },
     { key: "phone", label: "전화번호", placeholder: "예: 010-1234-5678" },
   ];
 
@@ -1246,6 +1245,7 @@ function ResultScreen({ student, scores, resolved, report, onRestart }: { studen
             <div className="grid gap-4">
               <InfoItem title="이름" value={student.name} />
               <InfoItem title="학년" value={student.grade} />
+              <InfoItem title="학교" value={student.school} />
               <InfoItem title="전화번호" value={student.phone} />
               <InfoItem title="유형명" value={`${report.title} · ${report.subtitle}`} />
               <InfoItem title="핵심 설명" value={report.summary} />
@@ -1281,7 +1281,7 @@ export default function Page() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [hasSavedResult, setHasSavedResult] = useState(false);
-  const [student, setStudent] = useState<StudentInfo>({ name: "", grade: "", phone: "" });
+  const [student, setStudent] = useState<StudentInfo>({ name: "", grade: "", school: "", phone: "" });
   const [answers, setAnswers] = useState<number[]>(() => Array(QUESTIONS.length).fill(-1));
 
   const answeredCount = useMemo(() => answers.filter((answer) => answer !== -1).length, [answers]);
