@@ -2,351 +2,376 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type StudentInfo = {
-  name: string;
-  grade: string;
-  school: string;
-  phone: string;
-};
+type RawSubmission = any;
 
-type SubmissionRecord = {
+type AdminSubmission = {
   id: string;
   createdAt: string;
-  student: StudentInfo;
-  answers: number[];
+  student: {
+    name: string;
+    school: string;
+    grade: string;
+    phone: string;
+  };
   resultKey: string;
   resultCode: string;
   reportTitle: string;
+  answers: number[];
   scores: Record<string, number>;
 };
 
-const ADMIN_PASSWORD = "3797";
-
-function formatDate(value: string) {
-  try {
-    return new Intl.DateTimeFormat("ko-KR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(value));
-  } catch {
-    return value;
-  }
+function normalizeSubmission(row: RawSubmission): AdminSubmission {
+  return {
+    id: String(row?.id ?? ""),
+    createdAt: String(row?.createdAt ?? row?.created_at ?? ""),
+    student: {
+      name: String(row?.student?.name ?? row?.student_name ?? ""),
+      school: String(row?.student?.school ?? row?.school ?? ""),
+      grade: String(row?.student?.grade ?? row?.grade ?? ""),
+      phone: String(row?.student?.phone ?? row?.phone ?? ""),
+    },
+    resultKey: String(row?.resultKey ?? row?.result_key ?? ""),
+    resultCode: String(row?.resultCode ?? row?.result_code ?? ""),
+    reportTitle: String(row?.reportTitle ?? row?.report_title ?? ""),
+    answers: Array.isArray(row?.answers) ? row.answers : [],
+    scores:
+      row?.scores && typeof row.scores === "object" && !Array.isArray(row.scores)
+        ? row.scores
+        : {},
+  };
 }
 
-function getScoreSummary(scores: Record<string, number>) {
-  const keys = ["E", "P", "R", "C", "M", "O", "S", "F"] as const;
-  return keys.map((key) => `${key} ${scores[key] ?? 0}`).join(" · ");
+function formatDate(value: string) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleDateString("ko-KR");
+}
+
+function formatDateTime(value: string) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleString("ko-KR");
+}
+
+function scoreEntries(scores: Record<string, number>) {
+  return Object.entries(scores).sort((a, b) => b[1] - a[1]);
 }
 
 export default function AdminPage() {
-  const [isAuth, setIsAuth] = useState(false);
-  const [password, setPassword] = useState("");
+  const [items, setItems] = useState<AdminSubmission[]>([]);
+  const [selectedId, setSelectedId] = useState<string>("");
   const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [submissions, setSubmissions] = useState<SubmissionRecord[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [statusText, setStatusText] = useState("불러오는 중...");
+  const [errorText, setErrorText] = useState("");
 
-  const fetchSubmissions = async () => {
-    setLoading(true);
-
+  async function loadItems() {
     try {
-      const response = await fetch("/api/submissions", {
+      setLoading(true);
+      setErrorText("");
+      setStatusText("불러오는 중...");
+
+      const res = await fetch("/api/submissions", {
         method: "GET",
         cache: "no-store",
       });
 
-      const json = await response.json();
+      const data = await res.json().catch(() => null);
 
-      if (!response.ok) {
-        throw new Error(json?.message || "목록을 불러오지 못했습니다.");
+      if (!res.ok || !data?.ok) {
+        throw new Error(data?.error || "목록 조회 중 오류가 발생했습니다.");
       }
 
-      setSubmissions(Array.isArray(json?.items) ? json.items : []);
+      const normalized = Array.isArray(data?.items)
+        ? data.items.map(normalizeSubmission)
+        : [];
+
+      setItems(normalized);
+
+      if (normalized.length > 0) {
+        setSelectedId((prev) => prev || normalized[0].id);
+      } else {
+        setSelectedId("");
+      }
+
+      setStatusText("준비 완료");
     } catch (error) {
       console.error(error);
+      setErrorText("목록 조회 중 오류가 발생했습니다.");
+      setStatusText("조회 실패");
       alert("목록 조회 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    if (!isAuth) return;
-    fetchSubmissions();
-  }, [isAuth]);
-
-  const filtered = useMemo(() => {
-    const keyword = query.trim().toLowerCase();
-    if (!keyword) return submissions;
-
-    return submissions.filter((item) => {
-      const name = item.student?.name?.toLowerCase() ?? "";
-      const school = item.student?.school?.toLowerCase() ?? "";
-      const grade = item.student?.grade?.toLowerCase() ?? "";
-      const phone = item.student?.phone?.toLowerCase() ?? "";
-      const title = item.reportTitle?.toLowerCase() ?? "";
-      const code = item.resultCode?.toLowerCase() ?? "";
-
-      return (
-        name.includes(keyword) ||
-        school.includes(keyword) ||
-        grade.includes(keyword) ||
-        phone.includes(keyword) ||
-        title.includes(keyword) ||
-        code.includes(keyword)
-      );
-    });
-  }, [query, submissions]);
-
-  const selected = useMemo(() => {
-    if (!selectedId) return filtered[0] ?? null;
-    return filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? null;
-  }, [filtered, selectedId]);
-
-  if (!isAuth) {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
-        <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-xl">
-          <h1 className="mb-2 text-2xl font-black text-slate-900">관리자 로그인</h1>
-          <p className="mb-5 text-sm leading-6 text-slate-500">
-            관리자 페이지에 접근하려면 비밀번호를 입력해 주세요.
-          </p>
-
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                if (password === ADMIN_PASSWORD) {
-                  setIsAuth(true);
-                } else {
-                  alert("비밀번호 틀림");
-                }
-              }
-            }}
-            placeholder="비밀번호 입력"
-            className="mb-4 w-full rounded-2xl border border-slate-200 px-4 py-3 text-base font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-400"
-          />
-
-          <button
-            type="button"
-            onClick={() => {
-              if (password === ADMIN_PASSWORD) {
-                setIsAuth(true);
-              } else {
-                alert("비밀번호 틀림");
-              }
-            }}
-            className="w-full rounded-2xl bg-black px-4 py-3 text-base font-bold text-white transition hover:bg-slate-800"
-          >
-            로그인
-          </button>
-        </div>
-      </main>
-    );
   }
 
+  useEffect(() => {
+    loadItems();
+  }, []);
+
+  const filteredItems = useMemo(() => {
+    const keyword = query.trim().toLowerCase();
+    if (!keyword) return items;
+
+    return items.filter((item) => {
+      const haystack = [
+        item.student.name,
+        item.student.school,
+        item.student.grade,
+        item.student.phone,
+        item.reportTitle,
+        item.resultCode,
+        item.resultKey,
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(keyword);
+    });
+  }, [items, query]);
+
+  const selected =
+    filteredItems.find((item) => item.id === selectedId) ||
+    items.find((item) => item.id === selectedId) ||
+    filteredItems[0] ||
+    null;
+
+  const latestDate = filteredItems[0]?.createdAt || items[0]?.createdAt || "";
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-sky-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <section className="rounded-[32px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-          <div className="flex flex-wrap items-start justify-between gap-4">
+    <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)] text-slate-900">
+      <div className="mx-auto max-w-[1440px] px-5 py-8 md:px-8">
+        <section className="rounded-[36px] border border-white/80 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur md:p-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <span className="inline-flex rounded-full bg-indigo-100 px-4 py-1 text-sm font-black text-indigo-700">
+              <div className="inline-flex rounded-full bg-indigo-100 px-5 py-2 text-sm font-black text-indigo-700">
                 관리자 전용
-              </span>
-              <h1 className="mt-5 text-4xl font-black tracking-tight text-slate-900">
+              </div>
+              <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 md:text-6xl">
                 학습성향검사 관리자
               </h1>
-              <p className="mt-3 text-base leading-7 text-slate-600">
+              <p className="mt-4 text-lg leading-8 text-slate-500">
                 모든 기기에서 저장된 학생 결과를 조회합니다.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex gap-3">
               <button
                 type="button"
-                onClick={fetchSubmissions}
-                className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+                onClick={loadItems}
+                className="rounded-full border border-slate-200 bg-white px-6 py-3 text-base font-black text-slate-700 transition hover:bg-slate-50"
               >
                 새로고침
               </button>
-
               <button
                 type="button"
                 onClick={() => {
-                  setIsAuth(false);
-                  setPassword("");
-                  setSubmissions([]);
-                  setSelectedId(null);
+                  window.location.href = "/";
                 }}
-                className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+                className="rounded-full border border-slate-200 bg-white px-6 py-3 text-base font-black text-slate-700 transition hover:bg-slate-50"
               >
                 로그아웃
               </button>
             </div>
           </div>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-4">
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-              <div className="text-xs font-black tracking-[0.18em] text-slate-400">TOTAL</div>
-              <div className="mt-2 text-3xl font-black text-slate-900">{submissions.length}</div>
-              <div className="mt-2 text-sm text-slate-500">저장된 전체 결과</div>
+          <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+              <div className="text-sm font-black tracking-[0.18em] text-slate-400">TOTAL</div>
+              <div className="mt-3 text-5xl font-black text-slate-900">{items.length}</div>
+              <div className="mt-3 text-sm text-slate-500">저장된 전체 결과</div>
             </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-              <div className="text-xs font-black tracking-[0.18em] text-slate-400">FILTERED</div>
-              <div className="mt-2 text-3xl font-black text-slate-900">{filtered.length}</div>
-              <div className="mt-2 text-sm text-slate-500">현재 검색 결과</div>
+            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+              <div className="text-sm font-black tracking-[0.18em] text-slate-400">FILTERED</div>
+              <div className="mt-3 text-5xl font-black text-slate-900">{filteredItems.length}</div>
+              <div className="mt-3 text-sm text-slate-500">현재 검색 결과</div>
             </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-              <div className="text-xs font-black tracking-[0.18em] text-slate-400">LATEST</div>
-              <div className="mt-2 text-lg font-black text-slate-900">
-                {submissions[0] ? formatDate(submissions[0].createdAt) : "-"}
+            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+              <div className="text-sm font-black tracking-[0.18em] text-slate-400">LATEST</div>
+              <div className="mt-3 text-2xl font-black text-slate-900">
+                {latestDate ? formatDateTime(latestDate) : "-"}
               </div>
-              <div className="mt-2 text-sm text-slate-500">가장 최근 검사 시각</div>
+              <div className="mt-3 text-sm text-slate-500">가장 최근 검사 시각</div>
             </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-              <div className="text-xs font-black tracking-[0.18em] text-slate-400">STATUS</div>
-              <div className="mt-2 text-lg font-black text-slate-900">
-                {loading ? "불러오는 중..." : "준비 완료"}
+            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+              <div className="text-sm font-black tracking-[0.18em] text-slate-400">STATUS</div>
+              <div className="mt-3 text-2xl font-black text-slate-900">
+                {loading ? "불러오는 중..." : statusText}
               </div>
-              <div className="mt-2 text-sm text-slate-500">서버 연결 상태</div>
+              <div className="mt-3 text-sm text-slate-500">서버 연결 상태</div>
             </div>
           </div>
         </section>
 
-        <section className="mt-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-[28px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-2xl font-black text-slate-900">결과 목록</h2>
+        <div className="mt-8 grid gap-8 xl:grid-cols-[1.45fr_0.95fr]">
+          <section className="rounded-[32px] border border-white/80 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur md:p-8">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <h2 className="text-4xl font-black tracking-tight text-slate-900">결과 목록</h2>
 
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="이름, 학교, 학년, 전화번호, 결과유형 검색"
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-400 md:max-w-md"
+                className="w-full max-w-[560px] rounded-[20px] border border-slate-200 bg-slate-50 px-5 py-4 text-lg font-semibold text-slate-700 outline-none placeholder:text-slate-400 focus:border-slate-400"
               />
             </div>
 
-            {filtered.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center text-slate-500">
-                저장된 결과가 없거나 검색 결과가 없습니다.
+            <div className="mt-6 overflow-hidden rounded-[28px] border border-slate-200 bg-slate-50">
+              <div className="grid grid-cols-[1.1fr_1fr_1fr_1fr_1fr_1.5fr_1fr] gap-2 border-b border-slate-200 px-4 py-5 text-center text-sm font-black text-slate-500 md:px-6">
+                <div>날짜</div>
+                <div>이름</div>
+                <div>학교</div>
+                <div>학년</div>
+                <div>유형</div>
+                <div>결과코드</div>
+                <div>관리</div>
               </div>
-            ) : (
-              <div className="overflow-hidden rounded-3xl border border-slate-200">
-                <div className="overflow-x-auto">
-                  <table className="min-w-full border-collapse text-sm">
-                    <thead className="bg-slate-50 text-left text-slate-500">
-                      <tr>
-                        <th className="px-4 py-4 font-black">날짜</th>
-                        <th className="px-4 py-4 font-black">이름</th>
-                        <th className="px-4 py-4 font-black">학교</th>
-                        <th className="px-4 py-4 font-black">학년</th>
-                        <th className="px-4 py-4 font-black">유형</th>
-                        <th className="px-4 py-4 font-black">결과코드</th>
-                        <th className="px-4 py-4 font-black">관리</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filtered.map((item) => {
-                        const active = selected?.id === item.id;
 
-                        return (
-                          <tr
-                            key={item.id}
-                            className={`border-t border-slate-200 ${
-                              active ? "bg-indigo-50/60" : "bg-white"
-                            }`}
-                          >
-                            <td className="px-4 py-4 font-medium text-slate-600">
-                              {formatDate(item.createdAt)}
-                            </td>
-                            <td className="px-4 py-4 font-black text-slate-900">
-                              {item.student?.name || "-"}
-                            </td>
-                            <td className="px-4 py-4 text-slate-700">
-                              {item.student?.school || "-"}
-                            </td>
-                            <td className="px-4 py-4 text-slate-700">
-                              {item.student?.grade || "-"}
-                            </td>
-                            <td className="px-4 py-4 text-slate-700">
-                              {item.reportTitle || "-"}
-                            </td>
-                            <td className="px-4 py-4 font-mono text-xs text-slate-500">
-                              {item.resultCode || "-"}
-                            </td>
-                            <td className="px-4 py-4">
-                              <button
-                                type="button"
-                                onClick={() => setSelectedId(item.id)}
-                                className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 transition hover:bg-slate-50"
-                              >
-                                상세보기
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+              {errorText ? (
+                <div className="px-6 py-12 text-center text-base font-semibold text-rose-500">
+                  {errorText}
                 </div>
-              </div>
-            )}
-          </div>
+              ) : filteredItems.length === 0 ? (
+                <div className="px-6 py-16 text-center text-2xl font-medium text-slate-400">
+                  저장된 결과가 없거나 검색 결과가 없습니다.
+                </div>
+              ) : (
+                <div>
+                  {filteredItems.map((item) => {
+                    const active = selected?.id === item.id;
 
-          <div className="rounded-[28px] border border-white/70 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-            <h2 className="text-2xl font-black text-slate-900">상세 정보</h2>
+                    return (
+                      <div
+                        key={item.id}
+                        className={`grid grid-cols-[1.1fr_1fr_1fr_1fr_1fr_1.5fr_1fr] items-center gap-2 border-b border-slate-200 px-4 py-5 text-center text-sm md:px-6 ${
+                          active ? "bg-indigo-50/70" : "bg-white"
+                        }`}
+                      >
+                        <div className="font-semibold text-slate-700">
+                          {formatDate(item.createdAt)}
+                        </div>
+                        <div className="font-semibold text-slate-700">
+                          {item.student.name || "-"}
+                        </div>
+                        <div className="font-semibold text-slate-700">
+                          {item.student.school || "-"}
+                        </div>
+                        <div className="font-semibold text-slate-700">
+                          {item.student.grade || "-"}
+                        </div>
+                        <div className="font-semibold text-slate-700">
+                          {item.reportTitle || item.resultKey || "-"}
+                        </div>
+                        <div className="font-semibold text-slate-700">
+                          {item.resultCode || "-"}
+                        </div>
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedId(item.id)}
+                            className="rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
+                          >
+                            상세보기
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="rounded-[32px] border border-white/80 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur md:p-8">
+            <h2 className="text-4xl font-black tracking-tight text-slate-900">상세 정보</h2>
 
             {!selected ? (
-              <div className="mt-6 rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center text-slate-500">
+              <div className="mt-8 rounded-[28px] border border-dashed border-slate-300 bg-slate-50 px-6 py-20 text-center text-2xl font-medium text-slate-400">
                 선택된 결과가 없습니다.
               </div>
             ) : (
-              <div className="mt-6 grid gap-4">
-                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                  <div className="text-xs font-black tracking-[0.18em] text-slate-400">
+              <div className="mt-8 grid gap-5">
+                <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+                  <div className="text-sm font-black tracking-[0.18em] text-slate-400">
                     학생 정보
                   </div>
-                  <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                    <div><span className="font-black text-slate-900">이름</span> · {selected.student?.name || "-"}</div>
-                    <div><span className="font-black text-slate-900">학교</span> · {selected.student?.school || "-"}</div>
-                    <div><span className="font-black text-slate-900">학년</span> · {selected.student?.grade || "-"}</div>
-                    <div><span className="font-black text-slate-900">전화번호</span> · {selected.student?.phone || "-"}</div>
+                  <div className="mt-5 space-y-3 text-xl font-semibold text-slate-800">
+                    <div>
+                      이름 <span className="font-black">·</span> {selected.student.name || "-"}
+                    </div>
+                    <div>
+                      학교 <span className="font-black">·</span> {selected.student.school || "-"}
+                    </div>
+                    <div>
+                      학년 <span className="font-black">·</span> {selected.student.grade || "-"}
+                    </div>
+                    <div>
+                      전화번호 <span className="font-black">·</span> {selected.student.phone || "-"}
+                    </div>
                   </div>
                 </div>
 
-                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                  <div className="text-xs font-black tracking-[0.18em] text-slate-400">
+                <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+                  <div className="text-sm font-black tracking-[0.18em] text-slate-400">
                     결과 정보
                   </div>
-                  <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                    <div><span className="font-black text-slate-900">유형명</span> · {selected.reportTitle || "-"}</div>
-                    <div><span className="font-black text-slate-900">결과코드</span> · {selected.resultCode || "-"}</div>
-                    <div><span className="font-black text-slate-900">저장시각</span> · {formatDate(selected.createdAt)}</div>
-                    <div><span className="font-black text-slate-900">문항 응답수</span> · {selected.answers?.length || 0}개</div>
+                  <div className="mt-5 space-y-3 text-xl font-semibold text-slate-800">
+                    <div>
+                      유형명 <span className="font-black">·</span>{" "}
+                      {selected.reportTitle || selected.resultKey || "-"}
+                    </div>
+                    <div>
+                      결과코드 <span className="font-black">·</span> {selected.resultCode || "-"}
+                    </div>
+                    <div>
+                      저장시각 <span className="font-black">·</span>{" "}
+                      {formatDateTime(selected.createdAt)}
+                    </div>
+                    <div>
+                      응답 수 <span className="font-black">·</span> {selected.answers.length}
+                    </div>
                   </div>
                 </div>
 
-                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                  <div className="text-xs font-black tracking-[0.18em] text-slate-400">
-                    원점수 요약
+                <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+                  <div className="text-sm font-black tracking-[0.18em] text-slate-400">
+                    점수 정보
                   </div>
-                  <div className="mt-3 text-sm leading-7 text-slate-700">
-                    {getScoreSummary(selected.scores || {})}
+
+                  {scoreEntries(selected.scores).length === 0 ? (
+                    <div className="mt-5 text-lg font-semibold text-slate-400">점수 데이터가 없습니다.</div>
+                  ) : (
+                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                      {scoreEntries(selected.scores).map(([key, value]) => (
+                        <div
+                          key={key}
+                          className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-4"
+                        >
+                          <span className="text-lg font-black text-slate-700">{key}</span>
+                          <span className="text-xl font-black text-slate-900">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+                  <div className="text-sm font-black tracking-[0.18em] text-slate-400">
+                    원본 응답
+                  </div>
+                  <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-8 text-slate-700">
+                    {selected.answers.length > 0 ? JSON.stringify(selected.answers) : "-"}
                   </div>
                 </div>
               </div>
             )}
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </main>
   );
