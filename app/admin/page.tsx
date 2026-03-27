@@ -55,6 +55,10 @@ function getScoreSummary(scores: Record<string, number>) {
 }
 
 export default function AdminPage() {
+  const ADMIN_PASSWORD = "3797";
+
+  const [isAuth, setIsAuth] = useState(false);
+  const [password, setPassword] = useState("");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -73,7 +77,38 @@ export default function AdminPage() {
       const title = item.reportTitle?.toLowerCase() ?? "";
       const code = item.resultCode?.toLowerCase() ?? "";
 
-      return (
+      if (!isAuth) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-slate-100">
+        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm">
+          <h1 className="text-2xl font-black mb-4">관리자 로그인</h1>
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="비밀번호 입력"
+            className="w-full border p-3 rounded-xl mb-4"
+          />
+
+          <button
+            onClick={() => {
+              if (password === ADMIN_PASSWORD) {
+                setIsAuth(true);
+              } else {
+                alert("비밀번호 틀림");
+              }
+            }}
+            className="w-full bg-black text-white p-3 rounded-xl font-bold"
+          >
+            로그인
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  return (
         name.includes(keyword) ||
         school.includes(keyword) ||
         grade.includes(keyword) ||
