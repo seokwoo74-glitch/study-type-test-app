@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type StudentInfo = {
   name: string;
@@ -20,21 +20,7 @@ type SubmissionRecord = {
   scores: Record<string, number>;
 };
 
-const STORAGE_KEY = "study_type_submissions_v1";
 const ADMIN_PASSWORD = "3797";
-
-function readSubmissions(): SubmissionRecord[] {
-  if (typeof window === "undefined") return [];
-
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
 
 function formatDate(value: string) {
   try {
@@ -60,9 +46,37 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [submissions, setSubmissions] = useState<SubmissionRecord[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const submissions = useMemo(() => readSubmissions(), [refreshKey]);
+  const fetchSubmissions = async () => {
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/submissions", {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        throw new Error(json?.message || "목록을 불러오지 못했습니다.");
+      }
+
+      setSubmissions(Array.isArray(json?.items) ? json.items : []);
+    } catch (error) {
+      console.error(error);
+      alert("목록 조회 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isAuth) return;
+    fetchSubmissions();
+  }, [isAuth]);
 
   const filtered = useMemo(() => {
     const keyword = query.trim().toLowerCase();
@@ -91,24 +105,6 @@ export default function AdminPage() {
     if (!selectedId) return filtered[0] ?? null;
     return filtered.find((item) => item.id === selectedId) ?? filtered[0] ?? null;
   }, [filtered, selectedId]);
-
-  const handleDeleteOne = (id: string) => {
-    if (typeof window === "undefined") return;
-    const next = submissions.filter((item) => item.id !== id);
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    setSelectedId(null);
-    setRefreshKey((prev) => prev + 1);
-  };
-
-  const handleDeleteAll = () => {
-    if (typeof window === "undefined") return;
-    const ok = window.confirm("저장된 결과를 모두 삭제할까요?");
-    if (!ok) return;
-
-    window.localStorage.removeItem(STORAGE_KEY);
-    setSelectedId(null);
-    setRefreshKey((prev) => prev + 1);
-  };
 
   if (!isAuth) {
     return (
@@ -167,34 +163,30 @@ export default function AdminPage() {
                 학습성향검사 관리자
               </h1>
               <p className="mt-3 text-base leading-7 text-slate-600">
-                로컬에 저장된 학생 결과를 검색하고, 상세 내용을 확인하는 페이지입니다.
+                모든 기기에서 저장된 학생 결과를 조회합니다.
               </p>
             </div>
 
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={() => setRefreshKey((prev) => prev + 1)}
+                onClick={fetchSubmissions}
                 className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
               >
                 새로고침
               </button>
+
               <button
                 type="button"
                 onClick={() => {
                   setIsAuth(false);
                   setPassword("");
+                  setSubmissions([]);
+                  setSelectedId(null);
                 }}
                 className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
               >
                 로그아웃
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteAll}
-                className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:bg-slate-800"
-              >
-                전체 삭제
               </button>
             </div>
           </div>
@@ -221,11 +213,11 @@ export default function AdminPage() {
             </div>
 
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-              <div className="text-xs font-black tracking-[0.18em] text-slate-400">SELECTED</div>
+              <div className="text-xs font-black tracking-[0.18em] text-slate-400">STATUS</div>
               <div className="mt-2 text-lg font-black text-slate-900">
-                {selected?.student?.name || "-"}
+                {loading ? "불러오는 중..." : "준비 완료"}
               </div>
-              <div className="mt-2 text-sm text-slate-500">현재 선택된 학생</div>
+              <div className="mt-2 text-sm text-slate-500">서버 연결 상태</div>
             </div>
           </div>
         </section>
@@ -292,22 +284,13 @@ export default function AdminPage() {
                               {item.resultCode || "-"}
                             </td>
                             <td className="px-4 py-4">
-                              <div className="flex flex-wrap gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => setSelectedId(item.id)}
-                                  className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 transition hover:bg-slate-50"
-                                >
-                                  상세보기
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDeleteOne(item.id)}
-                                  className="rounded-full border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-black text-rose-700 transition hover:bg-rose-100"
-                                >
-                                  삭제
-                                </button>
-                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedId(item.id)}
+                                className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 transition hover:bg-slate-50"
+                              >
+                                상세보기
+                              </button>
                             </td>
                           </tr>
                         );
