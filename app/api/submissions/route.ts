@@ -15,6 +15,34 @@ type SubmissionPayload = {
   scores: Record<string, number>;
 };
 
+export async function GET() {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("test_results")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Supabase select error:", error);
+      return NextResponse.json(
+        { ok: false, error: error.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+      items: data ?? [],
+    });
+  } catch (error) {
+    console.error("GET API error:", error);
+    return NextResponse.json(
+      { ok: false, error: "목록 조회 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as Partial<SubmissionPayload>;
@@ -55,7 +83,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("API error:", error);
+    console.error("POST API error:", error);
     return NextResponse.json(
       { ok: false, error: "서버 처리 중 오류가 발생했습니다." },
       { status: 500 }
