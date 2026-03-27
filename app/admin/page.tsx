@@ -62,50 +62,6 @@ export default function AdminPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  if (!isAuth) {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
-        <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-xl">
-          <h1 className="mb-2 text-2xl font-black text-slate-900">관리자 로그인</h1>
-          <p className="mb-5 text-sm leading-6 text-slate-500">
-            관리자 페이지에 접근하려면 비밀번호를 입력해 주세요.
-          </p>
-
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                if (password === ADMIN_PASSWORD) {
-                  setIsAuth(true);
-                } else {
-                  alert("비밀번호 틀림");
-                }
-              }
-            }}
-            placeholder="비밀번호 입력"
-            className="mb-4 w-full rounded-2xl border border-slate-200 px-4 py-3 text-base font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-400"
-          />
-
-          <button
-            type="button"
-            onClick={() => {
-              if (password === ADMIN_PASSWORD) {
-                setIsAuth(true);
-              } else {
-                alert("비밀번호 틀림");
-              }
-            }}
-            className="w-full rounded-2xl bg-black px-4 py-3 text-base font-bold text-white transition hover:bg-slate-800"
-          >
-            로그인
-          </button>
-        </div>
-      </main>
-    );
-  }
-
   const submissions = useMemo(() => readSubmissions(), [refreshKey]);
 
   const filtered = useMemo(() => {
@@ -153,6 +109,50 @@ export default function AdminPage() {
     setSelectedId(null);
     setRefreshKey((prev) => prev + 1);
   };
+
+  if (!isAuth) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
+        <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-xl">
+          <h1 className="mb-2 text-2xl font-black text-slate-900">관리자 로그인</h1>
+          <p className="mb-5 text-sm leading-6 text-slate-500">
+            관리자 페이지에 접근하려면 비밀번호를 입력해 주세요.
+          </p>
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                if (password === ADMIN_PASSWORD) {
+                  setIsAuth(true);
+                } else {
+                  alert("비밀번호 틀림");
+                }
+              }
+            }}
+            placeholder="비밀번호 입력"
+            className="mb-4 w-full rounded-2xl border border-slate-200 px-4 py-3 text-base font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-400"
+          />
+
+          <button
+            type="button"
+            onClick={() => {
+              if (password === ADMIN_PASSWORD) {
+                setIsAuth(true);
+              } else {
+                alert("비밀번호 틀림");
+              }
+            }}
+            className="w-full rounded-2xl bg-black px-4 py-3 text-base font-bold text-white transition hover:bg-slate-800"
+          >
+            로그인
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-sky-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
@@ -333,22 +333,10 @@ export default function AdminPage() {
                     학생 정보
                   </div>
                   <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                    <div>
-                      <span className="font-black text-slate-900">이름</span> ·{" "}
-                      {selected.student?.name || "-"}
-                    </div>
-                    <div>
-                      <span className="font-black text-slate-900">학교</span> ·{" "}
-                      {selected.student?.school || "-"}
-                    </div>
-                    <div>
-                      <span className="font-black text-slate-900">학년</span> ·{" "}
-                      {selected.student?.grade || "-"}
-                    </div>
-                    <div>
-                      <span className="font-black text-slate-900">전화번호</span> ·{" "}
-                      {selected.student?.phone || "-"}
-                    </div>
+                    <div><span className="font-black text-slate-900">이름</span> · {selected.student?.name || "-"}</div>
+                    <div><span className="font-black text-slate-900">학교</span> · {selected.student?.school || "-"}</div>
+                    <div><span className="font-black text-slate-900">학년</span> · {selected.student?.grade || "-"}</div>
+                    <div><span className="font-black text-slate-900">전화번호</span> · {selected.student?.phone || "-"}</div>
                   </div>
                 </div>
 
@@ -357,22 +345,10 @@ export default function AdminPage() {
                     결과 정보
                   </div>
                   <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                    <div>
-                      <span className="font-black text-slate-900">유형명</span> ·{" "}
-                      {selected.reportTitle || "-"}
-                    </div>
-                    <div>
-                      <span className="font-black text-slate-900">결과코드</span> ·{" "}
-                      {selected.resultCode || "-"}
-                    </div>
-                    <div>
-                      <span className="font-black text-slate-900">저장시각</span> ·{" "}
-                      {formatDate(selected.createdAt)}
-                    </div>
-                    <div>
-                      <span className="font-black text-slate-900">문항 응답수</span> ·{" "}
-                      {selected.answers?.length || 0}개
-                    </div>
+                    <div><span className="font-black text-slate-900">유형명</span> · {selected.reportTitle || "-"}</div>
+                    <div><span className="font-black text-slate-900">결과코드</span> · {selected.resultCode || "-"}</div>
+                    <div><span className="font-black text-slate-900">저장시각</span> · {formatDate(selected.createdAt)}</div>
+                    <div><span className="font-black text-slate-900">문항 응답수</span> · {selected.answers?.length || 0}개</div>
                   </div>
                 </div>
 
@@ -382,16 +358,6 @@ export default function AdminPage() {
                   </div>
                   <div className="mt-3 text-sm leading-7 text-slate-700">
                     {getScoreSummary(selected.scores || {})}
-                  </div>
-                </div>
-
-                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                  <div className="text-xs font-black tracking-[0.18em] text-slate-400">
-                    활용 팁
-                  </div>
-                  <div className="mt-3 text-sm leading-7 text-slate-700">
-                    관리자 페이지에서는 저장된 결과를 빠르게 조회하고 학생별 결과를 확인할 수
-                    있습니다. PDF 재출력은 학생 결과 페이지에서 다시 실행하면 됩니다.
                   </div>
                 </div>
               </div>
