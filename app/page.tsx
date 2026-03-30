@@ -1503,12 +1503,12 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:p-12">
         <span className="inline-flex rounded-full bg-indigo-100 px-4 py-1 text-sm font-black text-indigo-700">
-          학생 중심 · 학부모 신뢰형 리포트
+          우리 아이의 학습 성향, 결과보다 방향이 먼저입니다.
         </span>
         <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 sm:text-6xl">학습성향검사</h1>
         <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
           학생의 학습 태도와 사고 방식, 실행 습관을 바탕으로 가장 가까운 학습성향을 분석합니다.
-          결과는 유형 해설, 학습 전략, 부모 코칭, 진로 방향까지 포함된 리포트로 제공됩니다.
+          강점과 보완 포인트를 입체적으로 분석해 드립니다.
         </p>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
@@ -1516,12 +1516,12 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
             <p className="mt-2 text-sm leading-6 text-slate-600">총 {QUESTIONS.length}문항의 2지선다 검사</p>
           </div>
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-            <h2 className="font-black">분석 축</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">E/P · R/C · M/O · S/F 4축 기반</p>
+            <h2 className="font-black">정밀 분석</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">강점, 학습 습관, 사고 경향을 균형 있게 살펴보는 성향 진단</p>
           </div>
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-            <h2 className="font-black">결과 형식</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">유형명 + 축 분석 + 인쇄용 리포트</p>
+            <h2 className="font-black">맞춤 리포트</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">유형 해석부터 학습 전략, 부모 가이드까지 바로 제공</p>
           </div>
         </div>
         <button
