@@ -909,7 +909,7 @@ function generatePrintableReport({
   <style>
     @page {
       size: A4;
-      margin: 18mm;
+      margin: 16mm;
     }
 
     * {
@@ -933,6 +933,35 @@ function generatePrintableReport({
 
     .page {
       width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .logo-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 170px;
+      height: 54px;
+      border-radius: 16px;
+      border: 1.5px dashed #cbd5e1;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .doc-mark {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 800;
+      letter-spacing: 0.16em;
     }
 
     .hero {
@@ -1172,6 +1201,61 @@ function generatePrintableReport({
       white-space: pre-wrap;
     }
 
+    .comment-card {
+      margin-top: 18px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 20px;
+      background: #ffffff;
+      padding: 18px;
+    }
+
+    .comment-box {
+      margin-top: 10px;
+      min-height: 120px;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 14px;
+    }
+
+    .comment-lines {
+      margin-top: 8px;
+    }
+
+    .comment-line {
+      height: 22px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+
+    .signature-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .signature-box {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 16px;
+      background: #ffffff;
+      min-height: 92px;
+    }
+
+    .signature-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: #64748b;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .signature-line {
+      margin-top: 34px;
+      border-bottom: 1px solid #94a3b8;
+      height: 1px;
+    }
+
     .footer {
       margin-top: 18px;
       border-top: 1px solid #e2e8f0;
@@ -1179,10 +1263,6 @@ function generatePrintableReport({
       font-size: 10px;
       color: #94a3b8;
       text-align: center;
-    }
-
-    .page-break {
-      page-break-before: always;
     }
 
     @media print {
@@ -1194,6 +1274,11 @@ function generatePrintableReport({
 </head>
 <body>
   <div class="page">
+    <div class="topbar">
+      <div class="logo-box">LOGO / 학원명 자리</div>
+      <div class="doc-mark">LEARNING TYPE REPORT</div>
+    </div>
+
     <section class="hero">
       <div class="hero-sub">${safe(report.subtitle)}</div>
       <div class="hero-title">${safe(report.title)}</div>
@@ -1278,6 +1363,31 @@ function generatePrintableReport({
           <h2 class="section-title">추천 대화법</h2>
           <div class="body-copy">${safe(report.talk)}</div>
         </section>
+      </div>
+    </div>
+
+    <section class="comment-card">
+      <h2 class="section-title">상담 코멘트</h2>
+      <p class="section-desc">상담자가 학생의 현재 상태, 보완 포인트, 향후 지도 방향을 직접 기록하는 영역입니다.</p>
+      <div class="comment-box">
+        <div class="comment-lines">
+          <div class="comment-line"></div>
+          <div class="comment-line"></div>
+          <div class="comment-line"></div>
+          <div class="comment-line"></div>
+          <div class="comment-line"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="signature-wrap">
+      <div class="signature-box">
+        <div class="signature-title">상담 교사 서명</div>
+        <div class="signature-line"></div>
+      </div>
+      <div class="signature-box">
+        <div class="signature-title">학부모 확인</div>
+        <div class="signature-line"></div>
       </div>
     </div>
 
