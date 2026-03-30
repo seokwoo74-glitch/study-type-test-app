@@ -1,374 +1,558 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 
-type RawSubmission = any;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "";
 
-type AdminSubmission = {
-  id: string;
-  createdAt: string;
-  student: {
-    name: string;
-    school: string;
-    grade: string;
-    phone: string;
-  };
-  resultKey: string;
-  resultCode: string;
-  reportTitle: string;
-  answers: number[];
-  scores: Record<string, number>;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+type TestResultRow = {
+  id: string | number;
+  created_at?: string | null;
+
+  // 기본 정보
+  name?: string | null;
+  student_name?: string | null;
+  school?: string | null;
+  grade?: string | null;
+  phone?: string | null;
+  parent_phone?: string | null;
+
+  // 결과 정보
+  result_code?: string | null;
+  result_title?: string | null;
+  result_type?: string | null;
+  code?: string | null;
+  title?: string | null;
+  type_code?: string | null;
+
+  // 점수/추가 데이터
+  scores?: Record<string, number> | null;
+  answers?: unknown;
+  result_payload?: Record<string, unknown> | null;
+  summary?: string | null;
+  recommendation?: string | null;
+
+  // 확장 허용
+  [key: string]: any;
 };
 
-function normalizeSubmission(row: RawSubmission): AdminSubmission {
-  return {
-    id: String(row?.id ?? ""),
-    createdAt: String(row?.createdAt ?? row?.created_at ?? ""),
-    student: {
-      name: String(row?.student?.name ?? row?.student_name ?? ""),
-      school: String(row?.student?.school ?? row?.school ?? ""),
-      grade: String(row?.student?.grade ?? row?.grade ?? ""),
-      phone: String(row?.student?.phone ?? row?.phone ?? ""),
-    },
-    resultKey: String(row?.resultKey ?? row?.result_key ?? ""),
-    resultCode: String(row?.resultCode ?? row?.result_code ?? ""),
-    reportTitle: String(row?.reportTitle ?? row?.report_title ?? ""),
-    answers: Array.isArray(row?.answers) ? row.answers : [],
-    scores:
-      row?.scores && typeof row.scores === "object" && !Array.isArray(row.scores)
-        ? row.scores
-        : {},
+function formatDate(value?: string | null) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "-";
+  return d.toLocaleString("ko-KR");
+}
+
+function getName(row: TestResultRow) {
+  return (
+    row.name ||
+    row.student_name ||
+    row.result_payload?.name ||
+    row.result_payload?.student_name ||
+    "-"
+  );
+}
+
+function getSchool(row: TestResultRow) {
+  return row.school || row.result_payload?.school || "-";
+}
+
+function getGrade(row: TestResultRow) {
+  return row.grade || row.result_payload?.grade || "-";
+}
+
+function getPhone(row: TestResultRow) {
+  return (
+    row.phone ||
+    row.parent_phone ||
+    row.result_payload?.phone ||
+    row.result_payload?.parent_phone ||
+    "-"
+  );
+}
+
+function getResultCode(row: TestResultRow) {
+  return (
+    row.result_code ||
+    row.code ||
+    row.type_code ||
+    row.result_payload?.result_code ||
+    row.result_payload?.code ||
+    "-"
+  );
+}
+
+function getResultTitle(row: TestResultRow) {
+  return (
+    row.result_title ||
+    row.result_type ||
+    row.title ||
+    row.result_payload?.result_title ||
+    row.result_payload?.title ||
+    "-"
+  );
+}
+
+function getSearchBlob(row: TestResultRow) {
+  return [
+    row.id,
+    getName(row),
+    getSchool(row),
+    getGrade(row),
+    getPhone(row),
+    getResultCode(row),
+    getResultTitle(row),
+    row.created_at || "",
+  ]
+    .join(" ")
+    .toLowerCase();
+}
+
+function toCSV(rows: TestResultRow[]) {
+  const headers = [
+    "id",
+    "created_at",
+    "name",
+    "school",
+    "grade",
+    "phone",
+    "result_code",
+    "result_title",
+  ];
+
+  const escapeCSV = (value: unknown) => {
+    const str = String(value ?? "");
+    if (str.includes('"') || str.includes(",") || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
   };
+
+  const lines = rows.map((row) => [
+    row.id,
+    row.created_at ?? "",
+    getName(row),
+    getSchool(row),
+    getGrade(row),
+    getPhone(row),
+    getResultCode(row),
+    getResultTitle(row),
+  ]);
+
+  return [headers, ...lines].map((line) => line.map(escapeCSV).join(",")).join("\n");
 }
 
-function formatDate(value: string) {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "-";
-  return date.toLocaleDateString("ko-KR");
-}
-
-function formatDateTime(value: string) {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "-";
-  return date.toLocaleString("ko-KR");
-}
-
-function scoreEntries(scores: Record<string, number>) {
-  return Object.entries(scores).sort((a, b) => b[1] - a[1]);
+function StatCard({
+  label,
+  value,
+  sub,
+}: {
+  label: string;
+  value: string | number;
+  sub?: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="text-sm font-medium text-slate-500">{label}</div>
+      <div className="mt-2 text-3xl font-bold text-slate-900">{value}</div>
+      {sub ? <div className="mt-1 text-xs text-slate-400">{sub}</div> : null}
+    </div>
+  );
 }
 
 export default function AdminPage() {
-  const [items, setItems] = useState<AdminSubmission[]>([]);
-  const [selectedId, setSelectedId] = useState<string>("");
-  const [query, setQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [statusText, setStatusText] = useState("불러오는 중...");
-  const [errorText, setErrorText] = useState("");
-
-  const [authorized, setAuthorized] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
   const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [passwordError, setPasswordError] = useState("");
 
-  const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "";
+  const [rows, setRows] = useState<TestResultRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState("");
+  const [selectedId, setSelectedId] = useState<string | number | null>(null);
+
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("전체");
+  const [dateFilter, setDateFilter] = useState("전체");
+  const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
 
   useEffect(() => {
-    const saved = sessionStorage.getItem("admin-auth");
-    if (saved === "ok") {
-      setAuthorized(true);
+    const saved = sessionStorage.getItem("admin-auth-ok");
+    if (saved === "yes") {
+      setIsAuthed(true);
     }
-    setCheckingAuth(false);
   }, []);
 
-  async function loadItems() {
+  async function fetchResults() {
     try {
       setLoading(true);
-      setErrorText("");
-      setStatusText("불러오는 중...");
+      setFetchError("");
 
-      const res = await fetch("/api/submissions", {
-        method: "GET",
-        cache: "no-store",
-      });
+      const { data, error } = await supabase
+        .from("test_results")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-      const data = await res.json().catch(() => null);
+      if (error) throw error;
 
-      if (!res.ok || !data?.ok) {
-        throw new Error(data?.error || "목록 조회 중 오류가 발생했습니다.");
+      const safeData = (data || []) as TestResultRow[];
+      setRows(safeData);
+
+      if (safeData.length > 0 && selectedId == null) {
+        setSelectedId(safeData[0].id);
       }
-
-      const normalized = Array.isArray(data?.items)
-        ? data.items.map(normalizeSubmission)
-        : [];
-
-      setItems(normalized);
-
-      if (normalized.length > 0) {
-        setSelectedId((prev) => prev || normalized[0].id);
-      } else {
-        setSelectedId("");
-      }
-
-      setStatusText("준비 완료");
-    } catch (error) {
-      console.error(error);
-      setErrorText("목록 조회 중 오류가 발생했습니다.");
-      setStatusText("조회 실패");
-      alert("목록 조회 중 오류가 발생했습니다.");
+    } catch (err: any) {
+      setFetchError(err?.message || "데이터를 불러오지 못했습니다.");
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    if (!authorized) return;
-    loadItems();
-  }, [authorized]);
+    if (!isAuthed) return;
+    fetchResults();
+  }, [isAuthed]);
 
   function handleLogin() {
-    if (!ADMIN_PASSWORD) {
-      setLoginError("관리자 비밀번호 환경변수가 설정되지 않았습니다.");
+    if (!adminPassword) {
+      setPasswordError(
+        "NEXT_PUBLIC_ADMIN_PASSWORD 값이 없습니다. .env.local 또는 Vercel 환경변수에 추가해 주세요."
+      );
       return;
     }
 
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem("admin-auth", "ok");
-      setAuthorized(true);
-      setLoginError("");
-      setPassword("");
-    } else {
-      setLoginError("비밀번호가 올바르지 않습니다.");
+    if (password === adminPassword) {
+      sessionStorage.setItem("admin-auth-ok", "yes");
+      setIsAuthed(true);
+      setPasswordError("");
+      return;
     }
+
+    setPasswordError("비밀번호가 올바르지 않습니다.");
   }
 
   function handleLogout() {
-    sessionStorage.removeItem("admin-auth");
-    setAuthorized(false);
+    sessionStorage.removeItem("admin-auth-ok");
+    setIsAuthed(false);
     setPassword("");
-    setLoginError("");
+    setRows([]);
+    setSelectedId(null);
   }
 
-  const filteredItems = useMemo(() => {
-    const keyword = query.trim().toLowerCase();
-    if (!keyword) return items;
+  const uniqueTypes = useMemo(() => {
+    const types = rows
+      .map((row) => getResultTitle(row))
+      .filter((v) => v && v !== "-");
+    return ["전체", ...Array.from(new Set(types))];
+  }, [rows]);
 
-    return items.filter((item) => {
-      const haystack = [
-        item.student.name,
-        item.student.school,
-        item.student.grade,
-        item.student.phone,
-        item.reportTitle,
-        item.resultCode,
-        item.resultKey,
-      ]
-        .join(" ")
-        .toLowerCase();
+  const filteredRows = useMemo(() => {
+    let list = [...rows];
 
-      return haystack.includes(keyword);
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter((row) => getSearchBlob(row).includes(q));
+    }
+
+    if (typeFilter !== "전체") {
+      list = list.filter((row) => getResultTitle(row) === typeFilter);
+    }
+
+    if (dateFilter !== "전체") {
+      const now = new Date();
+      list = list.filter((row) => {
+        if (!row.created_at) return false;
+        const created = new Date(row.created_at);
+        if (Number.isNaN(created.getTime())) return false;
+
+        const diffMs = now.getTime() - created.getTime();
+        const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+        if (dateFilter === "오늘") {
+          return created.toDateString() === now.toDateString();
+        }
+        if (dateFilter === "7일") {
+          return diffDays <= 7;
+        }
+        if (dateFilter === "30일") {
+          return diffDays <= 30;
+        }
+        return true;
+      });
+    }
+
+    list.sort((a, b) => {
+      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return sortOrder === "latest" ? bTime - aTime : aTime - bTime;
     });
-  }, [items, query]);
 
-  const selected =
-    filteredItems.find((item) => item.id === selectedId) ||
-    items.find((item) => item.id === selectedId) ||
-    filteredItems[0] ||
-    null;
+    return list;
+  }, [rows, search, typeFilter, dateFilter, sortOrder]);
 
-  const latestDate = filteredItems[0]?.createdAt || items[0]?.createdAt || "";
+  const selectedRow = useMemo(() => {
+    return filteredRows.find((row) => row.id === selectedId) || filteredRows[0] || null;
+  }, [filteredRows, selectedId]);
 
-  if (checkingAuth) {
-    return (
-      <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)] flex items-center justify-center px-4">
-        <div className="rounded-[28px] border border-white/80 bg-white/90 px-8 py-10 text-center shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-          <div className="text-xl font-black text-slate-900">확인 중...</div>
-        </div>
-      </main>
-    );
+  useEffect(() => {
+    if (!selectedRow && filteredRows.length > 0) {
+      setSelectedId(filteredRows[0].id);
+      return;
+    }
+    if (selectedRow) {
+      setSelectedId(selectedRow.id);
+    }
+  }, [filteredRows, selectedRow]);
+
+  const stats = useMemo(() => {
+    const total = rows.length;
+
+    const today = rows.filter((row) => {
+      if (!row.created_at) return false;
+      const d = new Date(row.created_at);
+      return d.toDateString() === new Date().toDateString();
+    }).length;
+
+    const typeCountMap = new Map<string, number>();
+    for (const row of rows) {
+      const key = getResultTitle(row);
+      if (!key || key === "-") continue;
+      typeCountMap.set(key, (typeCountMap.get(key) || 0) + 1);
+    }
+
+    const topTypes = [...typeCountMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+
+    return { total, today, topTypes };
+  }, [rows]);
+
+  async function handleDelete(id: string | number) {
+    const ok = window.confirm("이 결과를 삭제할까요?");
+    if (!ok) return;
+
+    try {
+      const { error } = await supabase.from("test_results").delete().eq("id", id);
+      if (error) throw error;
+
+      const nextRows = rows.filter((row) => row.id !== id);
+      setRows(nextRows);
+
+      if (selectedId === id) {
+        setSelectedId(nextRows[0]?.id ?? null);
+      }
+    } catch (err: any) {
+      alert(err?.message || "삭제에 실패했습니다.");
+    }
   }
 
-  if (!authorized) {
+  function handleDownloadCSV() {
+    const csv = toCSV(filteredRows);
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `test_results_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  if (!isAuthed) {
     return (
-      <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)] flex items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-[32px] border border-white/80 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-          <div className="inline-flex rounded-full bg-indigo-100 px-4 py-2 text-sm font-black text-indigo-700">
-            관리자 로그인
+      <main className="min-h-screen bg-slate-50 px-4 py-10">
+        <div className="mx-auto max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
+          <div className="mb-6 text-center">
+            <div className="text-sm font-semibold tracking-wide text-indigo-600">
+              ADMIN
+            </div>
+            <h1 className="mt-2 text-3xl font-bold text-slate-900">
+              관리자 페이지
+            </h1>
+            <p className="mt-2 text-sm text-slate-500">
+              비밀번호를 입력해야 접근할 수 있어요.
+            </p>
           </div>
 
-          <h1 className="mt-5 text-3xl font-black text-slate-900">비밀번호 입력</h1>
-          <p className="mt-3 text-base leading-7 text-slate-500">
-            관리자 페이지는 비밀번호를 입력해야 접근할 수 있습니다.
-          </p>
+          <div className="space-y-3">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleLogin();
+              }}
+              placeholder="관리자 비밀번호"
+              className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-indigo-500"
+            />
+            <button
+              onClick={handleLogin}
+              className="w-full rounded-2xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:opacity-90"
+            >
+              로그인
+            </button>
+          </div>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleLogin();
-            }}
-            placeholder="비밀번호 입력"
-            className="mt-6 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-base font-semibold text-slate-700 outline-none placeholder:text-slate-400 focus:border-slate-400"
-          />
-
-          {loginError ? (
-            <div className="mt-3 text-sm font-semibold text-rose-500">
-              {loginError}
-            </div>
+          {passwordError ? (
+            <p className="mt-4 text-sm text-red-500">{passwordError}</p>
           ) : null}
-
-          <button
-            type="button"
-            onClick={handleLogin}
-            className="mt-6 w-full rounded-full bg-slate-900 px-5 py-4 text-base font-black text-white transition hover:bg-slate-800"
-          >
-            로그인
-          </button>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)] text-slate-900">
-      <div className="mx-auto max-w-[1440px] px-5 py-8 md:px-8">
-        <section className="rounded-[36px] border border-white/80 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur md:p-10">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <div className="inline-flex rounded-full bg-indigo-100 px-5 py-2 text-sm font-black text-indigo-700">
-                관리자 전용
-              </div>
-              <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 md:text-6xl">
-                학습성향검사 관리자
-              </h1>
-              <p className="mt-4 text-lg leading-8 text-slate-500">
-                모든 기기에서 저장된 학생 결과를 조회합니다.
-              </p>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={loadItems}
-                className="rounded-full border border-slate-200 bg-white px-6 py-3 text-base font-black text-slate-700 transition hover:bg-slate-50"
-              >
-                새로고침
-              </button>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="rounded-full border border-slate-200 bg-white px-6 py-3 text-base font-black text-slate-700 transition hover:bg-slate-50"
-              >
-                로그아웃
-              </button>
-            </div>
+    <main className="min-h-screen bg-slate-50 px-4 py-6 md:px-6">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-6 flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">
+              학습성향 검사 관리자페이지
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
+              응답 목록 확인, 검색, 삭제, CSV 다운로드가 가능합니다.
+            </p>
           </div>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-              <div className="text-sm font-black tracking-[0.18em] text-slate-400">TOTAL</div>
-              <div className="mt-3 text-5xl font-black text-slate-900">{items.length}</div>
-              <div className="mt-3 text-sm text-slate-500">저장된 전체 결과</div>
-            </div>
-
-            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-              <div className="text-sm font-black tracking-[0.18em] text-slate-400">FILTERED</div>
-              <div className="mt-3 text-5xl font-black text-slate-900">{filteredItems.length}</div>
-              <div className="mt-3 text-sm text-slate-500">현재 검색 결과</div>
-            </div>
-
-            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-              <div className="text-sm font-black tracking-[0.18em] text-slate-400">LATEST</div>
-              <div className="mt-3 text-2xl font-black text-slate-900">
-                {latestDate ? formatDateTime(latestDate) : "-"}
-              </div>
-              <div className="mt-3 text-sm text-slate-500">가장 최근 검사 시각</div>
-            </div>
-
-            <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-              <div className="text-sm font-black tracking-[0.18em] text-slate-400">STATUS</div>
-              <div className="mt-3 text-2xl font-black text-slate-900">
-                {loading ? "불러오는 중..." : statusText}
-              </div>
-              <div className="mt-3 text-sm text-slate-500">서버 연결 상태</div>
-            </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={fetchResults}
+              className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              새로고침
+            </button>
+            <button
+              onClick={handleDownloadCSV}
+              className="rounded-2xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+            >
+              CSV 다운로드
+            </button>
+            <button
+              onClick={handleLogout}
+              className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+            >
+              로그아웃
+            </button>
           </div>
-        </section>
+        </div>
 
-        <div className="mt-8 grid gap-8 xl:grid-cols-[1.45fr_0.95fr]">
-          <section className="rounded-[32px] border border-white/80 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur md:p-8">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <h2 className="text-4xl font-black tracking-tight text-slate-900">결과 목록</h2>
+        <div className="mb-6 grid gap-4 md:grid-cols-3">
+          <StatCard label="총 응답 수" value={stats.total} />
+          <StatCard label="오늘 응답 수" value={stats.today} />
+          <StatCard
+            label="가장 많은 유형 TOP3"
+            value={
+              stats.topTypes.length > 0
+                ? stats.topTypes
+                    .map(([name, count]) => `${name} (${count})`)
+                    .join(" / ")
+                : "-"
+            }
+          />
+        </div>
 
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="이름, 학교, 학년, 전화번호, 결과유형 검색"
-                className="w-full max-w-[560px] rounded-[20px] border border-slate-200 bg-slate-50 px-5 py-4 text-lg font-semibold text-slate-700 outline-none placeholder:text-slate-400 focus:border-slate-400"
-              />
+        <div className="mb-6 grid gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-4">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="이름 / 학교 / 코드 / 날짜 검색"
+            className="rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-indigo-500"
+          />
+
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-indigo-500"
+          >
+            {uniqueTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-indigo-500"
+          >
+            <option value="전체">전체 기간</option>
+            <option value="오늘">오늘</option>
+            <option value="7일">최근 7일</option>
+            <option value="30일">최근 30일</option>
+          </select>
+
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as "latest" | "oldest")}
+            className="rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-indigo-500"
+          >
+            <option value="latest">최신순</option>
+            <option value="oldest">오래된순</option>
+          </select>
+        </div>
+
+        {fetchError ? (
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            {fetchError}
+          </div>
+        ) : null}
+
+        <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
+          <section className="rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <div className="border-b border-slate-100 px-5 py-4">
+              <h2 className="text-lg font-bold text-slate-900">
+                응답 목록 ({filteredRows.length})
+              </h2>
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-[28px] border border-slate-200 bg-slate-50">
-              <div className="grid grid-cols-[1.1fr_1fr_1fr_1fr_1fr_1.5fr_1fr] gap-2 border-b border-slate-200 px-4 py-5 text-center text-sm font-black text-slate-500 md:px-6">
-                <div>날짜</div>
-                <div>이름</div>
-                <div>학교</div>
-                <div>학년</div>
-                <div>유형</div>
-                <div>결과코드</div>
-                <div>관리</div>
-              </div>
-
-              {errorText ? (
-                <div className="px-6 py-12 text-center text-base font-semibold text-rose-500">
-                  {errorText}
-                </div>
-              ) : filteredItems.length === 0 ? (
-                <div className="px-6 py-16 text-center text-2xl font-medium text-slate-400">
-                  저장된 결과가 없거나 검색 결과가 없습니다.
+            <div className="max-h-[70vh] overflow-y-auto p-3">
+              {loading ? (
+                <div className="p-4 text-sm text-slate-500">불러오는 중...</div>
+              ) : filteredRows.length === 0 ? (
+                <div className="p-4 text-sm text-slate-500">
+                  조건에 맞는 결과가 없습니다.
                 </div>
               ) : (
-                <div>
-                  {filteredItems.map((item) => {
-                    const active = selected?.id === item.id;
+                <div className="space-y-3">
+                  {filteredRows.map((row) => {
+                    const active = selectedRow?.id === row.id;
 
                     return (
-                      <div
-                        key={item.id}
-                        className={`grid grid-cols-[1.1fr_1fr_1fr_1fr_1fr_1.5fr_1fr] items-center gap-2 border-b border-slate-200 px-4 py-5 text-center text-sm md:px-6 ${
-                          active ? "bg-indigo-50/70" : "bg-white"
+                      <button
+                        key={String(row.id)}
+                        onClick={() => setSelectedId(row.id)}
+                        className={`w-full rounded-2xl border p-4 text-left transition ${
+                          active
+                            ? "border-indigo-500 bg-indigo-50"
+                            : "border-slate-200 bg-white hover:bg-slate-50"
                         }`}
                       >
-                        <div className="font-semibold text-slate-700">
-                          {formatDate(item.createdAt)}
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="text-base font-bold text-slate-900">
+                              {getName(row)}
+                            </div>
+                            <div className="mt-1 text-sm text-slate-500">
+                              {getSchool(row)} {getGrade(row) !== "-" ? `· ${getGrade(row)}` : ""}
+                            </div>
+                          </div>
+                          <div className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                            {getResultCode(row)}
+                          </div>
                         </div>
-                        <div className="font-semibold text-slate-700">
-                          {item.student.name || "-"}
+
+                        <div className="mt-3 text-sm font-medium text-slate-700">
+                          {getResultTitle(row)}
                         </div>
-                        <div className="font-semibold text-slate-700">
-                          {item.student.school || "-"}
+                        <div className="mt-2 text-xs text-slate-400">
+                          {formatDate(row.created_at)}
                         </div>
-                        <div className="font-semibold text-slate-700">
-                          {item.student.grade || "-"}
-                        </div>
-                        <div className="font-semibold text-slate-700">
-                          {item.reportTitle || item.resultKey || "-"}
-                        </div>
-                        <div className="font-semibold text-slate-700">
-                          {item.resultCode || "-"}
-                        </div>
-                        <div>
-                          <button
-                            type="button"
-                            onClick={() => setSelectedId(item.id)}
-                            className="rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
-                          >
-                            상세보기
-                          </button>
-                        </div>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
@@ -376,71 +560,107 @@ export default function AdminPage() {
             </div>
           </section>
 
-          <section className="rounded-[32px] border border-white/80 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur md:p-8">
-            <h2 className="text-4xl font-black tracking-tight text-slate-900">상세 정보</h2>
+          <section className="rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <div className="border-b border-slate-100 px-5 py-4">
+              <h2 className="text-lg font-bold text-slate-900">상세 보기</h2>
+            </div>
 
-            {!selected ? (
-              <div className="mt-8 rounded-[28px] border border-dashed border-slate-300 bg-slate-50 px-6 py-20 text-center text-2xl font-medium text-slate-400">
-                선택된 결과가 없습니다.
-              </div>
-            ) : (
-              <div className="mt-8 grid gap-5">
-                <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-                  <div className="text-sm font-black tracking-[0.18em] text-slate-400">
-                    학생 정보
-                  </div>
-                  <div className="mt-5 space-y-3 text-xl font-semibold text-slate-800">
-                    <div>이름 <span className="font-black">·</span> {selected.student.name || "-"}</div>
-                    <div>학교 <span className="font-black">·</span> {selected.student.school || "-"}</div>
-                    <div>학년 <span className="font-black">·</span> {selected.student.grade || "-"}</div>
-                    <div>전화번호 <span className="font-black">·</span> {selected.student.phone || "-"}</div>
-                  </div>
-                </div>
-
-                <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-                  <div className="text-sm font-black tracking-[0.18em] text-slate-400">
-                    결과 정보
-                  </div>
-                  <div className="mt-5 space-y-3 text-xl font-semibold text-slate-800">
-                    <div>유형명 <span className="font-black">·</span> {selected.reportTitle || selected.resultKey || "-"}</div>
-                    <div>결과코드 <span className="font-black">·</span> {selected.resultCode || "-"}</div>
-                    <div>저장시각 <span className="font-black">·</span> {formatDateTime(selected.createdAt)}</div>
-                    <div>응답 수 <span className="font-black">·</span> {selected.answers.length}</div>
-                  </div>
-                </div>
-
-                <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-                  <div className="text-sm font-black tracking-[0.18em] text-slate-400">
-                    점수 정보
-                  </div>
-
-                  {scoreEntries(selected.scores).length === 0 ? (
-                    <div className="mt-5 text-lg font-semibold text-slate-400">점수 데이터가 없습니다.</div>
-                  ) : (
-                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                      {scoreEntries(selected.scores).map(([key, value]) => (
-                        <div
-                          key={key}
-                          className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-4"
-                        >
-                          <span className="text-lg font-black text-slate-700">{key}</span>
-                          <span className="text-xl font-black text-slate-900">{value}</span>
-                        </div>
-                      ))}
+            <div className="p-5">
+              {!selectedRow ? (
+                <div className="text-sm text-slate-500">선택된 응답이 없습니다.</div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="text-xs font-semibold text-slate-500">이름</div>
+                      <div className="mt-1 text-lg font-bold text-slate-900">
+                        {getName(selectedRow)}
+                      </div>
                     </div>
-                  )}
-                </div>
 
-                <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
-                  <div className="text-sm font-black tracking-[0.18em] text-slate-400">
-                    원본 응답
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="text-xs font-semibold text-slate-500">검사일시</div>
+                      <div className="mt-1 text-lg font-bold text-slate-900">
+                        {formatDate(selectedRow.created_at)}
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="text-xs font-semibold text-slate-500">학교 / 학년</div>
+                      <div className="mt-1 text-lg font-bold text-slate-900">
+                        {getSchool(selectedRow)}
+                        {getGrade(selectedRow) !== "-" ? ` / ${getGrade(selectedRow)}` : ""}
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="text-xs font-semibold text-slate-500">연락처</div>
+                      <div className="mt-1 text-lg font-bold text-slate-900">
+                        {getPhone(selectedRow)}
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="text-xs font-semibold text-slate-500">결과 코드</div>
+                      <div className="mt-1 text-lg font-bold text-slate-900">
+                        {getResultCode(selectedRow)}
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="text-xs font-semibold text-slate-500">결과 유형</div>
+                      <div className="mt-1 text-lg font-bold text-slate-900">
+                        {getResultTitle(selectedRow)}
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-8 text-slate-700 break-all">
-                    {selected.answers.length > 0 ? JSON.stringify(selected.answers) : "-"}
+
+                  <div className="rounded-2xl border border-slate-200 p-4">
+                    <div className="mb-3 text-sm font-bold text-slate-900">점수 / 원본 데이터</div>
+
+                    {selectedRow.scores && typeof selectedRow.scores === "object" ? (
+                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                        {Object.entries(selectedRow.scores).map(([key, value]) => (
+                          <div
+                            key={key}
+                            className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                          >
+                            <div className="text-xs font-semibold uppercase text-slate-500">
+                              {key}
+                            </div>
+                            <div className="mt-1 text-2xl font-bold text-slate-900">
+                              {String(value)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-slate-500">
+                        저장된 scores 데이터가 없거나 형식이 다릅니다.
+                      </div>
+                    )}
+
+                    <details className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <summary className="cursor-pointer text-sm font-semibold text-slate-700">
+                        원본 JSON 보기
+                      </summary>
+                      <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-words text-xs text-slate-700">
+                        {JSON.stringify(selectedRow, null, 2)}
+                      </pre>
+                    </details>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      onClick={() => handleDelete(selectedRow.id)}
+                      className="rounded-2xl bg-red-500 px-4 py-3 text-sm font-semibold text-white hover:opacity-90"
+                    >
+                      이 응답 삭제
+                    </button>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </section>
         </div>
       </div>
