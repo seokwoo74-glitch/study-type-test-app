@@ -190,6 +190,21 @@ function isRareType(title: string): boolean {
   );
 }
 
+function getStatusLabel(status?: string | null): string {
+  return status ?? "미상담";
+}
+
+function getStatusBadgeClass(status?: string | null): string {
+  const safe = getStatusLabel(status);
+  if (safe === "상담완료") {
+    return "bg-emerald-100 text-emerald-700 border border-emerald-200";
+  }
+  if (safe === "상담예정") {
+    return "bg-amber-100 text-amber-700 border border-amber-200";
+  }
+  return "bg-rose-100 text-rose-700 border border-rose-200";
+}
+
 function StatCard({
   label,
   value,
@@ -222,9 +237,11 @@ function BarList({
 
         return (
           <div key={item.label}>
-            <div className="mb-1 flex items-center justify-between text-sm">
-              <span className="font-medium text-slate-700">{item.label}</span>
-              <span className="text-slate-500">{item.value}</span>
+            <div className="mb-1 flex items-center justify-between gap-3 text-sm">
+              <span className="truncate font-medium text-slate-700">
+                {item.label}
+              </span>
+              <span className="shrink-0 text-slate-500">{item.value}</span>
             </div>
             <div className="h-3 rounded-full bg-slate-100">
               <div
@@ -342,7 +359,7 @@ export default function AdminPage() {
 
     if (statusFilter !== "전체") {
       list = list.filter(
-        (row) => (row.consult_status ?? "미상담") === statusFilter
+        (row) => getStatusLabel(row.consult_status) === statusFilter
       );
     }
 
@@ -382,10 +399,13 @@ export default function AdminPage() {
   const dashboard = useMemo(() => {
     const total = rows.length;
     const unConsulted = rows.filter(
-      (row) => (row.consult_status ?? "미상담") === "미상담"
+      (row) => getStatusLabel(row.consult_status) === "미상담"
     ).length;
     const consulted = rows.filter(
-      (row) => (row.consult_status ?? "미상담") === "상담완료"
+      (row) => getStatusLabel(row.consult_status) === "상담완료"
+    ).length;
+    const scheduled = rows.filter(
+      (row) => getStatusLabel(row.consult_status) === "상담예정"
     ).length;
     const priority = rows.filter((row) => row.is_priority === true).length;
 
@@ -423,7 +443,7 @@ export default function AdminPage() {
     const priorityCandidates = [...rows]
       .filter((row) => {
         const title = getResultTitle(row);
-        const status = row.consult_status ?? "미상담";
+        const status = getStatusLabel(row.consult_status);
 
         return (
           row.is_priority === true ||
@@ -435,13 +455,13 @@ export default function AdminPage() {
       .sort((a, b) => {
         const aScore =
           (a.is_priority ? 100 : 0) +
-          ((a.consult_status ?? "미상담") === "미상담" ? 30 : 0) +
+          (getStatusLabel(a.consult_status) === "미상담" ? 30 : 0) +
           (isTopTierType(getResultTitle(a)) ? 20 : 0) +
           (isRareType(getResultTitle(a)) ? 10 : 0);
 
         const bScore =
           (b.is_priority ? 100 : 0) +
-          ((b.consult_status ?? "미상담") === "미상담" ? 30 : 0) +
+          (getStatusLabel(b.consult_status) === "미상담" ? 30 : 0) +
           (isTopTierType(getResultTitle(b)) ? 20 : 0) +
           (isRareType(getResultTitle(b)) ? 10 : 0);
 
@@ -457,10 +477,32 @@ export default function AdminPage() {
       isRareType(getResultTitle(row))
     ).length;
 
+    const memoRows = [...rows]
+      .filter((row) => typeof row.admin_memo === "string" && row.admin_memo.trim())
+      .sort((a, b) => {
+        const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return bTime - aTime;
+      })
+      .slice(0, 10);
+
+    const schoolMap = new Map<string, number>();
+    for (const row of rows) {
+      const school = getSchool(row);
+      if (!school || school === "-") continue;
+      schoolMap.set(school, (schoolMap.get(school) ?? 0) + 1);
+    }
+
+    const schoolStats = [...schoolMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, value]) => ({ label, value }))
+      .slice(0, 10);
+
     return {
       total,
       unConsulted,
       consulted,
+      scheduled,
       priority,
       today,
       typeDistribution,
@@ -468,6 +510,8 @@ export default function AdminPage() {
       priorityCandidates,
       topTierCount,
       rareTypeCount,
+      memoRows,
+      schoolStats,
     };
   }, [rows]);
 
@@ -572,7 +616,7 @@ export default function AdminPage() {
               관리자 대시보드
             </h1>
             <p className="mt-1 text-sm text-slate-500">
-              상담 관리 + 분석 대시보드까지 한 번에 확인할 수 있어요.
+              상담 관리, 메모, 유형 분석, 학교별 통계를 한 번에 볼 수 있어요.
             </p>
           </div>
 
@@ -598,10 +642,11 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-5">
+        <div className="grid gap-4 md:grid-cols-6">
           <StatCard label="총 응답" value={dashboard.total} />
           <StatCard label="오늘 응답" value={dashboard.today} />
           <StatCard label="미상담" value={dashboard.unConsulted} />
+          <StatCard label="상담예정" value={dashboard.scheduled} />
           <StatCard label="상담완료" value={dashboard.consulted} />
           <StatCard label="중요 표시" value={dashboard.priority} />
         </div>
@@ -630,75 +675,23 @@ export default function AdminPage() {
               </p>
             </div>
 
-            {dashboard.recent7Days.length === 0 ? (
-              <div className="text-sm text-slate-500">데이터가 없습니다.</div>
-            ) : (
-              <BarList items={dashboard.recent7Days} />
-            )}
+            <BarList items={dashboard.recent7Days} />
           </section>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="grid gap-6 lg:grid-cols-3">
           <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-slate-900">상담 우선 리스트</h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  중요 표시, 미상담, 영재형/희소 유형을 우선으로 보여줘요.
-                </p>
-              </div>
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-slate-900">학교별 통계</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                어떤 학교에서 응답이 많이 들어왔는지 보여줘요.
+              </p>
             </div>
 
-            {dashboard.priorityCandidates.length === 0 ? (
-              <div className="text-sm text-slate-500">표시할 대상이 없습니다.</div>
+            {dashboard.schoolStats.length === 0 ? (
+              <div className="text-sm text-slate-500">학교 데이터가 없습니다.</div>
             ) : (
-              <div className="space-y-3">
-                {dashboard.priorityCandidates.map((row) => (
-                  <button
-                    key={String(row.id)}
-                    onClick={() => setSelectedId(row.id)}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left hover:bg-slate-100"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-900">
-                            {getName(row)}
-                          </span>
-                          {row.is_priority ? (
-                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
-                              중요
-                            </span>
-                          ) : null}
-                          {isTopTierType(getResultTitle(row)) ? (
-                            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[11px] font-semibold text-indigo-700">
-                              상위권
-                            </span>
-                          ) : null}
-                          {isRareType(getResultTitle(row)) ? (
-                            <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-semibold text-rose-700">
-                              희소유형
-                            </span>
-                          ) : null}
-                        </div>
-                        <div className="mt-1 text-sm text-slate-600">
-                          {getResultTitle(row)}
-                        </div>
-                        <div className="mt-1 text-xs text-slate-400">
-                          {getSchool(row)}
-                          {getGrade(row) !== "-" ? ` · ${getGrade(row)}` : ""}
-                          {" · "}
-                          {formatDate(row.created_at)}
-                        </div>
-                      </div>
-
-                      <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">
-                        {row.consult_status ?? "미상담"}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <BarList items={dashboard.schoolStats} />
             )}
           </section>
 
@@ -706,7 +699,7 @@ export default function AdminPage() {
             <div className="mb-4">
               <h2 className="text-lg font-bold text-slate-900">빠른 인사이트</h2>
               <p className="mt-1 text-sm text-slate-500">
-                관리자 입장에서 바로 봐야 하는 숫자예요.
+                관리자 입장에서 바로 볼 핵심 숫자예요.
               </p>
             </div>
 
@@ -737,56 +730,174 @@ export default function AdminPage() {
               </div>
             </div>
           </section>
+
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-slate-900">최근 메모 목록</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                저장된 메모를 한눈에 확인할 수 있어요.
+              </p>
+            </div>
+
+            {dashboard.memoRows.length === 0 ? (
+              <div className="text-sm text-slate-500">저장된 메모가 없습니다.</div>
+            ) : (
+              <div className="space-y-3">
+                {dashboard.memoRows.map((row) => (
+                  <button
+                    key={String(row.id)}
+                    onClick={() => setSelectedId(row.id)}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left hover:bg-slate-100"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="font-semibold text-slate-900">
+                        {getName(row)}
+                      </div>
+                      <div
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusBadgeClass(
+                          row.consult_status
+                        )}`}
+                      >
+                        {getStatusLabel(row.consult_status)}
+                      </div>
+                    </div>
+                    <div className="mt-1 text-sm text-slate-500">
+                      {getResultTitle(row)}
+                    </div>
+                    <div className="mt-2 line-clamp-2 text-sm text-slate-700">
+                      {row.admin_memo}
+                    </div>
+                    <div className="mt-2 text-xs text-slate-400">
+                      {formatDate(row.created_at)}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
         </div>
 
-        <div className="grid gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-5">
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="검색"
-            className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
-          />
+        <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-slate-900">상담 우선 리스트</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                중요 표시, 미상담, 영재형/희소 유형을 우선으로 보여줘요.
+              </p>
+            </div>
 
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
-          >
-            {uniqueTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
+            {dashboard.priorityCandidates.length === 0 ? (
+              <div className="text-sm text-slate-500">표시할 대상이 없습니다.</div>
+            ) : (
+              <div className="space-y-3">
+                {dashboard.priorityCandidates.map((row) => (
+                  <button
+                    key={String(row.id)}
+                    onClick={() => setSelectedId(row.id)}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left hover:bg-slate-100"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-slate-900">
+                            {getName(row)}
+                          </span>
+                          {row.is_priority ? (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                              중요
+                            </span>
+                          ) : null}
+                          {isTopTierType(getResultTitle(row)) ? (
+                            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[11px] font-semibold text-indigo-700">
+                              상위권
+                            </span>
+                          ) : null}
+                          {isRareType(getResultTitle(row)) ? (
+                            <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-semibold text-rose-700">
+                              희소유형
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="mt-1 text-sm text-slate-600">
+                          {getResultTitle(row)}
+                        </div>
+                        <div className="mt-1 text-xs text-slate-400">
+                          {getSchool(row)}
+                          {getGrade(row) !== "-" ? ` · ${getGrade(row)}` : ""}
+                          {" · "}
+                          {formatDate(row.created_at)}
+                        </div>
+                      </div>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
-          >
-            <option value="전체">전체 상태</option>
-            <option value="미상담">미상담</option>
-            <option value="상담예정">상담예정</option>
-            <option value="상담완료">상담완료</option>
-          </select>
+                      <div
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusBadgeClass(
+                          row.consult_status
+                        )}`}
+                      >
+                        {getStatusLabel(row.consult_status)}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
 
-          <select
-            value={priorityFilter}
-            onChange={(e) => setPriorityFilter(e.target.value)}
-            className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
-          >
-            <option value="전체">전체 중요도</option>
-            <option value="중요만">중요만</option>
-          </select>
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-slate-900">필터</h2>
+            </div>
 
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value as "latest" | "oldest")}
-            className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
-          >
-            <option value="latest">최신순</option>
-            <option value="oldest">오래된순</option>
-          </select>
+            <div className="grid gap-3">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="검색"
+                className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
+              />
+
+              <select
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
+              >
+                {uniqueTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
+              >
+                <option value="전체">전체 상태</option>
+                <option value="미상담">미상담</option>
+                <option value="상담예정">상담예정</option>
+                <option value="상담완료">상담완료</option>
+              </select>
+
+              <select
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value)}
+                className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
+              >
+                <option value="전체">전체 중요도</option>
+                <option value="중요만">중요만</option>
+              </select>
+
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as "latest" | "oldest")}
+                className="rounded-2xl border border-slate-300 px-4 py-3 outline-none"
+              >
+                <option value="latest">최신순</option>
+                <option value="oldest">오래된순</option>
+              </select>
+            </div>
+          </section>
         </div>
 
         {fetchError ? (
@@ -827,7 +938,7 @@ export default function AdminPage() {
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
                               <div className="text-base font-bold text-slate-900">
                                 {getName(row)}
                               </div>
@@ -844,8 +955,12 @@ export default function AdminPage() {
                             </div>
                           </div>
 
-                          <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                            {row.consult_status ?? "미상담"}
+                          <div
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusBadgeClass(
+                              row.consult_status
+                            )}`}
+                          >
+                            {getStatusLabel(row.consult_status)}
                           </div>
                         </div>
 
@@ -925,7 +1040,7 @@ export default function AdminPage() {
                         상담 상태
                       </div>
                       <select
-                        value={selectedRow.consult_status ?? "미상담"}
+                        value={getStatusLabel(selectedRow.consult_status)}
                         onChange={(e) =>
                           void updateRow(selectedRow.id, {
                             consult_status: e.target.value,
