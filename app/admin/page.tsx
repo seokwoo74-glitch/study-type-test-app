@@ -67,6 +67,21 @@ export default function AdminPage() {
   const [statusText, setStatusText] = useState("불러오는 중...");
   const [errorText, setErrorText] = useState("");
 
+  const [authorized, setAuthorized] = useState(false);
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "";
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("admin-auth");
+    if (saved === "ok") {
+      setAuthorized(true);
+    }
+    setCheckingAuth(false);
+  }, []);
+
   async function loadItems() {
     try {
       setLoading(true);
@@ -108,8 +123,32 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
+    if (!authorized) return;
     loadItems();
-  }, []);
+  }, [authorized]);
+
+  function handleLogin() {
+    if (!ADMIN_PASSWORD) {
+      setLoginError("관리자 비밀번호 환경변수가 설정되지 않았습니다.");
+      return;
+    }
+
+    if (password === ADMIN_PASSWORD) {
+      sessionStorage.setItem("admin-auth", "ok");
+      setAuthorized(true);
+      setLoginError("");
+      setPassword("");
+    } else {
+      setLoginError("비밀번호가 올바르지 않습니다.");
+    }
+  }
+
+  function handleLogout() {
+    sessionStorage.removeItem("admin-auth");
+    setAuthorized(false);
+    setPassword("");
+    setLoginError("");
+  }
 
   const filteredItems = useMemo(() => {
     const keyword = query.trim().toLowerCase();
@@ -140,6 +179,58 @@ export default function AdminPage() {
 
   const latestDate = filteredItems[0]?.createdAt || items[0]?.createdAt || "";
 
+  if (checkingAuth) {
+    return (
+      <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)] flex items-center justify-center px-4">
+        <div className="rounded-[28px] border border-white/80 bg-white/90 px-8 py-10 text-center shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+          <div className="text-xl font-black text-slate-900">확인 중...</div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!authorized) {
+    return (
+      <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)] flex items-center justify-center px-4">
+        <div className="w-full max-w-md rounded-[32px] border border-white/80 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+          <div className="inline-flex rounded-full bg-indigo-100 px-4 py-2 text-sm font-black text-indigo-700">
+            관리자 로그인
+          </div>
+
+          <h1 className="mt-5 text-3xl font-black text-slate-900">비밀번호 입력</h1>
+          <p className="mt-3 text-base leading-7 text-slate-500">
+            관리자 페이지는 비밀번호를 입력해야 접근할 수 있습니다.
+          </p>
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleLogin();
+            }}
+            placeholder="비밀번호 입력"
+            className="mt-6 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-base font-semibold text-slate-700 outline-none placeholder:text-slate-400 focus:border-slate-400"
+          />
+
+          {loginError ? (
+            <div className="mt-3 text-sm font-semibold text-rose-500">
+              {loginError}
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={handleLogin}
+            className="mt-6 w-full rounded-full bg-slate-900 px-5 py-4 text-base font-black text-white transition hover:bg-slate-800"
+          >
+            로그인
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4fb_100%)] text-slate-900">
       <div className="mx-auto max-w-[1440px] px-5 py-8 md:px-8">
@@ -167,9 +258,7 @@ export default function AdminPage() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  window.location.href = "/";
-                }}
+                onClick={handleLogout}
                 className="rounded-full border border-slate-200 bg-white px-6 py-3 text-base font-black text-slate-700 transition hover:bg-slate-50"
               >
                 로그아웃
@@ -301,18 +390,10 @@ export default function AdminPage() {
                     학생 정보
                   </div>
                   <div className="mt-5 space-y-3 text-xl font-semibold text-slate-800">
-                    <div>
-                      이름 <span className="font-black">·</span> {selected.student.name || "-"}
-                    </div>
-                    <div>
-                      학교 <span className="font-black">·</span> {selected.student.school || "-"}
-                    </div>
-                    <div>
-                      학년 <span className="font-black">·</span> {selected.student.grade || "-"}
-                    </div>
-                    <div>
-                      전화번호 <span className="font-black">·</span> {selected.student.phone || "-"}
-                    </div>
+                    <div>이름 <span className="font-black">·</span> {selected.student.name || "-"}</div>
+                    <div>학교 <span className="font-black">·</span> {selected.student.school || "-"}</div>
+                    <div>학년 <span className="font-black">·</span> {selected.student.grade || "-"}</div>
+                    <div>전화번호 <span className="font-black">·</span> {selected.student.phone || "-"}</div>
                   </div>
                 </div>
 
@@ -321,20 +402,10 @@ export default function AdminPage() {
                     결과 정보
                   </div>
                   <div className="mt-5 space-y-3 text-xl font-semibold text-slate-800">
-                    <div>
-                      유형명 <span className="font-black">·</span>{" "}
-                      {selected.reportTitle || selected.resultKey || "-"}
-                    </div>
-                    <div>
-                      결과코드 <span className="font-black">·</span> {selected.resultCode || "-"}
-                    </div>
-                    <div>
-                      저장시각 <span className="font-black">·</span>{" "}
-                      {formatDateTime(selected.createdAt)}
-                    </div>
-                    <div>
-                      응답 수 <span className="font-black">·</span> {selected.answers.length}
-                    </div>
+                    <div>유형명 <span className="font-black">·</span> {selected.reportTitle || selected.resultKey || "-"}</div>
+                    <div>결과코드 <span className="font-black">·</span> {selected.resultCode || "-"}</div>
+                    <div>저장시각 <span className="font-black">·</span> {formatDateTime(selected.createdAt)}</div>
+                    <div>응답 수 <span className="font-black">·</span> {selected.answers.length}</div>
                   </div>
                 </div>
 
@@ -364,7 +435,7 @@ export default function AdminPage() {
                   <div className="text-sm font-black tracking-[0.18em] text-slate-400">
                     원본 응답
                   </div>
-                  <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-8 text-slate-700">
+                  <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-8 text-slate-700 break-all">
                     {selected.answers.length > 0 ? JSON.stringify(selected.answers) : "-"}
                   </div>
                 </div>
