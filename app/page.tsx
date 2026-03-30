@@ -843,108 +843,451 @@ function generatePrintableReport({
   report: Report;
   resultCode: string;
   student: StudentInfo;
-  axes: {
+  axes: Array<{
     name: string;
     left: string;
     right: string;
     leftValue: number;
     rightValue: number;
-  }[];
-  axisNarratives: { title: string; body: string }[];
+  }>;
+  axisNarratives: Array<{
+    title: string;
+    body: string;
+  }>;
 }) {
-  const escapeHtml = (value: string) =>
-    value
+  const safe = (value?: string) =>
+    (value || "-")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+      .replace(/"/g, "&quot;");
 
-  return `<!doctype html>
+  const axisCards = axes
+    .map((axis) => {
+      const leftWidth = `${Math.max(8, axis.leftValue * 20)}%`;
+      const rightWidth = `${Math.max(8, axis.rightValue * 20)}%`;
+
+      return `
+        <div class="axis-card">
+          <div class="axis-head">
+            <span>${safe(axis.left)}</span>
+            <span class="axis-name">${safe(axis.name)}</span>
+            <span>${safe(axis.right)}</span>
+          </div>
+
+          <div class="axis-track">
+            <div class="axis-left" style="width:${leftWidth}"></div>
+            <div class="axis-right" style="width:${rightWidth}"></div>
+          </div>
+
+          <div class="axis-score-row">
+            <span>${axis.leftValue} / 5</span>
+            <span>${axis.rightValue} / 5</span>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+
+  const narrativeCards = axisNarratives
+    .map(
+      (item) => `
+        <div class="mini-card">
+          <div class="mini-title">${safe(item.title)}</div>
+          <div class="mini-body">${safe(item.body)}</div>
+        </div>
+      `
+    )
+    .join("");
+
+  return `
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8" />
-<title>학습성향 리포트</title>
-<style>
-body{margin:0;font-family:'Pretendard',Arial;background:#f1f5f9;color:#0f172a}
-.page{max-width:900px;margin:0 auto;padding:40px}
-.cover{background:linear-gradient(135deg, ${report.color}, #0f172a);color:white;border-radius:28px;padding:40px}
-.cover h1{font-size:36px;margin:0}
-.cover p{opacity:0.9;margin-top:10px}
-.card{background:white;border-radius:20px;padding:24px;margin-top:20px;box-shadow:0 10px 30px rgba(0,0,0,0.08)}
-h2{margin:0 0 10px;font-size:18px}
-.text{line-height:1.8;font-size:14px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.item{background:#f8fafc;border-radius:12px;padding:12px}
-.axis{margin-top:10px}
-.footer{text-align:center;margin-top:30px;font-size:12px;color:#64748b}
-</style>
+  <meta charset="utf-8" />
+  <title>${safe(report.title)} 결과 리포트</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+    }
+
+    body {
+      line-height: 1.65;
+      font-size: 12.5px;
+    }
+
+    .page {
+      width: 100%;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      padding: 28px;
+      color: white;
+      background: linear-gradient(135deg, ${report.color} 0%, #0f172a 100%);
+    }
+
+    .hero-sub {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      opacity: 0.85;
+      font-weight: 800;
+    }
+
+    .hero-title {
+      margin-top: 10px;
+      font-size: 30px;
+      line-height: 1.2;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-summary {
+      margin-top: 14px;
+      max-width: 92%;
+      font-size: 14px;
+      line-height: 1.8;
+      opacity: 0.96;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.22);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 18px;
+      background: #ffffff;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .soft-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 18px;
+      background: #f8fafc;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .warm-card {
+      border: 1px solid #fde68a;
+      border-radius: 20px;
+      padding: 18px;
+      background: #fffbeb;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .green-card {
+      border: 1px solid #a7f3d0;
+      border-radius: 20px;
+      padding: 18px;
+      background: #ecfdf5;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .danger-card {
+      border: 1px solid #fecdd3;
+      border-radius: 20px;
+      padding: 18px;
+      background: #fff1f2;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin: 0 0 10px 0;
+    }
+
+    .section-desc {
+      margin: 0 0 14px 0;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .info-item {
+      border-radius: 16px;
+      padding: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .info-label {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+
+    .info-value {
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #334155;
+      white-space: pre-wrap;
+    }
+
+    .axis-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .axis-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+      background: #f8fafc;
+    }
+
+    .axis-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #334155;
+      margin-bottom: 10px;
+    }
+
+    .axis-name {
+      color: #94a3b8;
+      font-weight: 900;
+    }
+
+    .axis-track {
+      position: relative;
+      height: 12px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .axis-left {
+      height: 100%;
+      background: linear-gradient(90deg, #0f172a, ${report.color});
+      border-radius: 999px 0 0 999px;
+    }
+
+    .axis-right {
+      height: 100%;
+      background: linear-gradient(90deg, ${report.color}, #0f172a);
+      border-radius: 0 999px 999px 0;
+      margin-left: auto;
+    }
+
+    .axis-score-row {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 800;
+      color: #64748b;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      background: #ffffff;
+      padding: 12px;
+    }
+
+    .mini-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .mini-body {
+      font-size: 12px;
+      line-height: 1.75;
+      color: #475569;
+      white-space: pre-wrap;
+    }
+
+    .body-copy {
+      font-size: 12.5px;
+      line-height: 1.9;
+      color: #334155;
+      white-space: pre-wrap;
+    }
+
+    .footer {
+      margin-top: 18px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 10px;
+      font-size: 10px;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    @media print {
+      .page {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="page">
-<div class="cover">
-<h1>${escapeHtml(report.title)}</h1>
-<p>${escapeHtml(report.subtitle)} · ${escapeHtml(resultCode)}</p>
-</div>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-sub">${safe(report.subtitle)}</div>
+      <div class="hero-title">${safe(report.title)}</div>
+      <div class="hero-summary">${safe(report.summary)}</div>
 
-<div class="card">
-<h2>학생 정보</h2>
-<div class="grid">
-<div class="item">이름: ${escapeHtml(student.name || "-")}</div>
-<div class="item">학년: ${escapeHtml(student.grade || "-")}</div>
-<div class="item">학교: ${escapeHtml(student.school || "-")}</div>
-<div class="item">전화: ${escapeHtml(student.phone || "-")}</div>
-</div>
-</div>
-
-<div class="card"><h2>핵심 설명</h2><div class="text">${escapeHtml(report.summary)}</div></div>
-<div class="card"><h2>학습 전략</h2><div class="text">${escapeHtml(report.strategy)}</div></div>
-<div class="card"><h2>부모 코칭</h2><div class="text">${escapeHtml(report.parent)}</div></div>
-<div class="card"><h2>진로 방향</h2><div class="text">${escapeHtml(report.path)}</div></div>
-<div class="card"><h2>주의 패턴</h2><div class="text">${escapeHtml(report.danger)}</div></div>
-<div class="card"><h2>대화 제안</h2><div class="text">${escapeHtml(report.talk)}</div></div>
-
-<div class="card">
-<h2>축 분석</h2>
-${axes
-  .map((a) => {
-    const leftPercent = a.leftValue * 20;
-    const rightPercent = a.rightValue * 20;
-    return `
-    <div class="axis">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
-        <span>${escapeHtml(a.left)} (${a.leftValue})</span>
-        <span>${escapeHtml(a.name)}</span>
-        <span>${escapeHtml(a.right)} (${a.rightValue})</span>
+      <div class="badge-row">
+        <div class="badge">결과코드 ${safe(resultCode)}</div>
+        <div class="badge">학생 ${safe(student.name)}</div>
+        <div class="badge">학년 ${safe(student.grade)}</div>
+        <div class="badge">학교 ${safe(student.school)}</div>
       </div>
-      <div style="display:flex;height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden">
-        <div style="width:${leftPercent}%;background:#94a3b8"></div>
-        <div style="width:${rightPercent}%;background:${report.color}"></div>
+    </section>
+
+    <div class="grid">
+      <div>
+        <section class="card">
+          <h2 class="section-title">학생 기본 정보</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">이름</div>
+              <div class="info-value">${safe(student.name)}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">학년</div>
+              <div class="info-value">${safe(student.grade)}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">학교</div>
+              <div class="info-value">${safe(student.school)}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">전화번호</div>
+              <div class="info-value">${safe(student.phone)}</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <h2 class="section-title">축 분석</h2>
+          <p class="section-desc">네 가지 핵심 축에서 현재 응답 경향을 시각적으로 정리한 결과입니다.</p>
+          <div class="axis-list">
+            ${axisCards}
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <h2 class="section-title">축별 해석</h2>
+          <p class="section-desc">점수 차이를 실제 학습 지도 문장으로 해석했습니다.</p>
+          <div class="mini-list">
+            ${narrativeCards}
+          </div>
+        </section>
+      </div>
+
+      <div>
+        <section class="soft-card">
+          <h2 class="section-title">핵심 특징</h2>
+          <div class="body-copy">${safe(report.summary)}</div>
+        </section>
+
+        <section class="warm-card" style="margin-top:16px;">
+          <h2 class="section-title">부모 코칭 방법</h2>
+          <div class="body-copy">${safe(report.parent)}</div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <h2 class="section-title">추천 학습 전략</h2>
+          <div class="body-copy">${safe(report.strategy)}</div>
+        </section>
+
+        <section class="green-card" style="margin-top:16px;">
+          <h2 class="section-title">추천 진로 방향</h2>
+          <div class="body-copy">${safe(report.path)}</div>
+        </section>
+
+        <section class="danger-card" style="margin-top:16px;">
+          <h2 class="section-title">주의할 점</h2>
+          <div class="body-copy">${safe(report.danger)}</div>
+        </section>
+
+        <section class="card" style="margin-top:16px;">
+          <h2 class="section-title">추천 대화법</h2>
+          <div class="body-copy">${safe(report.talk)}</div>
+        </section>
       </div>
     </div>
-    `;
-  })
-  .join("")}
-</div>
 
-<div class="card">
-<h2>축별 해석</h2>
-${axisNarratives
-  .map(
-    (item) => `
-  <div class="item" style="margin-top:10px">
-    <div style="font-weight:700;margin-bottom:6px">${escapeHtml(item.title)}</div>
-    <div class="text">${escapeHtml(item.body)}</div>
+    <div class="footer">
+      학습성향검사 결과 리포트 · 학생의 현재 응답 경향을 바탕으로 생성된 참고용 자료입니다.
+    </div>
   </div>
-`
-  )
-  .join("")}
-</div>
-
-<div class="footer">학습성향검사 리포트 ©</div>
-</div>
 </body>
-</html>`;
+</html>
+  `;
 }
 
 function Shell({ children }: { children: ReactNode }) {
