@@ -3,17 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD ?? "";
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
+
+type JsonObject = Record<string, unknown>;
 
 type TestResultRow = {
   id: string | number;
   created_at?: string | null;
 
-  // 기본 정보
   name?: string | null;
   student_name?: string | null;
   school?: string | null;
@@ -21,7 +25,6 @@ type TestResultRow = {
   phone?: string | null;
   parent_phone?: string | null;
 
-  // 결과 정보
   result_code?: string | null;
   result_title?: string | null;
   result_type?: string | null;
@@ -29,90 +32,97 @@ type TestResultRow = {
   title?: string | null;
   type_code?: string | null;
 
-  // 점수/추가 데이터
   scores?: Record<string, number> | null;
   answers?: unknown;
-  result_payload?: Record<string, unknown> | null;
+  result_payload?: JsonObject | null;
   summary?: string | null;
   recommendation?: string | null;
 
-  // 확장 허용
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
-function formatDate(value?: string | null) {
+function formatDate(value?: string | null): string {
   if (!value) return "-";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return "-";
   return d.toLocaleString("ko-KR");
 }
 
-function getName(row: TestResultRow) {
-  return (
-    row.name ||
-    row.student_name ||
-    row.result_payload?.name ||
-    row.result_payload?.student_name ||
-    "-"
+function pickText(...values: unknown[]): string {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) return value.trim();
+    if (typeof value === "number") return String(value);
+  }
+  return "-";
+}
+
+function getPayloadValue(row: TestResultRow, key: string): unknown {
+  if (!row.result_payload || typeof row.result_payload !== "object") return undefined;
+  return row.result_payload[key];
+}
+
+function getName(row: TestResultRow): string {
+  return pickText(
+    row.name,
+    row.student_name,
+    getPayloadValue(row, "name"),
+    getPayloadValue(row, "student_name")
   );
 }
 
-function getSchool(row: TestResultRow) {
-  return row.school || row.result_payload?.school || "-";
+function getSchool(row: TestResultRow): string {
+  return pickText(row.school, getPayloadValue(row, "school"));
 }
 
-function getGrade(row: TestResultRow) {
-  return row.grade || row.result_payload?.grade || "-";
+function getGrade(row: TestResultRow): string {
+  return pickText(row.grade, getPayloadValue(row, "grade"));
 }
 
-function getPhone(row: TestResultRow) {
-  return (
-    row.phone ||
-    row.parent_phone ||
-    row.result_payload?.phone ||
-    row.result_payload?.parent_phone ||
-    "-"
+function getPhone(row: TestResultRow): string {
+  return pickText(
+    row.phone,
+    row.parent_phone,
+    getPayloadValue(row, "phone"),
+    getPayloadValue(row, "parent_phone")
   );
 }
 
-function getResultCode(row: TestResultRow) {
-  return (
-    row.result_code ||
-    row.code ||
-    row.type_code ||
-    row.result_payload?.result_code ||
-    row.result_payload?.code ||
-    "-"
+function getResultCode(row: TestResultRow): string {
+  return pickText(
+    row.result_code,
+    row.code,
+    row.type_code,
+    getPayloadValue(row, "result_code"),
+    getPayloadValue(row, "code")
   );
 }
 
-function getResultTitle(row: TestResultRow) {
-  return (
-    row.result_title ||
-    row.result_type ||
-    row.title ||
-    row.result_payload?.result_title ||
-    row.result_payload?.title ||
-    "-"
+function getResultTitle(row: TestResultRow): string {
+  return pickText(
+    row.result_title,
+    row.result_type,
+    row.title,
+    getPayloadValue(row, "result_title"),
+    getPayloadValue(row, "title")
   );
 }
 
-function getSearchBlob(row: TestResultRow) {
+function getSearchBlob(row: TestResultRow): string {
   return [
-    row.id,
+    String(row.id),
     getName(row),
     getSchool(row),
     getGrade(row),
     getPhone(row),
     getResultCode(row),
     getResultTitle(row),
-    row.created_at || "",
+    row.created_at ?? "",
   ]
     .join(" ")
     .toLowerCase();
 }
 
-function toCSV(rows: TestResultRow[]) {
+function toCSV(rows: TestResultRow[]): string {
   const headers = [
     "id",
     "created_at",
@@ -124,7 +134,7 @@ function toCSV(rows: TestResultRow[]) {
     "result_title",
   ];
 
-  const escapeCSV = (value: unknown) => {
+  const escapeCSV = (value: unknown): string => {
     const str = String(value ?? "");
     if (str.includes('"') || str.includes(",") || str.includes("\n")) {
       return `"${str.replace(/"/g, '""')}"`;
@@ -143,7 +153,35 @@ function toCSV(rows: TestResultRow[]) {
     getResultTitle(row),
   ]);
 
-  return [headers, ...lines].map((line) => line.map(escapeCSV).join(",")).join("\n");
+  return [headers, ...lines]
+    .map((line) => line.map(escapeCSV).join(","))
+    .join("\n");
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function normalizeScores(value: unknown): Record<string, number> | null {
+  if (!isRecord(value)) return null;
+
+  const result: Record<string, number> = {};
+
+  for (const [key, raw] of Object.entries(value)) {
+    if (typeof raw === "number" && Number.isFinite(raw)) {
+      result[key] = raw;
+      continue;
+    }
+
+    if (typeof raw === "string" && raw.trim()) {
+      const parsed = Number(raw);
+      if (Number.isFinite(parsed)) {
+        result[key] = parsed;
+      }
+    }
+  }
+
+  return Object.keys(result).length > 0 ? result : null;
 }
 
 function StatCard({
@@ -158,7 +196,7 @@ function StatCard({
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="text-sm font-medium text-slate-500">{label}</div>
-      <div className="mt-2 text-3xl font-bold text-slate-900">{value}</div>
+      <div className="mt-2 text-3xl font-bold text-slate-900 break-words">{value}</div>
       {sub ? <div className="mt-1 text-xs text-slate-400">{sub}</div> : null}
     </div>
   );
@@ -180,7 +218,7 @@ export default function AdminPage() {
   const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
 
   useEffect(() => {
-    const saved = sessionStorage.getItem("admin-auth-ok");
+    const saved = window.sessionStorage.getItem("admin-auth-ok");
     if (saved === "yes") {
       setIsAuthed(true);
     }
@@ -191,6 +229,12 @@ export default function AdminPage() {
       setLoading(true);
       setFetchError("");
 
+      if (!supabase) {
+        throw new Error(
+          "Supabase 환경변수가 없습니다. NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY를 확인해 주세요."
+        );
+      }
+
       const { data, error } = await supabase
         .from("test_results")
         .select("*")
@@ -198,14 +242,16 @@ export default function AdminPage() {
 
       if (error) throw error;
 
-      const safeData = (data || []) as TestResultRow[];
+      const safeData = Array.isArray(data) ? (data as TestResultRow[]) : [];
       setRows(safeData);
 
       if (safeData.length > 0 && selectedId == null) {
         setSelectedId(safeData[0].id);
       }
-    } catch (err: any) {
-      setFetchError(err?.message || "데이터를 불러오지 못했습니다.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "데이터를 불러오지 못했습니다.";
+      setFetchError(message);
     } finally {
       setLoading(false);
     }
@@ -213,7 +259,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!isAuthed) return;
-    fetchResults();
+    void fetchResults();
   }, [isAuthed]);
 
   function handleLogin() {
@@ -225,7 +271,7 @@ export default function AdminPage() {
     }
 
     if (password === adminPassword) {
-      sessionStorage.setItem("admin-auth-ok", "yes");
+      window.sessionStorage.setItem("admin-auth-ok", "yes");
       setIsAuthed(true);
       setPasswordError("");
       return;
@@ -235,7 +281,7 @@ export default function AdminPage() {
   }
 
   function handleLogout() {
-    sessionStorage.removeItem("admin-auth-ok");
+    window.sessionStorage.removeItem("admin-auth-ok");
     setIsAuthed(false);
     setPassword("");
     setRows([]);
@@ -245,7 +291,8 @@ export default function AdminPage() {
   const uniqueTypes = useMemo(() => {
     const types = rows
       .map((row) => getResultTitle(row))
-      .filter((v) => v && v !== "-");
+      .filter((v) => v !== "-");
+
     return ["전체", ...Array.from(new Set(types))];
   }, [rows]);
 
@@ -263,8 +310,10 @@ export default function AdminPage() {
 
     if (dateFilter !== "전체") {
       const now = new Date();
+
       list = list.filter((row) => {
         if (!row.created_at) return false;
+
         const created = new Date(row.created_at);
         if (Number.isNaN(created.getTime())) return false;
 
@@ -274,12 +323,15 @@ export default function AdminPage() {
         if (dateFilter === "오늘") {
           return created.toDateString() === now.toDateString();
         }
+
         if (dateFilter === "7일") {
           return diffDays <= 7;
         }
+
         if (dateFilter === "30일") {
           return diffDays <= 30;
         }
+
         return true;
       });
     }
@@ -294,7 +346,11 @@ export default function AdminPage() {
   }, [rows, search, typeFilter, dateFilter, sortOrder]);
 
   const selectedRow = useMemo(() => {
-    return filteredRows.find((row) => row.id === selectedId) || filteredRows[0] || null;
+    return (
+      filteredRows.find((row) => row.id === selectedId) ??
+      filteredRows[0] ??
+      null
+    );
   }, [filteredRows, selectedId]);
 
   useEffect(() => {
@@ -302,10 +358,11 @@ export default function AdminPage() {
       setSelectedId(filteredRows[0].id);
       return;
     }
-    if (selectedRow) {
+
+    if (selectedRow && selectedId !== selectedRow.id) {
       setSelectedId(selectedRow.id);
     }
-  }, [filteredRows, selectedRow]);
+  }, [filteredRows, selectedRow, selectedId]);
 
   const stats = useMemo(() => {
     const total = rows.length;
@@ -313,14 +370,16 @@ export default function AdminPage() {
     const today = rows.filter((row) => {
       if (!row.created_at) return false;
       const d = new Date(row.created_at);
+      if (Number.isNaN(d.getTime())) return false;
       return d.toDateString() === new Date().toDateString();
     }).length;
 
     const typeCountMap = new Map<string, number>();
+
     for (const row of rows) {
       const key = getResultTitle(row);
       if (!key || key === "-") continue;
-      typeCountMap.set(key, (typeCountMap.get(key) || 0) + 1);
+      typeCountMap.set(key, (typeCountMap.get(key) ?? 0) + 1);
     }
 
     const topTypes = [...typeCountMap.entries()]
@@ -335,7 +394,12 @@ export default function AdminPage() {
     if (!ok) return;
 
     try {
+      if (!supabase) {
+        throw new Error("Supabase 설정이 없습니다.");
+      }
+
       const { error } = await supabase.from("test_results").delete().eq("id", id);
+
       if (error) throw error;
 
       const nextRows = rows.filter((row) => row.id !== id);
@@ -344,14 +408,17 @@ export default function AdminPage() {
       if (selectedId === id) {
         setSelectedId(nextRows[0]?.id ?? null);
       }
-    } catch (err: any) {
-      alert(err?.message || "삭제에 실패했습니다.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "삭제에 실패했습니다.";
+      window.alert(message);
     }
   }
 
   function handleDownloadCSV() {
     const csv = toCSV(filteredRows);
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
@@ -405,6 +472,11 @@ export default function AdminPage() {
     );
   }
 
+  const selectedScores =
+    normalizeScores(selectedRow?.scores) ??
+    normalizeScores(getPayloadValue(selectedRow as TestResultRow, "scores")) ??
+    null;
+
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-6 md:px-6">
       <div className="mx-auto max-w-7xl">
@@ -420,7 +492,7 @@ export default function AdminPage() {
 
           <div className="flex flex-wrap gap-2">
             <button
-              onClick={fetchResults}
+              onClick={() => void fetchResults()}
               className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
             >
               새로고침
@@ -447,9 +519,7 @@ export default function AdminPage() {
             label="가장 많은 유형 TOP3"
             value={
               stats.topTypes.length > 0
-                ? stats.topTypes
-                    .map(([name, count]) => `${name} (${count})`)
-                    .join(" / ")
+                ? stats.topTypes.map(([name, count]) => `${name} (${count})`).join(" / ")
                 : "-"
             }
           />
@@ -538,9 +608,11 @@ export default function AdminPage() {
                               {getName(row)}
                             </div>
                             <div className="mt-1 text-sm text-slate-500">
-                              {getSchool(row)} {getGrade(row) !== "-" ? `· ${getGrade(row)}` : ""}
+                              {getSchool(row)}
+                              {getGrade(row) !== "-" ? ` · ${getGrade(row)}` : ""}
                             </div>
                           </div>
+
                           <div className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
                             {getResultCode(row)}
                           </div>
@@ -549,6 +621,7 @@ export default function AdminPage() {
                         <div className="mt-3 text-sm font-medium text-slate-700">
                           {getResultTitle(row)}
                         </div>
+
                         <div className="mt-2 text-xs text-slate-400">
                           {formatDate(row.created_at)}
                         </div>
@@ -616,11 +689,13 @@ export default function AdminPage() {
                   </div>
 
                   <div className="rounded-2xl border border-slate-200 p-4">
-                    <div className="mb-3 text-sm font-bold text-slate-900">점수 / 원본 데이터</div>
+                    <div className="mb-3 text-sm font-bold text-slate-900">
+                      점수 / 원본 데이터
+                    </div>
 
-                    {selectedRow.scores && typeof selectedRow.scores === "object" ? (
+                    {selectedScores ? (
                       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                        {Object.entries(selectedRow.scores).map(([key, value]) => (
+                        {Object.entries(selectedScores).map(([key, value]) => (
                           <div
                             key={key}
                             className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
@@ -629,7 +704,7 @@ export default function AdminPage() {
                               {key}
                             </div>
                             <div className="mt-1 text-2xl font-bold text-slate-900">
-                              {String(value)}
+                              {value}
                             </div>
                           </div>
                         ))}
@@ -652,7 +727,7 @@ export default function AdminPage() {
 
                   <div className="flex flex-wrap gap-3">
                     <button
-                      onClick={() => handleDelete(selectedRow.id)}
+                      onClick={() => void handleDelete(selectedRow.id)}
                       className="rounded-2xl bg-red-500 px-4 py-3 text-sm font-semibold text-white hover:opacity-90"
                     >
                       이 응답 삭제
