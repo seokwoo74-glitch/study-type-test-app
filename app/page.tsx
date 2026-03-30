@@ -1225,7 +1225,7 @@ function ResultScreen({
   const character = CHARACTER_META[resolved.key] || CHARACTER_META.DEFAULT;
 
   const axes = [
-    { name: "외향·내향", left: "외향", right: "내향", ...toFiveScalePair(scores.E, scores.P) },
+    { name: "내향·외향", left: "내향", right: "외향", ...toFiveScalePair(scores.E, scores.P) },
     { name: "논리·창의", left: "논리", right: "창의", ...toFiveScalePair(scores.R, scores.C) },
     { name: "모범·자율", left: "모범", right: "자율", ...toFiveScalePair(scores.M, scores.O) },
     { name: "안정·도전", left: "안정", right: "도전", ...toFiveScalePair(scores.S, scores.F) },
