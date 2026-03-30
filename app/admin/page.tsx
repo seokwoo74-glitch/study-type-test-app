@@ -172,6 +172,73 @@ function toCSV(rows: TestResultRow[]): string {
     .join("\n");
 }
 
+function isTopTierType(title: string): boolean {
+  return (
+    title.includes("영재형") ||
+    title.includes("창의적영재형") ||
+    title.includes("문·이과 혼합 영재형") ||
+    title.includes("모범형 영재형")
+  );
+}
+
+function isRareType(title: string): boolean {
+  return (
+    title.includes("1% 미만") ||
+    title.includes("2% 미만") ||
+    title.includes("3% 미만") ||
+    title.includes("영재형")
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  sub,
+}: {
+  label: string;
+  value: string | number;
+  sub?: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="text-sm text-slate-500">{label}</div>
+      <div className="mt-2 text-3xl font-bold text-slate-900">{value}</div>
+      {sub ? <div className="mt-2 text-xs text-slate-400">{sub}</div> : null}
+    </div>
+  );
+}
+
+function BarList({
+  items,
+}: {
+  items: Array<{ label: string; value: number }>;
+}) {
+  const max = Math.max(...items.map((item) => item.value), 1);
+
+  return (
+    <div className="space-y-3">
+      {items.map((item) => {
+        const width = `${(item.value / max) * 100}%`;
+
+        return (
+          <div key={item.label}>
+            <div className="mb-1 flex items-center justify-between text-sm">
+              <span className="font-medium text-slate-700">{item.label}</span>
+              <span className="text-slate-500">{item.value}</span>
+            </div>
+            <div className="h-3 rounded-full bg-slate-100">
+              <div
+                className="h-3 rounded-full bg-slate-900 transition-all"
+                style={{ width }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function AdminPage() {
   const [isAuthed, setIsAuthed] = useState(false);
   const [password, setPassword] = useState("");
@@ -306,21 +373,103 @@ export default function AdminPage() {
     setMemoDraft(selectedRow?.admin_memo ?? "");
   }, [selectedRow]);
 
-  const stats = useMemo(() => {
-    const total = rows.length;
-    const unConsulted = rows.filter(
-      (row) => (row.consult_status ?? "미상담") === "미상담"
-    ).length;
-    const priority = rows.filter((row) => row.is_priority === true).length;
-
-    return { total, unConsulted, priority };
-  }, [rows]);
-
   const selectedScores = selectedRow
     ? normalizeScores(selectedRow.scores) ??
       normalizeScores(getPayloadValue(selectedRow, "scores")) ??
       null
     : null;
+
+  const dashboard = useMemo(() => {
+    const total = rows.length;
+    const unConsulted = rows.filter(
+      (row) => (row.consult_status ?? "미상담") === "미상담"
+    ).length;
+    const consulted = rows.filter(
+      (row) => (row.consult_status ?? "미상담") === "상담완료"
+    ).length;
+    const priority = rows.filter((row) => row.is_priority === true).length;
+
+    const today = rows.filter((row) => {
+      if (!row.created_at) return false;
+      const d = new Date(row.created_at);
+      return d.toDateString() === new Date().toDateString();
+    }).length;
+
+    const byTypeMap = new Map<string, number>();
+    for (const row of rows) {
+      const title = getResultTitle(row);
+      if (!title || title === "-") continue;
+      byTypeMap.set(title, (byTypeMap.get(title) ?? 0) + 1);
+    }
+
+    const typeDistribution = [...byTypeMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, value]) => ({ label, value }));
+
+    const recent7Days = Array.from({ length: 7 }).map((_, idx) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - idx));
+
+      const label = `${date.getMonth() + 1}/${date.getDate()}`;
+      const value = rows.filter((row) => {
+        if (!row.created_at) return false;
+        const d = new Date(row.created_at);
+        return d.toDateString() === date.toDateString();
+      }).length;
+
+      return { label, value };
+    });
+
+    const priorityCandidates = [...rows]
+      .filter((row) => {
+        const title = getResultTitle(row);
+        const status = row.consult_status ?? "미상담";
+
+        return (
+          row.is_priority === true ||
+          status === "미상담" ||
+          isTopTierType(title) ||
+          isRareType(title)
+        );
+      })
+      .sort((a, b) => {
+        const aScore =
+          (a.is_priority ? 100 : 0) +
+          ((a.consult_status ?? "미상담") === "미상담" ? 30 : 0) +
+          (isTopTierType(getResultTitle(a)) ? 20 : 0) +
+          (isRareType(getResultTitle(a)) ? 10 : 0);
+
+        const bScore =
+          (b.is_priority ? 100 : 0) +
+          ((b.consult_status ?? "미상담") === "미상담" ? 30 : 0) +
+          (isTopTierType(getResultTitle(b)) ? 20 : 0) +
+          (isRareType(getResultTitle(b)) ? 10 : 0);
+
+        return bScore - aScore;
+      })
+      .slice(0, 8);
+
+    const topTierCount = rows.filter((row) =>
+      isTopTierType(getResultTitle(row))
+    ).length;
+
+    const rareTypeCount = rows.filter((row) =>
+      isRareType(getResultTitle(row))
+    ).length;
+
+    return {
+      total,
+      unConsulted,
+      consulted,
+      priority,
+      today,
+      typeDistribution,
+      recent7Days,
+      priorityCandidates,
+      topTierCount,
+      rareTypeCount,
+    };
+  }, [rows]);
 
   async function updateRow(
     id: string | number,
@@ -376,7 +525,7 @@ export default function AdminPage() {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `test_results_consult_${new Date()
+    a.download = `test_results_dashboard_${new Date()
       .toISOString()
       .slice(0, 10)}.csv`;
     a.click();
@@ -423,7 +572,7 @@ export default function AdminPage() {
               관리자 대시보드
             </h1>
             <p className="mt-1 text-sm text-slate-500">
-              상담 상태, 메모, 중요 표시까지 관리할 수 있어요.
+              상담 관리 + 분석 대시보드까지 한 번에 확인할 수 있어요.
             </p>
           </div>
 
@@ -449,27 +598,145 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="text-sm text-slate-500">총 응답</div>
-            <div className="mt-2 text-3xl font-bold text-slate-900">
-              {stats.total}
-            </div>
-          </div>
+        <div className="grid gap-4 md:grid-cols-5">
+          <StatCard label="총 응답" value={dashboard.total} />
+          <StatCard label="오늘 응답" value={dashboard.today} />
+          <StatCard label="미상담" value={dashboard.unConsulted} />
+          <StatCard label="상담완료" value={dashboard.consulted} />
+          <StatCard label="중요 표시" value={dashboard.priority} />
+        </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="text-sm text-slate-500">미상담</div>
-            <div className="mt-2 text-3xl font-bold text-slate-900">
-              {stats.unConsulted}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-slate-900">유형 분포</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                현재 가장 많이 나온 유형을 확인해 보세요.
+              </p>
             </div>
-          </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="text-sm text-slate-500">중요 표시</div>
-            <div className="mt-2 text-3xl font-bold text-slate-900">
-              {stats.priority}
+            {dashboard.typeDistribution.length === 0 ? (
+              <div className="text-sm text-slate-500">데이터가 없습니다.</div>
+            ) : (
+              <BarList items={dashboard.typeDistribution.slice(0, 8)} />
+            )}
+          </section>
+
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-slate-900">최근 7일 응답</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                최근 일주일 응답 흐름입니다.
+              </p>
             </div>
-          </div>
+
+            {dashboard.recent7Days.length === 0 ? (
+              <div className="text-sm text-slate-500">데이터가 없습니다.</div>
+            ) : (
+              <BarList items={dashboard.recent7Days} />
+            )}
+          </section>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">상담 우선 리스트</h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  중요 표시, 미상담, 영재형/희소 유형을 우선으로 보여줘요.
+                </p>
+              </div>
+            </div>
+
+            {dashboard.priorityCandidates.length === 0 ? (
+              <div className="text-sm text-slate-500">표시할 대상이 없습니다.</div>
+            ) : (
+              <div className="space-y-3">
+                {dashboard.priorityCandidates.map((row) => (
+                  <button
+                    key={String(row.id)}
+                    onClick={() => setSelectedId(row.id)}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left hover:bg-slate-100"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-slate-900">
+                            {getName(row)}
+                          </span>
+                          {row.is_priority ? (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                              중요
+                            </span>
+                          ) : null}
+                          {isTopTierType(getResultTitle(row)) ? (
+                            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[11px] font-semibold text-indigo-700">
+                              상위권
+                            </span>
+                          ) : null}
+                          {isRareType(getResultTitle(row)) ? (
+                            <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-semibold text-rose-700">
+                              희소유형
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="mt-1 text-sm text-slate-600">
+                          {getResultTitle(row)}
+                        </div>
+                        <div className="mt-1 text-xs text-slate-400">
+                          {getSchool(row)}
+                          {getGrade(row) !== "-" ? ` · ${getGrade(row)}` : ""}
+                          {" · "}
+                          {formatDate(row.created_at)}
+                        </div>
+                      </div>
+
+                      <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">
+                        {row.consult_status ?? "미상담"}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-slate-900">빠른 인사이트</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                관리자 입장에서 바로 봐야 하는 숫자예요.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="text-sm text-slate-500">영재형 / 상위권 유형 수</div>
+                <div className="mt-2 text-2xl font-bold text-slate-900">
+                  {dashboard.topTierCount}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="text-sm text-slate-500">희소 유형 수</div>
+                <div className="mt-2 text-2xl font-bold text-slate-900">
+                  {dashboard.rareTypeCount}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="text-sm text-slate-500">지금 바로 상담 추천</div>
+                <div className="mt-2 text-base font-semibold text-slate-900">
+                  {dashboard.priorityCandidates[0]
+                    ? `${getName(dashboard.priorityCandidates[0])} · ${getResultTitle(
+                        dashboard.priorityCandidates[0]
+                      )}`
+                    : "없음"}
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
 
         <div className="grid gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-5">
