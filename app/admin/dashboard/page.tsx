@@ -22,6 +22,7 @@ type TestResultRow = {
   result_code?: string | null;
   result_title?: string | null;
   result_type?: string | null;
+  report_title?: string | null;
   code?: string | null;
   title?: string | null;
   type_code?: string | null;
@@ -99,29 +100,14 @@ function getResultCode(row: TestResultRow): string {
 
 function getResultTitle(row: TestResultRow): string {
   return pickText(
+    row.report_title,
     row.result_title,
     row.result_type,
     row.title,
+    getPayloadValue(row, "report_title"),
     getPayloadValue(row, "result_title"),
     getPayloadValue(row, "title")
   );
-}
-
-function normalizeScores(value: unknown): Record<string, number> | null {
-  if (typeof value !== "object" || value === null) return null;
-
-  const result: Record<string, number> = {};
-
-  for (const [key, raw] of Object.entries(value)) {
-    if (typeof raw === "number") {
-      result[key] = raw;
-    } else if (typeof raw === "string") {
-      const num = Number(raw);
-      if (!Number.isNaN(num)) result[key] = num;
-    }
-  }
-
-  return Object.keys(result).length > 0 ? result : null;
 }
 
 function toCSV(rows: TestResultRow[]): string {
@@ -197,6 +183,193 @@ function getStatusBadgeClass(status?: string | null): string {
     return "border border-amber-200 bg-amber-100 text-amber-700";
   }
   return "border border-rose-200 bg-rose-100 text-rose-700";
+}
+
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function buildAdminPrintableHtml(row: TestResultRow): string {
+  const name = getName(row);
+  const school = getSchool(row);
+  const grade = getGrade(row);
+  const phone = getPhone(row);
+  const resultCode = getResultCode(row);
+  const resultTitle = getResultTitle(row) === "-" ? "결과명 없음" : getResultTitle(row);
+  const status = getStatusLabel(row.consult_status);
+  const memo = typeof row.admin_memo === "string" ? row.admin_memo : "";
+  const createdAt = formatDate(row.created_at);
+
+  return `
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>관리자 상담 리포트</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 32px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+    }
+    .page {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+    }
+    .title {
+      font-size: 30px;
+      font-weight: 800;
+      margin: 0;
+    }
+    .subtitle {
+      margin-top: 8px;
+      color: #475569;
+      font-size: 14px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      background: #eef2ff;
+      color: #4338ca;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 18px;
+      background: #fff;
+    }
+    .card h3 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      font-weight: 800;
+    }
+    .row {
+      margin: 8px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .label {
+      display: inline-block;
+      width: 92px;
+      color: #475569;
+      font-weight: 700;
+    }
+    .memo {
+      min-height: 180px;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+    .footer {
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+    }
+    .sign {
+      width: 220px;
+      border-top: 1px solid #94a3b8;
+      padding-top: 10px;
+      text-align: center;
+      color: #475569;
+      font-size: 13px;
+    }
+    @media print {
+      body { padding: 0; }
+      .page { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div>
+        <h1 class="title">학습성향 검사 관리자 상담 리포트</h1>
+        <div class="subtitle">출력일시: ${escapeHtml(new Date().toLocaleString("ko-KR"))}</div>
+      </div>
+      <div class="badge">${escapeHtml(status)}</div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>학생 기본 정보</h3>
+        <div class="row"><span class="label">이름</span>${escapeHtml(name)}</div>
+        <div class="row"><span class="label">학교</span>${escapeHtml(school)}</div>
+        <div class="row"><span class="label">학년</span>${escapeHtml(grade)}</div>
+        <div class="row"><span class="label">연락처</span>${escapeHtml(phone)}</div>
+        <div class="row"><span class="label">검사일시</span>${escapeHtml(createdAt)}</div>
+      </div>
+
+      <div class="card">
+        <h3>검사 결과</h3>
+        <div class="row"><span class="label">결과명</span>${escapeHtml(resultTitle)}</div>
+        <div class="row"><span class="label">결과코드</span>${escapeHtml(resultCode)}</div>
+        <div class="row"><span class="label">상담상태</span>${escapeHtml(status)}</div>
+        <div class="row"><span class="label">행 ID</span>${escapeHtml(String(row.id))}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>관리자 메모</h3>
+      <div class="memo">${escapeHtml(memo || "메모 없음")}</div>
+    </div>
+
+    <div class="footer">
+      <div style="color:#64748b;font-size:13px;">
+        학습성향 검사 관리자용 출력본
+      </div>
+      <div class="sign">상담자 서명</div>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
+
+function printAdminPdf(row: TestResultRow) {
+  const html = buildAdminPrintableHtml(row);
+  const win = window.open("", "_blank", "width=980,height=900");
+
+  if (!win) {
+    window.alert("팝업이 차단되어 출력 창을 열 수 없습니다.");
+    return;
+  }
+
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+
+  setTimeout(() => {
+    win.print();
+  }, 300);
 }
 
 function StatCard({
@@ -390,12 +563,6 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     setMemoDraft(selectedRow?.admin_memo ?? "");
   }, [selectedRow]);
-
-  const selectedScores = selectedRow
-    ? normalizeScores(selectedRow.scores) ??
-      normalizeScores(getPayloadValue(selectedRow, "scores")) ??
-      null
-    : null;
 
   const dashboard = useMemo(() => {
     const total = rows.length;
@@ -746,7 +913,7 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <div className="mt-1 text-sm text-slate-500">
-                      {getResultTitle(row)}
+                      {getResultTitle(row) === "-" ? "결과명 없음" : getResultTitle(row)}
                     </div>
                     <div className="mt-2 line-clamp-2 text-sm text-slate-700">
                       {row.admin_memo}
@@ -803,7 +970,7 @@ export default function AdminDashboardPage() {
                           ) : null}
                         </div>
                         <div className="mt-1 text-sm text-slate-600">
-                          {getResultTitle(row)}
+                          {getResultTitle(row) === "-" ? "결과명 없음" : getResultTitle(row)}
                         </div>
                         <div className="mt-1 text-xs text-slate-400">
                           {getSchool(row)}
@@ -949,7 +1116,7 @@ export default function AdminDashboardPage() {
                         </div>
 
                         <div className="mt-3 text-sm font-medium text-slate-700">
-                          {getResultTitle(row)}
+                          {getResultTitle(row) === "-" ? "결과명 없음" : getResultTitle(row)}
                         </div>
 
                         <div className="mt-2 text-xs text-slate-400">
@@ -979,11 +1146,26 @@ export default function AdminDashboardPage() {
                         기본 정보
                       </div>
                       <div className="space-y-2 text-sm text-slate-600">
-                        <div><span className="font-semibold text-slate-800">이름:</span> {getName(selectedRow)}</div>
-                        <div><span className="font-semibold text-slate-800">학교:</span> {getSchool(selectedRow)}</div>
-                        <div><span className="font-semibold text-slate-800">학년:</span> {getGrade(selectedRow)}</div>
-                        <div><span className="font-semibold text-slate-800">연락처:</span> {getPhone(selectedRow)}</div>
-                        <div><span className="font-semibold text-slate-800">검사일시:</span> {formatDate(selectedRow.created_at)}</div>
+                        <div>
+                          <span className="font-semibold text-slate-800">이름:</span>{" "}
+                          {getName(selectedRow)}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-slate-800">학교:</span>{" "}
+                          {getSchool(selectedRow)}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-slate-800">학년:</span>{" "}
+                          {getGrade(selectedRow)}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-slate-800">연락처:</span>{" "}
+                          {getPhone(selectedRow)}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-slate-800">검사일시:</span>{" "}
+                          {formatDate(selectedRow.created_at)}
+                        </div>
                       </div>
                     </div>
 
@@ -992,9 +1174,20 @@ export default function AdminDashboardPage() {
                         결과 정보
                       </div>
                       <div className="space-y-2 text-sm text-slate-600">
-                        <div><span className="font-semibold text-slate-800">결과 코드:</span> {getResultCode(selectedRow)}</div>
-                        <div><span className="font-semibold text-slate-800">결과명:</span> {getResultTitle(selectedRow)}</div>
-                        <div><span className="font-semibold text-slate-800">행 ID:</span> {String(selectedRow.id)}</div>
+                        <div>
+                          <span className="font-semibold text-slate-800">결과 코드:</span>{" "}
+                          {getResultCode(selectedRow)}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-slate-800">결과명:</span>{" "}
+                          {getResultTitle(selectedRow) === "-"
+                            ? "결과명 없음"
+                            : getResultTitle(selectedRow)}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-slate-800">행 ID:</span>{" "}
+                          {String(selectedRow.id)}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1075,6 +1268,13 @@ export default function AdminDashboardPage() {
                       </button>
 
                       <button
+                        onClick={() => printAdminPdf(selectedRow)}
+                        className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white"
+                      >
+                        관리자 PDF 출력
+                      </button>
+
+                      <button
                         onClick={() => void handleDelete(selectedRow.id)}
                         disabled={saving}
                         className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white"
@@ -1082,32 +1282,6 @@ export default function AdminDashboardPage() {
                         응답 삭제
                       </button>
                     </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 p-4">
-                    <div className="mb-3 text-sm font-bold text-slate-900">점수</div>
-
-                    {selectedScores ? (
-                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                        {Object.entries(selectedScores).map(([key, value]) => (
-                          <div
-                            key={key}
-                            className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
-                          >
-                            <div className="text-xs font-semibold uppercase text-slate-500">
-                              {key}
-                            </div>
-                            <div className="mt-2 text-2xl font-bold text-slate-900">
-                              {value}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-slate-500">
-                        저장된 점수 데이터가 없습니다.
-                      </div>
-                    )}
                   </div>
 
                   <details className="rounded-2xl border border-slate-200 p-4">
