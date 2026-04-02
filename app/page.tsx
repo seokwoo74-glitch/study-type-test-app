@@ -1731,7 +1731,7 @@ function ResultScreen({
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm font-black text-slate-600">
                 <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">
-                  결과코드 {resolved.code}
+                  결과코드 {resolved.fullcode}
                 </span>
                 <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">
                   학생 {student.name || "미입력"}
