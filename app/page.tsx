@@ -649,7 +649,7 @@ function buildDisplayCode(scores: Record<string, number>) {
   const trackLetter = scores.M >= scores.O ? "M" : "O";
   const styleLetter = scores.S >= scores.F ? "S" : "F";
 
-  const formatLetter = (letter: string, diff: number) => (diff <= 1 ? letter.toLowerCase() : letter.toUpperCase());
+  const formatLetter = (letter: string, diff: number) => (diff <= 2 ? letter.toLowerCase() : letter.toUpperCase());
 
   const code =
     formatLetter(socialLetter, socialDiff) +
