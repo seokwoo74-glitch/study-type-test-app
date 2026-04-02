@@ -1502,50 +1502,52 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="rounded-[32px] bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-
-        {/* 상단 */}
         <div className="text-center">
-          <div className="inline-block rounded-full bg-yellow-300 px-4 py-2 text-sm font-black">
+          <div className="inline-block animate-[floatBadge_2.6s_ease-in-out_infinite] rounded-full bg-yellow-300 px-4 py-2 text-sm font-black shadow-sm">
             🔥 실제 상담에서 쓰는 검사
           </div>
 
           <h1 className="mt-6 text-3xl font-black leading-tight text-slate-900 sm:text-4xl">
-            우리 아이<br />
+            우리 아이
+            <br />
             <span className="text-indigo-600">학습성향</span> 정확히 알아보기
           </h1>
 
           <p className="mt-4 text-base leading-7 text-slate-600">
-            공부를 못하는 이유가 아니라  
+            공부를 못하는 이유가 아니라
             <br />
-            <span className="font-bold text-slate-900">방법이 안 맞았던 걸 수도 있습니다</span>
+            <span className="font-bold text-slate-900">
+              방법이 안 맞았던 걸 수도 있습니다
+            </span>
           </p>
         </div>
 
-        {/* 카드 */}
         <div className="mt-8 grid gap-4">
-
-          <div className="rounded-[24px] bg-yellow-300 p-5 font-bold">
-            ✔ 결과 정확도 높음 (실제 상담 사용)
+          <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:-translate-y-0.5">
+            <div className="font-bold text-slate-900">
+              ✓ 결과 정확도 높음 (실제 상담 사용)
+            </div>
           </div>
 
-          <div className="rounded-[24px] bg-slate-100 p-5">
-            ✔ 5분이면 끝나는 간단 검사
+          <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:-translate-y-0.5">
+            <div className="font-bold text-slate-900">
+              ✓ 5분이면 끝나는 간단 검사
+            </div>
           </div>
 
-          <div className="rounded-[24px] bg-slate-100 p-5">
-            ✔ 검사 후 바로 솔루션 제공
+          <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:-translate-y-0.5">
+            <div className="font-bold text-slate-900">
+              ✓ 검사 후 바로 솔루션 제공
+            </div>
           </div>
-
         </div>
 
-        {/* 버튼 */}
         <button
           onClick={onStart}
-          className="mt-8 w-full rounded-[24px] bg-[#FEE500] py-5 text-lg font-black text-slate-900 shadow-md transition hover:-translate-y-0.5"
+          className="mt-8 w-full animate-[pulseSoft_2.2s_ease-in-out_infinite] rounded-[24px] bg-[#FEE500] py-5 text-lg font-black text-slate-900 shadow-md transition hover:-translate-y-0.5"
         >
           검사 시작하기 🚀
         </button>
-
       </div>
     </div>
   );
@@ -1707,7 +1709,7 @@ function LoadingScreen() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="rounded-[32px] bg-white p-10 text-center shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-yellow-300 text-3xl shadow-sm">
+        <div className="mx-auto flex h-16 w-16 animate-[floatBadge_2.3s_ease-in-out_infinite] items-center justify-center rounded-full bg-yellow-300 text-3xl shadow-sm">
           ⏳
         </div>
 
@@ -1728,8 +1730,14 @@ function LoadingScreen() {
           입니다.
         </p>
 
-        <div className="mt-8 overflow-hidden rounded-full bg-slate-200">
-          <div className="h-3 animate-pulse rounded-full bg-yellow-300" />
+        <div className="mt-8 flex items-center justify-center gap-2">
+          <span className="h-3 w-3 animate-[dotBounce_1.1s_ease-in-out_infinite] rounded-full bg-yellow-300" />
+          <span className="h-3 w-3 animate-[dotBounce_1.1s_ease-in-out_0.15s_infinite] rounded-full bg-yellow-300" />
+          <span className="h-3 w-3 animate-[dotBounce_1.1s_ease-in-out_0.3s_infinite] rounded-full bg-yellow-300" />
+        </div>
+
+        <div className="mt-6 overflow-hidden rounded-full bg-slate-200">
+          <div className="h-3 animate-[loadingBar_1.8s_ease-in-out_infinite] rounded-full bg-yellow-300" />
         </div>
 
         <div className="mt-4 text-sm font-bold text-slate-400">
