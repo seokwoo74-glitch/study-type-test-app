@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
-type Step = "landing" | "form" | "test" | "result";
+type Step = "landing" | "form" | "test" | "loading" | "result";
 
 type StudentInfo = {
   name: string;
@@ -1703,6 +1703,43 @@ function TestScreen({
   );
 }
 
+function LoadingScreen() {
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="rounded-[32px] bg-white p-10 text-center shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-yellow-300 text-3xl shadow-sm">
+          ⏳
+        </div>
+
+        <div className="mt-6 text-sm font-black tracking-[0.16em] text-slate-400">
+          RESULT ANALYZING
+        </div>
+
+        <h2 className="mt-3 text-2xl font-black text-slate-900 sm:text-3xl">
+          결과 분석 중입니다...
+        </h2>
+
+        <p className="mt-4 text-base leading-8 text-slate-600">
+          학생의 응답 패턴을 바탕으로
+          <br />
+          <span className="font-black text-slate-900">
+            정확도 높은 결과를 생성 중
+          </span>
+          입니다.
+        </p>
+
+        <div className="mt-8 overflow-hidden rounded-full bg-slate-200">
+          <div className="h-3 animate-pulse rounded-full bg-yellow-300" />
+        </div>
+
+        <div className="mt-4 text-sm font-bold text-slate-400">
+          잠시만 기다려 주세요
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ResultScreen({
   student,
   scores,
@@ -2033,16 +2070,21 @@ export default function Page() {
     });
   };
 
-  const goNext = () => {
-    if (step === "test" && currentIndex === QUESTIONS.length - 1) {
-      moveSafely(() => setStep("result"));
-      return;
-    }
+const goNext = () => {
+  if (step === "test" && currentIndex === QUESTIONS.length - 1) {
+    moveSafely(() => setStep("loading"));
 
-    if (step === "test") {
-      moveSafely(() => setCurrentIndex((prev) => prev + 1));
-    }
-  };
+    window.setTimeout(() => {
+      setStep("result");
+    }, 1600);
+
+    return;
+  }
+
+  if (step === "test") {
+    moveSafely(() => setCurrentIndex((prev) => prev + 1));
+  }
+};
 
   const goPrev = () => {
     if (step === "form") {
@@ -2071,36 +2113,38 @@ export default function Page() {
   return (
     <Shell>
       <div className={`${isTransitioning ? "opacity-80" : "opacity-100"} transition-opacity duration-150`}>
-        {step === "landing" && <LandingScreen onStart={() => moveSafely(() => setStep("form"))} />}
+       {step === "landing" && <LandingScreen onStart={() => moveSafely(() => setStep("form"))} />}
 
-        {step === "form" && (
-          <FormScreen
-            student={student}
-            onChange={handleStudentChange}
-            onNext={() => moveSafely(() => setStep("test"))}
-            onBack={() => moveSafely(() => setStep("landing"))}
-          />
-        )}
+{step === "form" && (
+  <FormScreen
+    student={student}
+    onChange={handleStudentChange}
+    onNext={() => moveSafely(() => setStep("test"))}
+    onBack={() => moveSafely(() => setStep("landing"))}
+  />
+)}
 
-        {step === "test" && (
-          <TestScreen
-            currentIndex={currentIndex}
-            answers={answers}
-            onAnswer={handleAnswer}
-            onNext={goNext}
-            onPrev={goPrev}
-          />
-        )}
+{step === "test" && (
+  <TestScreen
+    currentIndex={currentIndex}
+    answers={answers}
+    onAnswer={handleAnswer}
+    onNext={goNext}
+    onPrev={goPrev}
+  />
+)}
 
-        {step === "result" && (
-          <ResultScreen
-            student={student}
-            scores={scores}
-            resolved={resolved}
-            report={report}
-            onRestart={restart}
-          />
-        )}
+{step === "loading" && <LoadingScreen />}
+
+{step === "result" && (
+  <ResultScreen
+    student={student}
+    scores={scores}
+    resolved={resolved}
+    report={report}
+    onRestart={restart}
+  />
+)}
       </div>
     </Shell>
   );
