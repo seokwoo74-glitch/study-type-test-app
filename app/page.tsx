@@ -1678,7 +1678,7 @@ function ResultScreen({
   const character = CHARACTER_META[resolved.key] || CHARACTER_META.DEFAULT;
 
   const axes = [
-    { name: "외향·내향", left: "외향", right: "내향", ...toFiveScalePair(scores.E, scores.P) },
+    { name: "내향·외향", left: "내향", right: "외향", ...toFiveScalePair(scores.E, scores.P) },
     { name: "논리·창의", left: "논리", right: "창의", ...toFiveScalePair(scores.R, scores.C) },
     { name: "모범·자율", left: "모범", right: "자율", ...toFiveScalePair(scores.M, scores.O) },
     { name: "안정·도전", left: "안정", right: "도전", ...toFiveScalePair(scores.S, scores.F) },
@@ -1757,37 +1757,68 @@ function ResultScreen({
           <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
             <div className="mb-4 flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-yellow-300 text-xl shadow-sm">
-                💬
+                🔥
               </div>
               <div>
-                <h2 className="text-lg font-black text-slate-900">한눈에 보는 요약</h2>
-                <p className="text-sm text-slate-500">카카오톡 말풍선처럼 핵심만 먼저 보여줘요</p>
+                <h2 className="text-lg font-black text-slate-900">핵심 인사이트</h2>
+                <p className="text-sm text-slate-500">부모님이 가장 궁금해하는 내용만 모았습니다</p>
               </div>
             </div>
 
-            <div className="grid gap-3">
-              <div className="max-w-[92%] rounded-[24px] rounded-bl-md bg-yellow-300 px-5 py-4 text-[15px] font-bold leading-7 text-slate-900 shadow-sm">
-                {report.summary}
+            <div className="grid gap-4">
+              <div className="rounded-[22px] bg-yellow-300 p-5 text-slate-900 shadow-sm">
+                <div className="text-xs font-black uppercase tracking-[0.16em]">
+                  위치
+                </div>
+                <div className="mt-2 text-lg font-black">
+                  상위 {getPercentile(resolved.key)}% 유형
+                </div>
+                <div className="mt-1 text-sm">
+                  또래 대비 학습 잠재력이 높은 편입니다
+                </div>
               </div>
 
-              <div className="ml-auto max-w-[92%] rounded-[24px] rounded-br-md bg-slate-100 px-5 py-4 text-[15px] leading-7 text-slate-700 shadow-sm">
-                부모님께는 <span className="font-black text-slate-900">“{report.parent}”</span> 방향으로
-                지도하는 것이 잘 맞아요.
+              <div className="rounded-[22px] border border-slate-200 bg-white p-5">
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                  실제 모습
+                </div>
+                <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                  {getTraits(resolved.key).map((t, i) => (
+                    <li key={i}>✔ {t}</li>
+                  ))}
+                </ul>
               </div>
 
-              <div className="max-w-[92%] rounded-[24px] rounded-bl-md bg-white px-5 py-4 text-[15px] leading-7 text-slate-700 shadow-sm ring-1 ring-slate-200">
-                추천 전략은 <span className="font-black text-slate-900">{report.strategy}</span>
+              <div className="rounded-[22px] border border-slate-200 bg-slate-50 p-5">
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                  미래 방향
+                </div>
+                <div className="mt-2 text-sm leading-7 text-slate-700">
+                  {getFuture(resolved.key)}
+                </div>
+              </div>
+
+              <div className="rounded-[22px] border border-rose-200 bg-rose-50 p-5">
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-rose-400">
+                  ⚠ 위험 패턴
+                </div>
+                <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                  {getDangerPattern(resolved.key).map((d, i) => (
+                    <li key={i}>- {d}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-[22px] border border-emerald-200 bg-emerald-50 p-5">
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-emerald-500">
+                  👉 지금 해야 할 1가지
+                </div>
+                <div className="mt-2 text-sm font-bold text-slate-800">
+                  {getAction(resolved.key)}
+                </div>
               </div>
             </div>
           </section>
-
-          <SectionCard
-            title="축 분석"
-            desc="네 가지 핵심 축을 카카오 카드처럼 한눈에 볼 수 있게 정리했어요."
-            accentColor={report.color}
-          >
-            <AxisBars scores={scores} />
-          </SectionCard>
         </div>
 
         <div className="grid gap-6">
@@ -1843,24 +1874,6 @@ function ResultScreen({
               </div>
             </div>
           </section>
-
-          <SectionCard
-            title="축별 해석"
-            desc="실제 상담할 때 바로 써먹을 수 있게 문장으로 풀었어요."
-            accentColor={report.color}
-          >
-            <div className="grid gap-4">
-              {axisNarratives.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 p-4"
-                >
-                  <div className="text-sm font-black text-slate-900">{item.title}</div>
-                  <div className="mt-2 text-sm leading-7 text-slate-600">{item.body}</div>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
 
           <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
             <div className="mb-4 flex items-center gap-3">
@@ -2077,4 +2090,59 @@ function shareNative(text: string) {
   } else {
     copyToClipboard(text);
   }
+}
+
+function getPercentile(key: string) {
+  if (key.includes("ERMS") || key.includes("ECMF")) return 1;
+  if (key.includes("ERMF") || key.includes("ECMS")) return 3;
+  if (key.includes("EROS") || key.includes("ECOS")) return 10;
+  if (key.includes("PRMF") || key.includes("PCMF")) return 20;
+  return 70;
+}
+
+function getTraits(key: string) {
+  if (key.includes("ER")) {
+    return ["발표·소통에서 강함", "에너지가 외부 활동에서 살아남", "리더 역할을 맡을 때 빛남"];
+  }
+
+  if (key.includes("PC")) {
+    return ["혼자 집중할 때 몰입이 높음", "조용하지만 생각이 깊음", "겉보다 속이 단단한 편"];
+  }
+
+  if (key.includes("PR")) {
+    return ["관심 있는 과목은 확실히 잘함", "싫은 건 미루는 편", "환경에 따라 성과 차이가 큼"];
+  }
+
+  return ["상황에 따라 유연함", "균형 잡힌 성향", "안정적인 학습 스타일"];
+}
+
+function getFuture(key: string) {
+  if (key.includes("ER")) return "리더형, 기획형, 활동 중심 역할에서 강점이 드러날 가능성이 큽니다.";
+  if (key.includes("EC")) return "전문직, 분석형, 언어/연구 계열에서 깊이 있는 성장 가능성이 높습니다.";
+  if (key.includes("PR") || key.includes("PC")) return "특정 분야에 강하게 몰입하는 전문가형으로 성장할 가능성이 큽니다.";
+  return "균형형 인재로 다양한 진로 선택지 속에서 안정적으로 성장할 수 있습니다.";
+}
+
+function getDangerPattern(key: string) {
+  if (key.includes("PR") || key.includes("PC")) {
+    return ["좋아하는 것만 하는 패턴", "마무리 부족", "성적 편차가 커질 수 있음"];
+  }
+
+  if (key.includes("ER")) {
+    return ["집중력 분산", "활동이 과해질 수 있음", "계획이 흐트러질 수 있음"];
+  }
+
+  return ["목표 없이 흐름만 유지", "성장 속도가 느려질 수 있음"];
+}
+
+function getAction(key: string) {
+  if (key.includes("PR") || key.includes("PC")) {
+    return "하루 1시간이라도 무조건 끝까지 앉아있는 습관 만들기";
+  }
+
+  if (key.includes("ER")) {
+    return "활동 시간을 조금 줄이고 공부 시간을 고정하기";
+  }
+
+  return "하루 학습 루틴을 일정하게 유지하기";
 }
