@@ -1500,37 +1500,52 @@ function ProgressBar({ current, total, color }: { current: number; total: number
 
 function LandingScreen({ onStart }: { onStart: () => void }) {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="rounded-[36px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:p-12">
-        <span className="inline-flex rounded-full bg-indigo-100 px-4 py-1 text-sm font-black text-indigo-700">
-          우리 아이의 학습 성향, 결과보다 방향이 먼저입니다.
-        </span>
-        <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 sm:text-6xl">학습성향검사</h1>
-        <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-          학생의 학습 태도와 사고 방식, 실행 습관을 바탕으로 가장 가까운 학습성향을 분석합니다.
-          강점과 보완 포인트를 입체적으로 분석해 드립니다.
-        </p>
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-            <h2 className="font-black">문항 수</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">총 {QUESTIONS.length}문항의 2지선다 검사</p>
+    <div className="mx-auto max-w-4xl px-4 py-10">
+      <div className="rounded-[32px] bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+
+        {/* 상단 */}
+        <div className="text-center">
+          <div className="inline-block rounded-full bg-yellow-300 px-4 py-2 text-sm font-black">
+            🔥 실제 상담에서 쓰는 검사
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-            <h2 className="font-black">정밀 분석</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">강점, 학습 습관, 사고 경향을 균형 있게 살펴보는 성향 진단</p>
-          </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-            <h2 className="font-black">맞춤 리포트</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">유형 해석부터 학습 전략, 부모 가이드까지 바로 제공</p>
-          </div>
+
+          <h1 className="mt-6 text-3xl font-black leading-tight text-slate-900 sm:text-4xl">
+            우리 아이<br />
+            <span className="text-indigo-600">학습성향</span> 정확히 알아보기
+          </h1>
+
+          <p className="mt-4 text-base leading-7 text-slate-600">
+            공부를 못하는 이유가 아니라  
+            <br />
+            <span className="font-bold text-slate-900">방법이 안 맞았던 걸 수도 있습니다</span>
+          </p>
         </div>
+
+        {/* 카드 */}
+        <div className="mt-8 grid gap-4">
+
+          <div className="rounded-[24px] bg-yellow-300 p-5 font-bold">
+            ✔ 결과 정확도 높음 (실제 상담 사용)
+          </div>
+
+          <div className="rounded-[24px] bg-slate-100 p-5">
+            ✔ 5분이면 끝나는 간단 검사
+          </div>
+
+          <div className="rounded-[24px] bg-slate-100 p-5">
+            ✔ 검사 후 바로 솔루션 제공
+          </div>
+
+        </div>
+
+        {/* 버튼 */}
         <button
-          type="button"
           onClick={onStart}
-          className="mt-10 rounded-full bg-slate-900 px-7 py-4 text-base font-black text-white transition hover:-translate-y-0.5 hover:bg-slate-800"
+          className="mt-8 w-full rounded-[24px] bg-[#FEE500] py-5 text-lg font-black text-slate-900 shadow-md transition hover:-translate-y-0.5"
         >
-          검사 시작하기
+          검사 시작하기 🚀
         </button>
+
       </div>
     </div>
   );
@@ -1607,56 +1622,82 @@ function TestScreen({
   const question = QUESTIONS[currentIndex];
   const currentAnswer = answers[currentIndex];
 
+  const progress = Math.round(((currentIndex + 1) / QUESTIONS.length) * 100);
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="rounded-[32px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="text-sm font-black tracking-[0.16em] text-indigo-600">
-              QUESTION {currentIndex + 1} / {QUESTIONS.length}
-            </div>
-            <h2 className="mt-2 text-3xl font-black leading-tight text-slate-900">{question}</h2>
+    <div className="mx-auto max-w-3xl px-4 py-10">
+
+      <div className="rounded-[32px] bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+
+        {/* 진행률 */}
+        <div className="mb-6">
+          <div className="flex justify-between text-xs font-black text-slate-400">
+            <span>{currentIndex + 1} / {QUESTIONS.length}</span>
+            <span>{progress}%</span>
+          </div>
+
+          <div className="mt-2 h-3 rounded-full bg-slate-200">
+            <div
+              className="h-3 rounded-full bg-yellow-300 transition-all"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
 
-        <ProgressBar current={currentIndex + 1} total={QUESTIONS.length} color="#4f46e5" />
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {CHOICES.map((choice) => {
-            const active = currentAnswer === choice.value;
-            return (
-              <button
-                key={choice.label}
-                type="button"
-                onClick={() => onAnswer(choice.value)}
-                className={`rounded-[28px] border px-6 py-6 text-left transition ${
-                  active
-                    ? "border-slate-900 bg-slate-900 text-white shadow-xl"
-                    : "border-slate-200 bg-white text-slate-900 hover:border-slate-300 hover:bg-slate-50"
-                }`}
-              >
-                <div className="text-xl font-black">{choice.label}</div>
-                <div className={`mt-2 text-sm ${active ? "text-slate-200" : "text-slate-500"}`}>
-                  {choice.value === 1 ? "해당 문항에 동의합니다." : "해당 문항에 동의하지 않습니다."}
-                </div>
-              </button>
-            );
-          })}
+        {/* 질문 */}
+        <div className="text-center">
+          <h2 className="text-xl font-black leading-8 text-slate-900">
+            {question}
+          </h2>
         </div>
 
-        <div className="mt-8 flex items-center justify-between gap-3">
-          <button type="button" onClick={onPrev} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700">
+        {/* 선택 */}
+        <div className="mt-8 grid gap-4">
+
+          <button
+            onClick={() => onAnswer(1)}
+            className={`rounded-[24px] p-6 text-lg font-black transition ${
+              currentAnswer === 1
+                ? "bg-yellow-300 text-slate-900 shadow-lg"
+                : "bg-slate-100 text-slate-700"
+            }`}
+          >
+            그렇다 👍
+          </button>
+
+          <button
+            onClick={() => onAnswer(0)}
+            className={`rounded-[24px] p-6 text-lg font-black transition ${
+              currentAnswer === 0
+                ? "bg-slate-900 text-white shadow-lg"
+                : "bg-slate-100 text-slate-700"
+            }`}
+          >
+            아니다 👎
+          </button>
+
+        </div>
+
+        {/* 버튼 */}
+        <div className="mt-8 flex justify-between">
+
+          <button
+            onClick={onPrev}
+            className="rounded-full bg-slate-100 px-5 py-3 text-sm font-black"
+          >
             이전
           </button>
+
           <button
-            type="button"
             onClick={onNext}
             disabled={currentAnswer === -1}
-            className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white disabled:opacity-30"
           >
             {currentIndex === QUESTIONS.length - 1 ? "결과 보기" : "다음"}
           </button>
+
         </div>
+
       </div>
     </div>
   );
