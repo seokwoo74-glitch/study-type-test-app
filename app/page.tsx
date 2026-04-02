@@ -1678,13 +1678,14 @@ function ResultScreen({
   const character = CHARACTER_META[resolved.key] || CHARACTER_META.DEFAULT;
 
   const axes = [
-    { name: "내향·외향", left: "내향", right: "외향", ...toFiveScalePair(scores.E, scores.P) },
+    { name: "외향·내향", left: "외향", right: "내향", ...toFiveScalePair(scores.E, scores.P) },
     { name: "논리·창의", left: "논리", right: "창의", ...toFiveScalePair(scores.R, scores.C) },
     { name: "모범·자율", left: "모범", right: "자율", ...toFiveScalePair(scores.M, scores.O) },
     { name: "안정·도전", left: "안정", right: "도전", ...toFiveScalePair(scores.S, scores.F) },
   ];
 
   const axisNarratives = generateAxisNarratives(scores);
+
   const printableHtml = generatePrintableReport({
     report,
     resultCode: resolved.fullCode,
@@ -1693,24 +1694,48 @@ function ResultScreen({
     axisNarratives,
   });
 
+  // 🔥 추가된 공유 텍스트
+  const shareText = buildShareText(report.title);
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="grid gap-6 lg:grid-cols-[1.12fr_0.88fr]">
+
+        {/* LEFT */}
         <div className="grid gap-6">
           <section className="relative overflow-hidden rounded-[32px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
             <div className={`absolute inset-0 bg-gradient-to-br ${character.aura}`} />
             <div className="relative">
+
+              {/* 🔥 자극 문구 추가 */}
+              <div className="text-sm font-black text-red-500 mb-2">
+                🔥 상위 가능성 유형
+              </div>
+
               <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-black text-slate-700 shadow-sm">
                 <span>{character.emoji}</span>
                 <span>{character.label}</span>
               </div>
-              <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">{report.title}</h1>
-              <p className="mt-3 text-lg font-bold text-slate-600">{report.subtitle}</p>
-              <p className="mt-5 max-w-3xl text-base leading-8 text-slate-700">{character.tagline}</p>
+
+              <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">
+                {report.title}
+              </h1>
+
+              <p className="mt-3 text-lg font-bold text-slate-600">
+                {report.subtitle}
+              </p>
+
+              <p className="mt-5 max-w-3xl text-base leading-8 text-slate-700">
+                {character.tagline}
+              </p>
+
               <div className="mt-6 flex flex-wrap gap-3 text-sm font-black text-slate-600">
-                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">결과코드 {resolved.code}</span>
-                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">차이값 {resolved.diffText}</span>
-                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">학생 {student.name || "미입력"}</span>
+                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">
+                  결과코드 {resolved.code}
+                </span>
+                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">
+                  학생 {student.name || "미입력"}
+                </span>
               </div>
             </div>
           </section>
@@ -1720,50 +1745,65 @@ function ResultScreen({
           </SectionCard>
         </div>
 
+        {/* RIGHT */}
         <div className="grid gap-6">
+
           <SectionCard title="결과 해석" desc="유형 설명과 실제 적용 방향을 함께 확인해 보세요." accentColor={report.color}>
             <div className="grid gap-4">
               <InfoItem title="이름" value={student.name} />
               <InfoItem title="학년" value={student.grade} />
               <InfoItem title="학교" value={student.school} />
-              <InfoItem title="전화번호" value={student.phone} />
               <InfoItem title="유형명" value={`${report.title} · ${report.subtitle}`} />
               <InfoItem title="핵심 설명" value={report.summary} />
               <InfoItem title="학습 전략" value={report.strategy} />
               <InfoItem title="부모 코칭" value={report.parent} />
               <InfoItem title="진로 방향" value={report.path} />
               <InfoItem title="주의 패턴" value={report.danger} />
-              <InfoItem title="대화 제안" value={report.talk} />
             </div>
           </SectionCard>
 
-          <SectionCard title="축별 해석" desc="축 점수를 실제 지도 문장으로 풀어낸 자동 해석입니다." accentColor={report.color}>
-            <div className="grid gap-4">
-              {axisNarratives.map((item) => (
-                <InfoItem key={item.title} title={item.title} value={item.body} />
-              ))}
-            </div>
-          </SectionCard>
+          <SectionCard title="활용하기" desc="출력 및 공유가 가능합니다." accentColor={report.color}>
+            <div className="flex flex-wrap gap-3 justify-center">
 
-          <SectionCard title="활용하기" desc="출력하거나 다시 검사할 수 있어요." accentColor={report.color}>
-            <div className="flex flex-wrap gap-3">
+              {/* PDF */}
               <button
                 type="button"
                 onClick={() => printReport(printableHtml)}
-                className="rounded-full px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+                className="rounded-full px-5 py-3 text-sm font-black text-white"
                 style={{ background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)` }}
               >
-                PDF / 인쇄하기
+                PDF 저장
               </button>
+
+              {/* 🔥 공유 */}
+              <button
+                type="button"
+                onClick={() => shareNative(shareText)}
+                className="rounded-full bg-indigo-600 px-5 py-3 text-sm font-black text-white"
+              >
+                친구 공유 📤
+              </button>
+
+              <button
+                type="button"
+                onClick={() => copyToClipboard(shareText)}
+                className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700"
+              >
+                부모님 공유 👨‍👩‍👧
+              </button>
+
+              {/* 다시 */}
               <button
                 type="button"
                 onClick={onRestart}
-                className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+                className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700"
               >
-                처음부터 다시하기
+                다시하기
               </button>
+
             </div>
           </SectionCard>
+
         </div>
       </div>
     </div>
@@ -1906,4 +1946,31 @@ export default function Page() {
       </div>
     </Shell>
   );
+}
+
+function buildShareText(title: string) {
+  return `우리 아이 학습유형 결과 😮
+
+👉 ${title}
+
+생각보다 정확해서 놀람...
+무료 테스트 해보세요👇
+https://study-type-test-app-zbmw.vercel.app`;
+}
+
+function copyToClipboard(text: string) {
+  navigator.clipboard.writeText(text);
+  alert("링크가 복사됐어요 👍");
+}
+
+function shareNative(text: string) {
+  if (navigator.share) {
+    navigator.share({
+      title: "학습성향 검사",
+      text,
+      url: "https://study-type-test-app-zbmw.vercel.app",
+    });
+  } else {
+    copyToClipboard(text);
+  }
 }
