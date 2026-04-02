@@ -1694,116 +1694,220 @@ function ResultScreen({
     axisNarratives,
   });
 
-  // 🔥 추가된 공유 텍스트
   const shareText = buildShareText(report.title);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="grid gap-6 lg:grid-cols-[1.12fr_0.88fr]">
-
-        {/* LEFT */}
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
         <div className="grid gap-6">
-          <section className="relative overflow-hidden rounded-[32px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-            <div className={`absolute inset-0 bg-gradient-to-br ${character.aura}`} />
+          <section className="relative overflow-hidden rounded-[34px] border border-yellow-100 bg-white p-7 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+            <div
+              className="absolute inset-x-0 top-0 h-40"
+              style={{
+                background: `linear-gradient(135deg, ${hexToRgba(report.color, 0.18)} 0%, rgba(250,204,21,0.18) 100%)`,
+              }}
+            />
             <div className="relative">
-
-              {/* 🔥 자극 문구 추가 */}
-              <div className="text-sm font-black text-red-500 mb-2">
-                🔥 상위 가능성 유형
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center gap-2 rounded-full bg-yellow-300 px-4 py-2 text-sm font-black text-slate-900 shadow-sm">
+                  <span>{character.emoji}</span>
+                  <span>{character.label}</span>
+                </div>
+                <div className="rounded-full bg-white/90 px-4 py-2 text-xs font-black text-slate-500 shadow-sm">
+                  결과코드 {resolved.fullCode}
+                </div>
               </div>
 
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-black text-slate-700 shadow-sm">
-                <span>{character.emoji}</span>
-                <span>{character.label}</span>
-              </div>
+              <div className="mt-7 rounded-[28px] bg-white/95 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
+                <div className="text-sm font-black tracking-[0.14em] text-yellow-500">
+                  학습성향 분석 결과
+                </div>
+                <h1 className="mt-3 text-3xl font-black leading-tight text-slate-900 sm:text-4xl">
+                  {report.title}
+                </h1>
+                <p className="mt-2 text-base font-bold text-slate-500">
+                  {report.subtitle}
+                </p>
 
-              <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">
-                {report.title}
-              </h1>
+                <div className="mt-5 rounded-[24px] bg-slate-50 px-5 py-4 text-[15px] leading-8 text-slate-700">
+                  <span className="font-black text-slate-900">{student.name || "학생"}</span>
+                  님은{" "}
+                  <span style={{ color: report.color }} className="font-black">
+                    {report.title}
+                  </span>
+                  에 가까워요.  
+                  {character.tagline}
+                </div>
 
-              <p className="mt-3 text-lg font-bold text-slate-600">
-                {report.subtitle}
-              </p>
-
-              <p className="mt-5 max-w-3xl text-base leading-8 text-slate-700">
-                {character.tagline}
-              </p>
-
-              <div className="mt-6 flex flex-wrap gap-3 text-sm font-black text-slate-600">
-                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">
-                  결과코드 {resolved.fullcode}
-                </span>
-                <span className="rounded-full bg-white/80 px-4 py-2 shadow-sm">
-                  학생 {student.name || "미입력"}
-                </span>
+                <div className="mt-5 flex flex-wrap gap-2 text-sm font-black">
+                  <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
+                    학생 {student.name || "미입력"}
+                  </span>
+                  <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
+                    학년 {student.grade || "미입력"}
+                  </span>
+                  <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
+                    학교 {student.school || "미입력"}
+                  </span>
+                </div>
               </div>
             </div>
           </section>
 
-          <SectionCard title="축 분석" desc="네 가지 축에서 현재 응답의 균형을 확인해 보세요." accentColor={report.color}>
+          <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-yellow-300 text-xl shadow-sm">
+                💬
+              </div>
+              <div>
+                <h2 className="text-lg font-black text-slate-900">한눈에 보는 요약</h2>
+                <p className="text-sm text-slate-500">카카오톡 말풍선처럼 핵심만 먼저 보여줘요</p>
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              <div className="max-w-[92%] rounded-[24px] rounded-bl-md bg-yellow-300 px-5 py-4 text-[15px] font-bold leading-7 text-slate-900 shadow-sm">
+                {report.summary}
+              </div>
+
+              <div className="ml-auto max-w-[92%] rounded-[24px] rounded-br-md bg-slate-100 px-5 py-4 text-[15px] leading-7 text-slate-700 shadow-sm">
+                부모님께는 <span className="font-black text-slate-900">“{report.parent}”</span> 방향으로
+                지도하는 것이 잘 맞아요.
+              </div>
+
+              <div className="max-w-[92%] rounded-[24px] rounded-bl-md bg-white px-5 py-4 text-[15px] leading-7 text-slate-700 shadow-sm ring-1 ring-slate-200">
+                추천 전략은 <span className="font-black text-slate-900">{report.strategy}</span>
+              </div>
+            </div>
+          </section>
+
+          <SectionCard
+            title="축 분석"
+            desc="네 가지 핵심 축을 카카오 카드처럼 한눈에 볼 수 있게 정리했어요."
+            accentColor={report.color}
+          >
             <AxisBars scores={scores} />
           </SectionCard>
         </div>
 
-        {/* RIGHT */}
         <div className="grid gap-6">
+          <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-xl text-white shadow-sm">
+                ✨
+              </div>
+              <div>
+                <h2 className="text-lg font-black text-slate-900">결과 카드</h2>
+                <p className="text-sm text-slate-500">중요한 정보만 카드형으로 정리했어요</p>
+              </div>
+            </div>
 
-          <SectionCard title="결과 해석" desc="유형 설명과 실제 적용 방향을 함께 확인해 보세요." accentColor={report.color}>
             <div className="grid gap-4">
-              <InfoItem title="이름" value={student.name} />
-              <InfoItem title="학년" value={student.grade} />
-              <InfoItem title="학교" value={student.school} />
-              <InfoItem title="유형명" value={`${report.title} · ${report.subtitle}`} />
-              <InfoItem title="핵심 설명" value={report.summary} />
-              <InfoItem title="학습 전략" value={report.strategy} />
-              <InfoItem title="부모 코칭" value={report.parent} />
-              <InfoItem title="진로 방향" value={report.path} />
-              <InfoItem title="주의 패턴" value={report.danger} />
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                  유형명
+                </div>
+                <div className="mt-2 text-lg font-black text-slate-900">
+                  {report.title}
+                </div>
+                <div className="mt-1 text-sm font-bold text-slate-500">
+                  {report.subtitle}
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+                  추천 진로 방향
+                </div>
+                <div className="mt-2 text-sm leading-7 text-slate-700">
+                  {report.path}
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-rose-100 bg-rose-50 p-5">
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-rose-400">
+                  주의 패턴
+                </div>
+                <div className="mt-2 text-sm leading-7 text-slate-700">
+                  {report.danger}
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-emerald-100 bg-emerald-50 p-5">
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-emerald-500">
+                  추천 대화법
+                </div>
+                <div className="mt-2 text-sm leading-7 text-slate-700">
+                  {report.talk}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <SectionCard
+            title="축별 해석"
+            desc="실제 상담할 때 바로 써먹을 수 있게 문장으로 풀었어요."
+            accentColor={report.color}
+          >
+            <div className="grid gap-4">
+              {axisNarratives.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-[22px] border border-slate-200 bg-slate-50 p-4"
+                >
+                  <div className="text-sm font-black text-slate-900">{item.title}</div>
+                  <div className="mt-2 text-sm leading-7 text-slate-600">{item.body}</div>
+                </div>
+              ))}
             </div>
           </SectionCard>
 
-          <SectionCard title="활용하기" desc="출력 및 공유가 가능합니다." accentColor={report.color}>
-            <div className="flex flex-wrap gap-3 justify-center">
+          <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-yellow-300 text-xl shadow-sm">
+                🚀
+              </div>
+              <div>
+                <h2 className="text-lg font-black text-slate-900">공유하고 활용하기</h2>
+                <p className="text-sm text-slate-500">공유 버튼이 눈에 띄어야 퍼져요</p>
+              </div>
+            </div>
 
-              {/* PDF */}
-              <button
-                type="button"
-                onClick={() => printReport(printableHtml)}
-                className="rounded-full px-5 py-3 text-sm font-black text-white"
-                style={{ background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)` }}
-              >
-                PDF 저장
-              </button>
-
-              {/* 🔥 공유 */}
+            <div className="grid gap-3">
               <button
                 type="button"
                 onClick={() => shareNative(shareText)}
-                className="rounded-full bg-indigo-600 px-5 py-3 text-sm font-black text-white"
+                className="rounded-[22px] bg-[#FEE500] px-5 py-4 text-base font-black text-slate-900 shadow-sm transition hover:-translate-y-0.5"
               >
-                친구 공유 📤
+                카톡처럼 바로 공유하기 📤
               </button>
 
               <button
                 type="button"
                 onClick={() => copyToClipboard(shareText)}
-                className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700"
+                className="rounded-[22px] border border-slate-200 bg-white px-5 py-4 text-base font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
               >
-                부모님 공유 👨‍👩‍👧
+                링크 복사해서 보내기 👨‍👩‍👧
               </button>
 
-              {/* 다시 */}
+              <button
+                type="button"
+                onClick={() => printReport(printableHtml)}
+                className="rounded-[22px] px-5 py-4 text-base font-black text-white shadow-sm transition hover:-translate-y-0.5"
+                style={{ background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)` }}
+              >
+                PDF 저장 / 인쇄하기
+              </button>
+
               <button
                 type="button"
                 onClick={onRestart}
-                className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700"
+                className="rounded-[22px] border border-slate-200 bg-slate-100 px-5 py-4 text-base font-black text-slate-700 shadow-sm transition hover:bg-slate-200"
               >
-                다시하기
+                처음부터 다시하기
               </button>
-
             </div>
-          </SectionCard>
-
+          </section>
         </div>
       </div>
     </div>
