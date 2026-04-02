@@ -1881,8 +1881,8 @@ function ResultScreen({
                 🚀
               </div>
               <div>
-                <h2 className="text-lg font-black text-slate-900">공유하고 활용하기</h2>
-                <p className="text-sm text-slate-500">공유 버튼이 눈에 띄어야 퍼져요</p>
+                <h2 className="text-lg font-black text-slate-900">공유하기</h2>
+                <p className="text-sm text-slate-500">친구 또는 부모님께 보여주세요</p>
               </div>
             </div>
 
@@ -1892,7 +1892,7 @@ function ResultScreen({
                 onClick={() => shareNative(shareText)}
                 className="rounded-[22px] bg-[#FEE500] px-5 py-4 text-base font-black text-slate-900 shadow-sm transition hover:-translate-y-0.5"
               >
-                카톡처럼 바로 공유하기 📤
+                 바로 공유하기 📤
               </button>
 
               <button
@@ -1900,7 +1900,7 @@ function ResultScreen({
                 onClick={() => copyToClipboard(shareText)}
                 className="rounded-[22px] border border-slate-200 bg-white px-5 py-4 text-base font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
               >
-                링크 복사해서 보내기 👨‍👩‍👧
+                링크 복사하기 👨‍👩‍👧
               </button>
 
               <button
