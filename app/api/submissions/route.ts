@@ -1,29 +1,44 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-type SubmissionPayload = {
-  student: {
-    name: string;
-    grade: string;
-    school?: string;
-    phone?: string;
-  };
-  answers: number[];
-  resultKey: string;
-  resultCode: string;
-  reportTitle: string;
-  scores: Record<string, number>;
-};
-
-export async function GET() {
+export async function POST(req: Request) {
   try {
+    const body = await req.json();
+
+    const insertRow = {
+      student_name: String(body.student_name ?? ""),
+      grade: String(body.grade ?? ""),
+      school: String(body.school ?? ""),
+      phone: String(body.phone ?? ""),
+
+      result_code: String(body.result_code ?? ""),
+      result_full_code: String(body.result_full_code ?? ""),
+      result_title: String(body.result_title ?? ""),
+      result_subtitle: String(body.result_subtitle ?? ""),
+
+      e_score: Number(body.e_score ?? 0),
+      p_score: Number(body.p_score ?? 0),
+      r_score: Number(body.r_score ?? 0),
+      c_score: Number(body.c_score ?? 0),
+      m_score: Number(body.m_score ?? 0),
+      o_score: Number(body.o_score ?? 0),
+      s_score: Number(body.s_score ?? 0),
+      f_score: Number(body.f_score ?? 0),
+
+      result_payload:
+        body.result_payload && typeof body.result_payload === "object"
+          ? body.result_payload
+          : {},
+    };
+
     const { data, error } = await supabaseAdmin
       .from("test_results")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .insert(insertRow)
+      .select()
+      .single();
 
     if (error) {
-      console.error("Supabase select error:", error);
+      console.error("[api/submissions] insert error:", error);
       return NextResponse.json(
         { ok: false, error: error.message },
         { status: 500 }
@@ -32,61 +47,13 @@ export async function GET() {
 
     return NextResponse.json({
       ok: true,
-      items: data ?? [],
+      row: data,
     });
   } catch (error) {
-    console.error("GET API error:", error);
+    console.error("[api/submissions] unexpected error:", error);
     return NextResponse.json(
-      { ok: false, error: "목록 조회 중 오류가 발생했습니다." },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(req: Request) {
-  try {
-    const body = (await req.json()) as Partial<SubmissionPayload>;
-
-    if (!body.student?.name || !body.student?.grade) {
-      return NextResponse.json(
-        { ok: false, error: "학생 이름과 학년이 필요합니다." },
-        { status: 400 }
-      );
-    }
-
-    if (!Array.isArray(body.answers)) {
-      return NextResponse.json(
-        { ok: false, error: "answers 형식이 올바르지 않습니다." },
-        { status: 400 }
-      );
-    }
-
-    const { error } = await supabaseAdmin.from("test_results").insert({
-      student_name: body.student.name,
-      grade: body.student.grade,
-      school: body.student.school ?? "",
-      phone: body.student.phone ?? "",
-      answers: body.answers,
-      result_key: body.resultKey ?? "",
-      result_code: body.resultCode ?? "",
-      report_title: body.reportTitle ?? "",
-      scores: body.scores ?? {},
-    });
-
-    if (error) {
-      console.error("Supabase insert error:", error);
-      return NextResponse.json(
-        { ok: false, error: error.message },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error("POST API error:", error);
-    return NextResponse.json(
-      { ok: false, error: "서버 처리 중 오류가 발생했습니다." },
-      { status: 500 }
+      { ok: false, error: "잘못된 요청입니다." },
+      { status: 400 }
     );
   }
 }

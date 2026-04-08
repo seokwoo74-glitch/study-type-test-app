@@ -1,5 +1,6 @@
 "use client";
 
+import ResultScreen from "@/components/shared-result-screen";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 type Step = "landing" | "form" | "test" | "loading" | "result";
@@ -36,6 +37,114 @@ type CharacterMeta = {
   emoji: string;
   aura: string;
 };
+
+type ResultPayload = {
+  version: number;
+  submittedAt: string;
+  student: {
+    name: string;
+    grade: string;
+    school: string;
+    phone: string;
+  };
+  result: {
+    key: string;
+    code: string;
+    fullCode: string;
+    diffText: string;
+    title: string;
+    subtitle: string;
+    summary: string;
+    strategy: string;
+    parent: string;
+    path: string;
+    danger: string;
+    talk: string;
+    color: string;
+  };
+  scores: {
+    E: number;
+    P: number;
+    R: number;
+    C: number;
+    M: number;
+    O: number;
+    S: number;
+    F: number;
+  };
+  diffs: {
+    social: number;
+    judgment: number;
+    track: number;
+    style: number;
+  };
+  meta: {
+    totalAnswered: number;
+    totalQuestions: number;
+  };
+};
+
+function buildResultPayload(params: {
+  student: StudentInfo;
+  resolved: ResolvedResult;
+  report: Report;
+  scores: Record<string, number>;
+  totalAnswered: number;
+  totalQuestions: number;
+}): ResultPayload {
+  const { student, resolved, report, scores, totalAnswered, totalQuestions } = params;
+
+  const social = Math.abs((scores.E ?? 0) - (scores.P ?? 0));
+  const judgment = Math.abs((scores.R ?? 0) - (scores.C ?? 0));
+  const track = Math.abs((scores.M ?? 0) - (scores.O ?? 0));
+  const style = Math.abs((scores.S ?? 0) - (scores.F ?? 0));
+
+  return {
+    version: 1,
+    submittedAt: new Date().toISOString(),
+    student: {
+      name: student.name ?? "",
+      grade: student.grade ?? "",
+      school: student.school ?? "",
+      phone: student.phone ?? "",
+    },
+    result: {
+      key: resolved.key,
+      code: resolved.code,
+      fullCode: resolved.fullCode,
+      diffText: resolved.diffText,
+      title: report.title,
+      subtitle: report.subtitle,
+      summary: report.summary,
+      strategy: report.strategy,
+      parent: report.parent,
+      path: report.path,
+      danger: report.danger,
+      talk: report.talk,
+      color: report.color,
+    },
+    scores: {
+      E: Number(scores.E ?? 0),
+      P: Number(scores.P ?? 0),
+      R: Number(scores.R ?? 0),
+      C: Number(scores.C ?? 0),
+      M: Number(scores.M ?? 0),
+      O: Number(scores.O ?? 0),
+      S: Number(scores.S ?? 0),
+      F: Number(scores.F ?? 0),
+    },
+    diffs: {
+      social,
+      judgment,
+      track,
+      style,
+    },
+    meta: {
+      totalAnswered,
+      totalQuestions,
+    },
+  };
+}
 
 const QUESTIONS: string[] = [
   "정해진 규칙을 잘 지킨다는 소리를 듣는다",
@@ -1748,271 +1857,6 @@ function LoadingScreen() {
   );
 }
 
-function ResultScreen({
-  student,
-  scores,
-  resolved,
-  report,
-  onRestart,
-}: {
-  student: StudentInfo;
-  scores: Record<string, number>;
-  resolved: ResolvedResult;
-  report: Report;
-  onRestart: () => void;
-}) {
-  const character = CHARACTER_META[resolved.key] || CHARACTER_META.DEFAULT;
-
-  const axes = [
-    { name: "내향·외향", left: "내향", right: "외향", ...toFiveScalePair(scores.E, scores.P) },
-    { name: "논리·창의", left: "논리", right: "창의", ...toFiveScalePair(scores.R, scores.C) },
-    { name: "모범·자율", left: "모범", right: "자율", ...toFiveScalePair(scores.M, scores.O) },
-    { name: "안정·도전", left: "안정", right: "도전", ...toFiveScalePair(scores.S, scores.F) },
-  ];
-
-  const axisNarratives = generateAxisNarratives(scores);
-
-  const printableHtml = generatePrintableReport({
-    report,
-    resultCode: resolved.fullCode,
-    student,
-    axes,
-    axisNarratives,
-  });
-
-  const shareText = buildShareText(report.title);
-
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
-        <div className="grid gap-6">
-          <section className="relative overflow-hidden rounded-[34px] border border-yellow-100 bg-white p-7 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-            <div
-              className="absolute inset-x-0 top-0 h-40"
-              style={{
-                background: `linear-gradient(135deg, ${hexToRgba(report.color, 0.18)} 0%, rgba(250,204,21,0.18) 100%)`,
-              }}
-            />
-            <div className="relative">
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="inline-flex items-center gap-2 rounded-full bg-yellow-300 px-4 py-2 text-sm font-black text-slate-900 shadow-sm">
-                  <span>{character.emoji}</span>
-                  <span>{character.label}</span>
-                </div>
-                <div className="rounded-full bg-white/90 px-4 py-2 text-xs font-black text-slate-500 shadow-sm">
-                  결과코드 {resolved.fullCode}
-                </div>
-              </div>
-
-              <div className="mt-7 rounded-[28px] bg-white/95 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
-                <div className="text-sm font-black tracking-[0.14em] text-yellow-500">
-                  학습성향 분석 결과
-                </div>
-                <h1 className="mt-3 text-3xl font-black leading-tight text-slate-900 sm:text-4xl">
-                  {report.title}
-                </h1>
-                <p className="mt-2 text-base font-bold text-slate-500">
-                  {report.subtitle}
-                </p>
-
-                <div className="mt-5 rounded-[24px] bg-slate-50 px-5 py-4 text-[15px] leading-8 text-slate-700">
-                  <span className="font-black text-slate-900">{student.name || "학생"}</span>
-                  님은{" "}
-                  <span style={{ color: report.color }} className="font-black">
-                    {report.title}
-                  </span>
-                  에 가까워요.  
-                  {character.tagline}
-                </div>
-
-                <div className="mt-5 flex flex-wrap gap-2 text-sm font-black">
-                  <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
-                    학생 {student.name || "미입력"}
-                  </span>
-                  <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
-                    학년 {student.grade || "미입력"}
-                  </span>
-                  <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
-                    학교 {student.school || "미입력"}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-yellow-300 text-xl shadow-sm">
-                🔥
-              </div>
-              <div>
-                <h2 className="text-lg font-black text-slate-900">핵심 인사이트</h2>
-                <p className="text-sm text-slate-500">부모님이 가장 궁금해하는 내용만 모았습니다</p>
-              </div>
-            </div>
-
-            <div className="grid gap-4">
-              <div className="rounded-[22px] bg-yellow-300 p-5 text-slate-900 shadow-sm">
-                <div className="text-xs font-black uppercase tracking-[0.16em]">
-                  위치
-                </div>
-                <div className="mt-2 text-lg font-black">
-                  상위 {getPercentile(resolved.key)}% 유형
-                </div>
-                <div className="mt-1 text-sm">
-                  또래 대비 학습 잠재력이 높은 편입니다
-                </div>
-              </div>
-
-              <div className="rounded-[22px] border border-slate-200 bg-white p-5">
-                <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-                  실제 모습
-                </div>
-                <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                  {getTraits(resolved.key).map((t, i) => (
-                    <li key={i}>✔ {t}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-[22px] border border-slate-200 bg-slate-50 p-5">
-                <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-                  미래 방향
-                </div>
-                <div className="mt-2 text-sm leading-7 text-slate-700">
-                  {getFuture(resolved.key)}
-                </div>
-              </div>
-
-              <div className="rounded-[22px] border border-rose-200 bg-rose-50 p-5">
-                <div className="text-xs font-black uppercase tracking-[0.16em] text-rose-400">
-                  ⚠ 위험 패턴
-                </div>
-                <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                  {getDangerPattern(resolved.key).map((d, i) => (
-                    <li key={i}>- {d}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-[22px] border border-emerald-200 bg-emerald-50 p-5">
-                <div className="text-xs font-black uppercase tracking-[0.16em] text-emerald-500">
-                  👉 지금 해야 할 1가지
-                </div>
-                <div className="mt-2 text-sm font-bold text-slate-800">
-                  {getAction(resolved.key)}
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <div className="grid gap-6">
-          <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-xl text-white shadow-sm">
-                ✨
-              </div>
-              <div>
-                <h2 className="text-lg font-black text-slate-900">결과 카드</h2>
-                <p className="text-sm text-slate-500">중요한 정보만 카드형으로 정리했어요</p>
-              </div>
-            </div>
-
-            <div className="grid gap-4">
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-                  유형명
-                </div>
-                <div className="mt-2 text-lg font-black text-slate-900">
-                  {report.title}
-                </div>
-                <div className="mt-1 text-sm font-bold text-slate-500">
-                  {report.subtitle}
-                </div>
-              </div>
-
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-                  추천 진로 방향
-                </div>
-                <div className="mt-2 text-sm leading-7 text-slate-700">
-                  {report.path}
-                </div>
-              </div>
-
-              <div className="rounded-[24px] border border-rose-100 bg-rose-50 p-5">
-                <div className="text-xs font-black uppercase tracking-[0.16em] text-rose-400">
-                  주의 패턴
-                </div>
-                <div className="mt-2 text-sm leading-7 text-slate-700">
-                  {report.danger}
-                </div>
-              </div>
-
-              <div className="rounded-[24px] border border-emerald-100 bg-emerald-50 p-5">
-                <div className="text-xs font-black uppercase tracking-[0.16em] text-emerald-500">
-                  추천 대화법
-                </div>
-                <div className="mt-2 text-sm leading-7 text-slate-700">
-                  {report.talk}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-yellow-300 text-xl shadow-sm">
-                🚀
-              </div>
-              <div>
-                <h2 className="text-lg font-black text-slate-900">공유하기</h2>
-                <p className="text-sm text-slate-500">친구 또는 부모님께 보여주세요</p>
-              </div>
-            </div>
-
-            <div className="grid gap-3">
-              <button
-                type="button"
-                onClick={() => shareNative(shareText)}
-                className="rounded-[22px] bg-[#FEE500] px-5 py-4 text-base font-black text-slate-900 shadow-sm transition hover:-translate-y-0.5"
-              >
-                 바로 공유하기 📤
-              </button>
-
-              <button
-                type="button"
-                onClick={() => copyToClipboard(shareText)}
-                className="rounded-[22px] border border-slate-200 bg-white px-5 py-4 text-base font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
-              >
-                링크 복사하기 👨‍👩‍👧
-              </button>
-
-              <button
-                type="button"
-                onClick={() => printReport(printableHtml)}
-                className="rounded-[22px] px-5 py-4 text-base font-black text-white shadow-sm transition hover:-translate-y-0.5"
-                style={{ background: `linear-gradient(135deg, ${report.color} 0%, #0f172a 100%)` }}
-              >
-                PDF 저장 / 인쇄하기
-              </button>
-
-              <button
-                type="button"
-                onClick={onRestart}
-                className="rounded-[22px] border border-slate-200 bg-slate-100 px-5 py-4 text-base font-black text-slate-700 shadow-sm transition hover:bg-slate-200"
-              >
-                처음부터 다시하기
-              </button>
-            </div>
-          </section>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Page() {
   const [step, setStep] = useState<Step>("landing");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -2027,36 +1871,71 @@ export default function Page() {
   const resolved = useMemo(() => resolveResult(scores), [scores]);
   const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
 
-  useEffect(() => {
-    if (step !== "result" || hasSavedResult || !isComplete) return;
+useEffect(() => {
+  if (step !== "result" || hasSavedResult || !isComplete) return;
 
-    let cancelled = false;
+  let cancelled = false;
 
-    const run = async () => {
-      try {
-        await saveSubmissionToApi({
-          student,
-          answers,
-          resultKey: resolved.key,
-          resultCode: resolved.fullCode,
-          reportTitle: report.title,
-          scores,
-        });
+  const run = async () => {
+    try {
+      const resultPayload = buildResultPayload({
+        student,
+        resolved,
+        report,
+        scores,
+        totalAnswered: answeredCount,
+        totalQuestions: QUESTIONS.length,
+      });
 
-        if (!cancelled) {
-          setHasSavedResult(true);
-        }
-      } catch (error) {
-        console.error("결과 저장 실패:", error);
+      const response = await fetch("/api/submissions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          student_name: student.name,
+          grade: student.grade,
+          school: student.school,
+          phone: student.phone,
+
+          result_code: resolved.code,
+          result_full_code: resolved.fullCode,
+          result_title: report.title,
+          result_subtitle: report.subtitle,
+
+          e_score: scores.E ?? 0,
+          p_score: scores.P ?? 0,
+          r_score: scores.R ?? 0,
+          c_score: scores.C ?? 0,
+          m_score: scores.M ?? 0,
+          o_score: scores.O ?? 0,
+          s_score: scores.S ?? 0,
+          f_score: scores.F ?? 0,
+
+          result_payload: resultPayload,
+        }),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok || !json?.ok) {
+        throw new Error(json?.error || "결과 저장 실패");
       }
-    };
 
-    run();
+      if (!cancelled) {
+        setHasSavedResult(true);
+      }
+    } catch (error) {
+      console.error("결과 저장 실패:", error);
+    }
+  };
 
-    return () => {
-      cancelled = true;
-    };
-  }, [step, hasSavedResult, isComplete, student, answers, resolved, report, scores]);
+  void run();
+
+  return () => {
+    cancelled = true;
+  };
+}, [step, hasSavedResult, isComplete, student, resolved, report, scores, answeredCount]);
 
   const moveSafely = (next: () => void) => {
     setIsTransitioning(true);
