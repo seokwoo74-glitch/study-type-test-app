@@ -240,6 +240,31 @@ const SCORE_MAP: Record<string, number>[] = [
   { S: 3 }, { S: 3 }, { F: 5 }, { P: 3 }, { P: 3 }, { F: 5 }, { F: 3 }, { P: 5 }, { M: 3 }, { F: 3 },
 ];
 
+function makeScores(answers: number[]) {
+  const total: Record<string, number> = {
+    E: 0,
+    P: 0,
+    R: 0,
+    C: 0,
+    M: 0,
+    O: 0,
+    S: 0,
+    F: 0,
+  };
+
+  answers.forEach((answer, idx) => {
+    if (answer !== 1) return;
+
+    const map = SCORE_MAP[idx] || {};
+
+    Object.entries(map).forEach(([key, value]) => {
+      total[key] += Number(value);
+    });
+  });
+
+  return total;
+}
+
 const CHOICES = [
   { label: "그렇다", value: 1 },
   { label: "아니다", value: 0 },
@@ -252,437 +277,689 @@ const RESULT_DEFINITIONS: Array<{
   meta: CharacterMeta;
 }> = [
   {
-    key: "ERMS",
-    aliases: ["ERMS", "ERMs", "eRMS", "eRMs", "ErMS", "ErMs", "erMS", "erMs"],
+    key: "ERMs",
+    aliases: [],
     report: {
       title: "이과 창의적영재형",
       subtitle: "1% 미만",
-      summary: "이과적 두뇌와 창의적 사고가 매우 뛰어나며, 상위권을 넘어 특출한 성취 가능성을 지닌 유형입니다.",
-      strategy: "자기주도성이 강하므로 학생의 의견을 중심으로 학습 방향을 설계하되, 내신·대회·전형 정보를 균형 있게 관리하는 것이 좋습니다.",
-      parent: "통제보다 신뢰와 지원이 효과적입니다. 수준이 맞는 집단에서 더 크게 성장할 가능성이 높습니다.",
-      path: "서울대, 카이스트, 포항공대, 의학·공학·자연과학 계열과 잘 맞습니다.",
-      danger: "맞지 않는 환경에서는 흥미가 급격히 떨어질 수 있습니다.",
-      talk: "‘왜 그렇게 생각했는지 설명해볼래?’ 같은 질문형 대화가 효과적입니다.",
+      summary:
+        "극상위권 성적과 이과적 두뇌, 창의적 사고가 함께 매우 강한 최상위 영재형입니다. 특정 과목에서는 절대적인 지배력을 보일 가능성이 큽니다.",
+      strategy:
+        "학생의 자기주도성을 존중하면서 선행·심화 학습을 강하게 밀어주고, 경시·대회·비교과 결과물까지 함께 설계하는 방식이 잘 맞습니다.",
+      parent:
+        "통제보다 신뢰가 중요합니다. 일반 학생 집단보다 학습 만족도를 채워줄 수 있는 상위 집단과 맞춤형 환경을 연결해 주는 것이 효과적입니다.",
+      path:
+        "서울대, 카이스트, 포항공대, 연세대, 의예, 물리·화학·수학·생명과학 계열과 잘 맞습니다.",
+      danger:
+        "개인적 특성이 강해 또래와의 동화가 어렵거나, 수준이 맞지 않는 환경에서 흥미가 급격히 떨어질 수 있습니다.",
+      talk:
+        "네가 원하는 방향을 중심으로 가되, 큰 목표까지 갈 수 있게 일정과 기회를 같이 설계해보자.",
       color: "#2563eb",
     },
     meta: {
       label: "창의 연구자",
-      tagline: "깊이 있는 탐구와 독창성이 빛나는 최상위 이과형",
+      tagline: "이과적 두뇌와 창의 사고가 뛰어난 최상위형",
       emoji: "🧠",
       aura: "from-blue-500/25 via-sky-400/10 to-cyan-300/20",
     },
   },
   {
-    key: "ERMF",
-    aliases: ["ERMF", "ERMf", "ERmF", "ERmf", "eRMF", "eRMf", "eRmF", "eRmf", "ErMF", "ErMf", "ErmF", "Ermf"],
+    key: "ERMS",
+    aliases: ["ERmS", "ERms"],
+    report: {
+      title: "이과 모범적영재형",
+      subtitle: "2% 미만",
+      summary:
+        "모든 과목에서 고르게 최상위 성적을 유지하는 이상적인 이과 영재형입니다. 계획성과 실천력이 매우 뛰어납니다.",
+      strategy:
+        "학생 의견을 중심으로 학습 방향을 잡아도 안정적이며, 선행·심화 학습과 고난도 목표를 함께 설계할수록 성과가 커집니다.",
+      parent:
+        "부모가 과하게 흔들기보다 믿고 지지해 주는 방식이 좋습니다. 다만 멘탈 관리는 간헐적으로 점검해 주는 것이 필요합니다.",
+      path: "SKY, 의치대, 공대, TOP권 의예 계열과 잘 맞습니다.",
+      danger:
+        "완성도가 높은 만큼 스트레스와 멘탈 흔들림이 누적되면 타격이 클 수 있습니다.",
+      talk:
+        "지금처럼 해낼 힘은 충분하니, 큰 목표까지 갈 수 있도록 리듬과 멘탈만 같이 챙기자.",
+      color: "#1d4ed8",
+    },
+    meta: {
+      label: "모범 영재",
+      tagline: "전 과목 고르게 최상위권을 유지하는 이상적 영재형",
+      emoji: "👑",
+      aura: "from-blue-600/25 via-indigo-400/10 to-sky-300/20",
+    },
+  },
+  {
+    key: "eRMF",
+    aliases: ["eRMf", "ERMF", "ERMf", "ERmF", "ERmf"],
     report: {
       title: "이과 영재형",
       subtitle: "3% 미만",
-      summary: "특정 과목에서 매우 높은 성취 가능성을 보이며, 관심 분야에서는 압도적 몰입을 보일 수 있는 유형입니다.",
-      strategy: "관심 과목의 강점을 유지하면서도 시작한 일을 성과물로 연결할 수 있도록 고른 학습과 마무리 습관을 설계하는 것이 중요합니다.",
-      parent: "흥미 중심 몰입이 강해 균형 잡힌 학습 리듬 관리가 필요합니다.",
-      path: "수학, 물리, 전자, 발명, IT·연구 계열과 잘 맞습니다.",
-      danger: "마무리와 꾸준함이 약해지면 성과가 불안정해질 수 있습니다.",
-      talk: "‘잘하는 걸 살리면서 끝까지 연결해보자’는 접근이 효과적입니다.",
+      summary:
+        "특정 과목에서 압도적인 성취를 보이는 영재형입니다. 관심 분야에서는 타의 추종을 불허하는 몰입을 보일 수 있습니다.",
+      strategy:
+        "강한 과목의 경쟁력을 살리되, 시작한 일을 결과물로 연결하고 내신·대회·전형 일정을 고르게 챙기도록 설계하는 것이 중요합니다.",
+      parent:
+        "독특하고 산만해 보일 수 있어도 재능의 방향은 분명합니다. 흥미 영역을 부정하지 말고 성과물로 이어지게 도와주는 것이 좋습니다.",
+      path:
+        "카이스트, 포항공대, SKY, 물리·수학·전자학 계열, IT 연구 분야와 잘 맞습니다.",
+      danger:
+        "많은 일을 벌이고 끝맺음이 약해지면 전체 성과가 흩어질 수 있습니다.",
+      talk:
+        "좋아하는 걸 더 크게 키우되, 끝까지 완성하는 힘도 같이 만들어보자.",
       color: "#0f766e",
     },
     meta: {
       label: "몰입 발명가",
-      tagline: "좋아하는 분야에 압도적으로 빠져드는 영재형",
+      tagline: "특정 과목에서 압도적 강점을 보이는 영재형",
       emoji: "⚡",
       aura: "from-teal-500/25 via-emerald-400/10 to-cyan-300/20",
     },
   },
   {
-    key: "EROS",
-    aliases: ["eROS", "eRoS", "EROS", "EROs", "ERoS", "ERos"],
+    key: "eROS",
+    aliases: ["eRoS", "EROf", "EROS", "EROs", "ERoS", "ERos", "eRMS", "eRMs"],
     report: {
       title: "이과모범형",
       subtitle: "4%~10% 미만",
-      summary: "이과 성향과 자기관리 능력이 함께 강한 유형으로, 안정적인 상위권 전략이 잘 맞습니다.",
-      strategy: "내신과 모의고사를 고르게 관리하며 시험 불안과 외부 활동으로 인한 리듬 흔들림만 잘 조절하면 강점을 꾸준히 유지할 수 있습니다.",
-      parent: "학생의 학습 방식을 존중해도 무난하지만, 친구 관계나 외부 활동이 학습 흐름을 방해하지 않도록 점검이 필요합니다.",
-      path: "SKY, 의·치·한의대, 자연과학, 공학, 수의학 계열과 잘 맞습니다.",
-      danger: "적극적인 성향 때문에 학습보다 관계와 활동에 에너지가 분산될 수 있습니다.",
-      talk: "‘지금의 리듬만 지키면 충분히 좋은 결과로 이어질 수 있어’라는 대화가 좋습니다.",
+      summary:
+        "전교과 내신과 모의고사를 안정적으로 유지하는 상위권 이과형입니다. 계획성과 실천력이 고르게 잘 잡혀 있습니다.",
+      strategy:
+        "내신 중심 전략과 시험 리듬 유지가 중요합니다. 일반고에서 전교권 유지 전략과 교과 중심 학종이 잘 맞습니다.",
+      parent:
+        "학생 방식에 맞춰줘도 대체로 안정적이지만, 친구·외부 활동 때문에 학습 리듬이 깨지지 않게 관리가 필요합니다.",
+      path:
+        "SKY, 의대, 의·치·한의대, 자연과학, 공학, 수의학 계열과 잘 맞습니다.",
+      danger:
+        "적극적인 성향 때문에 관계와 외부 활동으로 공부 흐름이 흔들릴 수 있고, 시험불안이 성과에 직접 영향을 줄 수 있습니다.",
+      talk:
+        "지금 리듬만 잘 지키면 충분히 높은 목표까지 갈 수 있어.",
       color: "#0891b2",
     },
     meta: {
-      label: "엘리트 플래너",
-      tagline: "성실함과 자기관리가 돋보이는 안정형 상위권",
+      label: "이과 모범생",
+      tagline: "안정적 내신과 실천력이 강한 상위권형",
       emoji: "📘",
       aura: "from-sky-500/25 via-cyan-400/10 to-blue-300/20",
     },
   },
   {
-    key: "PROS_PASSIVE",
-    aliases: ["pROS", "pRoS", "pRMS", "pRmS"],
+    key: "eRmS",
+    aliases: ["eRms", "pRMS", "pRmS", "pROS", "pRoS"],
     report: {
       title: "(수동적) 이과 모범형",
       subtitle: "4%~10% 미만",
-      summary: "성실함과 인내심을 바탕으로 상위권을 안정적으로 유지하는 유형입니다.",
-      strategy: "개념 정리와 실수 관리, 시험 불안 조절이 중요하며 보다 적극적인 활동 경험과 리더십 기회를 함께 쌓으면 성장 폭이 커집니다.",
-      parent: "실력은 충분하지만 자기표현과 존재감이 약할 수 있으므로, 안정감을 해치지 않는 선에서 경험의 폭을 넓혀주는 것이 좋습니다.",
-      path: "SKY, 지방의대, 자연과학, 공학, 수의학, 약학 계열과 잘 맞습니다.",
-      danger: "실수 하나에 흔들리면 멘탈 영향이 큰 편입니다.",
-      talk: "‘차분히 쌓아온 힘이 크다’는 식의 대화가 좋습니다.",
+      summary:
+        "성실함과 인내심으로 상위권을 안정적으로 유지하는 유형입니다. 겉으로 드러나는 추진력은 약해도 꾸준함이 강점입니다.",
+      strategy:
+        "내신 안정 유지, 개념 정리, 시험불안 관리, 그리고 리더십 경험과 교내 활동을 조금씩 추가해 주는 방식이 좋습니다.",
+      parent:
+        "실력은 충분하지만 존재감이 약할 수 있어요. 너무 강하게 밀기보다 안정감을 해치지 않는 선에서 경험 폭을 넓혀주는 것이 좋습니다.",
+      path:
+        "SKY, 지방의대, 자연과학, 공학, 수의학, 약학 계열과 잘 맞습니다.",
+      danger:
+        "쉬운 부분에서의 실수가 멘탈에 큰 타격이 될 수 있고, 지나치게 수동적이면 기회를 놓칠 수 있습니다.",
+      talk:
+        "차분히 쌓아온 힘이 크니까, 이제는 조금 더 드러내는 연습도 해보자.",
       color: "#0284c7",
     },
     meta: {
       label: "차분한 성취가",
-      tagline: "묵직하게 쌓아 올리는 실속형 상위권",
+      tagline: "성실함과 인내로 상위권을 유지하는 유형",
       emoji: "🛡️",
       aura: "from-cyan-500/25 via-sky-400/10 to-indigo-300/20",
     },
   },
   {
     key: "PRMF",
-    aliases: ["PRMF", "PRMf", "PRmF", "PRmf", "PRMs", "pRMs", "pRMF", "pRMf", "pRmF", "pRmf", "pRoF"],
+    aliases: ["PRMf", "PRmF", "PRmf", "PRMs", "pRMs", "pRMF", "pRMf", "pRmF", "pRmf", "pRoF"],
     report: {
       title: "이과 뺀질이형",
       subtitle: "20% 미만",
-      summary: "수학·과학 등 특정 과목에서는 강점을 보이지만, 흥미 없는 과목은 쉽게 놓칠 수 있는 유형입니다.",
-      strategy: "절대 학습시간 확보, 감독이 있는 환경, 선호 과목의 성과를 전체 학습 동기로 연결하는 구조가 필요합니다.",
-      parent: "자유도보다 책임감이 생기는 환경이 더 적합합니다. 결과물 중심 경험이 학습 전체를 끌어올리는 데 도움이 됩니다.",
-      path: "이공계열, 논술·정시 전략, IT 분야와 연결될 수 있습니다.",
-      danger: "좋아하는 과목만 밀고 나가다 전체 균형이 무너질 수 있습니다.",
-      talk: "‘짧게라도 끝까지 가는 힘을 같이 만들어보자’는 식의 대화가 좋습니다.",
+      summary:
+        "수학·과학처럼 관심 있는 과목은 강하지만 흥미 없는 과목은 쉽게 놓치는 편차형입니다. 머리는 좋지만 균형이 핵심입니다.",
+      strategy:
+        "전 과목을 규칙적으로 관리하고, 절대 학습시간을 확보하며, 감독관 있는 환경에서 학습 효율을 높이는 전략이 필요합니다.",
+      parent:
+        "자유를 너무 크게 주기보다 책임감을 경험할 수 있는 구조와 물리적인 공부 시간 확보가 중요합니다.",
+      path:
+        "이공계, IT, 연구, CEO형 진로와 연결될 수 있습니다.",
+      danger:
+        "선호 과목만 파고들다 전체 성적 균형이 무너질 수 있고, 분위기에 휩쓸리면 성과 편차가 커집니다.",
+      talk:
+        "재능은 충분하니까, 좋아하는 것만이 아니라 끝까지 균형 있게 가는 힘을 같이 만들어보자.",
       color: "#7c3aed",
     },
     meta: {
-      label: "자유로운 문제해결사",
-      tagline: "관심 분야에서 번뜩이는 재능을 터뜨리는 편차형",
+      label: "자유 문제해결사",
+      tagline: "관심 과목에서만 강하게 튀는 편차형",
       emoji: "🎯",
       aura: "from-violet-500/25 via-fuchsia-400/10 to-purple-300/20",
     },
   },
   {
     key: "EROF",
-    aliases: ["EROF", "EROf", "ERoF", "ERof", "eROF", "eROf", "eRoF", "eRof"],
+    aliases: ["ERoF", "ERof", "eROF", "eROf", "eRoF", "eRof", "eRmF", "eRmf"],
     report: {
       title: "외향적 이과뺀질형",
       subtitle: "20% 미만",
-      summary: "관심 있는 과목에서는 번뜩이는 성과를 보이지만, 주변 환경의 영향을 크게 받는 유형입니다.",
-      strategy: "통제적 환경, 선택과 집중, 책임감 경험이 효과적이며 관심 분야의 구체적 결과물이 전체 성적 향상에 시너지를 줄 수 있습니다.",
-      parent: "환경에 따라 결과 차이가 커질 수 있어 학습 공간과 함께하는 집단을 신중히 선택하는 것이 중요합니다.",
-      path: "자유전공, 자연과학, 건축, IT 마케팅, 이공계 연구 계열과 잘 맞습니다.",
-      danger: "많은 일을 시작하지만 끝맺음이 약할 수 있습니다.",
-      talk: "‘환경을 잘 고르면 강점이 훨씬 크게 드러날 수 있어’라는 코칭이 효과적입니다.",
+      summary:
+        "관심 특정 과목에서는 성과가 빠르게 올라가지만 환경과 분위기 영향을 크게 받는 활동형 편차 유형입니다.",
+      strategy:
+        "통제적 환경, 관리 철저한 학습 공간, 소규모 팀수업과 책임감 있는 역할 경험이 효과적입니다.",
+      parent:
+        "혼자 잘할 거라고 두기보다 환경을 설계해 주는 것이 핵심입니다. 결과물과 책임 경험이 학습 태도를 바꾸는 데 도움이 됩니다.",
+      path:
+        "자유전공, 자연과학, 건축, IT 마케팅, 연구 계열과 잘 맞습니다.",
+      danger:
+        "많은 일을 시작하고 끝맺음이 약할 수 있으며, 주변 분위기에 따라 성과 편차가 매우 커질 수 있습니다.",
+      talk:
+        "환경만 잘 맞추면 훨씬 크게 올라갈 수 있어. 집중해서 끝내는 경험을 같이 만들자.",
       color: "#9333ea",
     },
     meta: {
       label: "에너지 크리에이터",
-      tagline: "사람과 환경 속에서 아이디어가 살아나는 활동형",
+      tagline: "환경과 분위기 영향을 크게 받는 활동형",
       emoji: "🚀",
       aura: "from-purple-500/25 via-fuchsia-400/10 to-pink-300/20",
     },
   },
   {
-    key: "PROS",
-    aliases: ["PROF", "PROf", "PROS", "PROs", "PRoF", "PRof", "PRoS", "PRos", "PRMS", "PRmS", "PRms", "pROF", "pROf", "pROs", "pRos", "pRof", "pRms", "eROs", "eRos"],
+    key: "PROF",
+    aliases: [
+      "PROf", "pROF", "pROf", "eROs", "eRos", "PRoF", "PRof", "pRof",
+      "PROS", "PROs", "PRoS", "PRos", "PRmS", "PRms", "PRMS", "pRms", "pROs", "pRos",
+    ],
     report: {
-      title: "이과 잠재성장형",
+      title: "이과 진주형",
       subtitle: "70% 내외",
-      summary: "현재 강점이 선명하게 드러나지 않았더라도 기초를 차분히 쌓을수록 성장 가능성이 커지는 유형입니다.",
-      strategy: "선행보다 내신 중심으로 접근하고 한 과목씩 성취 경험을 만드는 방식이 효과적입니다. 절대 시간보다 집중 시간을 늘리는 전략이 중요합니다.",
-      parent: "비교보다 작은 성공 경험의 축적이 중요합니다. 선호 과목에서 자신감을 회복하게 하면 전체 학습에도 긍정적인 영향을 줄 수 있습니다.",
-      path: "간호, 사범, 이과대학, 교사·간호사·물리치료사·약사 계열과 잘 맞습니다.",
-      danger: "막연한 목표만 세우면 쉽게 지칠 수 있습니다.",
-      talk: "‘이번에는 이 한 가지를 끝내보자’처럼 작고 분명한 목표가 효과적입니다.",
+      summary:
+        "지금은 특출한 과목이 선명하지 않지만, 단계적으로 성과를 쌓아가면 크게 성장할 수 있는 대기만성형입니다.",
+      strategy:
+        "선행보다 내신 중심으로 접근하고, 한 과목씩 성취 경험을 만들어 자신감을 회복시키는 방식이 가장 효과적입니다.",
+      parent:
+        "비교보다 작은 성취의 축적이 중요합니다. 선호 과목부터 자신감을 붙여 전반적 학습 동기로 확장해 주는 것이 좋습니다.",
+      path:
+        "간호, 사범대, 이과대학, 교사, 간호사, 물리치료사, 약사 계열과 잘 맞습니다.",
+      danger:
+        "막연한 목표만 세우면 쉽게 지칠 수 있고, 물리적 시간만 늘리고 집중력이 따라오지 않으면 비효율이 커집니다.",
+      talk:
+        "한 번에 다 잘하려고 하지 말고, 이번엔 한 과목 한 단계만 확실히 끝내보자.",
       color: "#ea580c",
     },
     meta: {
-      label: "성장 새싹",
-      tagline: "작은 성취를 쌓을수록 크게 성장하는 잠재형",
+      label: "성장 원석",
+      tagline: "발견 시점에 따라 가능성이 커지는 대기만성형",
       emoji: "🌱",
       aura: "from-orange-500/25 via-amber-400/10 to-yellow-300/20",
     },
   },
+
   {
     key: "ECMF",
-    aliases: ["ECMF", "ECMf"],
+    aliases: ["ECMf"],
     report: {
-      title: "문과 창의적영재형",
+      title: "문과 창의적 영재형",
       subtitle: "1% 미만",
-      summary: "문과 성향의 창의성과 표현력이 매우 강하며 차별화된 결과물을 만들 가능성이 높은 유형입니다.",
-      strategy: "관심 분야 심화 학습과 결과물 축적이 잘 맞습니다.",
-      parent: "다름을 교정하기보다 강점이 성과로 연결되게 도와주는 것이 중요합니다.",
-      path: "어문, 언론정보, 연극영화, 광고, 방송PD, 게임기획 계열과 잘 맞습니다.",
-      danger: "실행 리듬이 무너지면 결과가 불안정해질 수 있습니다.",
-      talk: "‘네 생각을 결과물로 보여줄 방법을 같이 찾아보자’는 접근이 좋습니다.",
+      summary:
+        "문과적 창의성과 표현력이 매우 강하며, 관심 과목에서는 절대적인 강점을 보이는 최상위 창의형입니다.",
+      strategy:
+        "관심 분야 심화, 특기자·종합·논술형 전형 대비, 대회·소논문·동아리 결과물 축적이 잘 맞습니다.",
+      parent:
+        "독특함을 교정하기보다 개성으로 성과를 낼 수 있게 도와주는 것이 중요합니다.",
+      path:
+        "어문, 언론정보, 연극영화, 광고, 방송PD, 게임기획, Art&Tech 계열과 잘 맞습니다.",
+      danger:
+        "산만하고 엉뚱해 보일 수 있어도 핵심 재능을 놓치면 안 됩니다. 너무 일반적 틀에 맞추려 하면 강점이 죽을 수 있습니다.",
+      talk:
+        "네 생각이 남다른 건 강점이야. 그걸 결과물로 어떻게 보여줄지 같이 만들어보자.",
       color: "#db2777",
     },
     meta: {
       label: "감각 스토리텔러",
-      tagline: "표현력과 창의성이 돋보이는 문과 창의형",
+      tagline: "문과 창의성과 표현력이 뛰어난 최상위형",
       emoji: "🎨",
       aura: "from-pink-500/25 via-rose-400/10 to-fuchsia-300/20",
     },
   },
   {
     key: "ECMS",
-    aliases: ["ECMS", "eCMS", "EcMS", "EcMs", "ecMS", "ecMs"],
+    aliases: ["eCMS"],
     report: {
       title: "문과 모범형 영재형",
       subtitle: "2% 미만",
-      summary: "안정된 성과와 자기관리 능력을 함께 갖춘 이상적인 문과 영재형입니다.",
-      strategy: "신뢰를 기반으로 하되 체력·멘탈 관리까지 함께 챙기면 좋습니다.",
-      parent: "과한 개입보다 신뢰와 점검이 적합합니다.",
-      path: "SKY, 경영·행정·신문방송·법조·외교관 계열과 잘 맞습니다.",
-      danger: "완벽주의와 부담감이 누적될 수 있습니다.",
-      talk: "‘지금도 충분히 잘 가고 있어’라는 메시지가 중요합니다.",
+      summary:
+        "전교과 고르게 최상위 성적을 유지하며 자기관리와 계획 실천이 매우 뛰어난 이상적 문과 영재형입니다.",
+      strategy:
+        "학생 의견을 존중하면서도 선행·심화 학습과 체력 관리, 목표 대학 전략까지 함께 운영하는 방식이 좋습니다.",
+      parent:
+        "과하게 통제할 필요는 없습니다. 신뢰를 바탕으로 체력과 멘탈만 보조해주는 것이 가장 효과적입니다.",
+      path:
+        "SKY, 한의대(문과), 경영, 신문방송, 행정, 자유전공 계열과 잘 맞습니다.",
+      danger:
+        "높은 완성도 뒤에 부담감이 누적될 수 있어 간헐적 멘탈 관리가 필요합니다.",
+      talk:
+        "지금도 충분히 잘하고 있어. 오래 안정적으로 가려면 몸과 마음 리듬도 같이 챙기자.",
       color: "#2563eb",
     },
     meta: {
-      label: "품격 있는 우등생",
-      tagline: "안정성과 완성도를 동시에 갖춘 문과 영재형",
+      label: "품격 우등생",
+      tagline: "전 과목 최상위와 자기관리가 함께 강한 문과형",
       emoji: "👑",
       aura: "from-blue-500/25 via-indigo-400/10 to-sky-300/20",
     },
   },
   {
-    key: "ECOS",
-    aliases: ["ECOS", "ECOs", "ECoS", "ECos", "ECmS", "ECms", "eCmS", "eCms", "pCMS", "ECoF", "ECmf", "ECMs", "eCMs"],
+    key: "ECMs",
+    aliases: ["eCMs", "ECoF", "ECmf"],
     report: {
-      title: "내성적 문과영재형",
+      title: "문과 영재형",
       subtitle: "3% 미만",
-      summary: "언어·외국어 영역의 강점과 깊이 있는 사고를 함께 지닌 문과 상위권 유형입니다.",
-      strategy: "심화 학습과 실천 습관을 함께 보완하는 것이 중요합니다.",
-      parent: "겉으로 드러나지 않는 실행 부족을 세심하게 관리해주면 크게 성장할 수 있습니다.",
-      path: "정치외교, 신문방송, 법조, 언론, 외교관 계열과 잘 맞습니다.",
-      danger: "실행력이 떨어지면 결과가 기대만큼 드러나지 않을 수 있습니다.",
-      talk: "‘깊이는 충분하니 이제 실천으로 연결해보자’는 대화가 효과적입니다.",
+      summary:
+        "언어·외국어 영역에서 매우 강하고 수학도 우수한 편으로, 특정 과목 최상위 성취가 가능한 문과 영재형입니다.",
+      strategy:
+        "심화·선행 학습과 스펙 관리, 토론·발표·언어 활동을 함께 설계하면 강점이 크게 살아납니다.",
+      parent:
+        "언변과 통찰력은 강하지만 실천 습관은 별도 관리가 필요할 수 있습니다. 계획을 실제 행동으로 이어지게 도와주세요.",
+      path:
+        "어문, 신문방송, 정치외교, 법조, 언론, 외교관 계열과 잘 맞습니다.",
+      danger:
+        "실천력이 부족해지면 잠재력 대비 결과가 덜 드러날 수 있습니다.",
+      talk:
+        "생각의 깊이는 충분하니, 이제 그 힘을 실천으로 연결해보자.",
       color: "#7c3aed",
     },
     meta: {
-      label: "깊이형 사색가",
-      tagline: "조용하지만 강한 사고력과 언어 감각을 지닌 유형",
+      label: "언어 영재",
+      tagline: "언어·외국어 영역 강점이 두드러지는 유형",
       emoji: "📚",
       aura: "from-violet-500/25 via-indigo-400/10 to-purple-300/20",
     },
   },
   {
-    key: "PCOS",
-    aliases: ["pCOS", "pCoS", "pCmS"],
+    key: "pCMS",
+    aliases: [],
     report: {
-      title: "(내성적) 문과 모범형",
+      title: "내성적 문과영재형",
+      subtitle: "3% 미만",
+      summary:
+        "강한 사고력과 언어 재능을 갖췄지만 겉으로 드러나는 에너지는 낮은 편인 깊이형 영재입니다.",
+      strategy:
+        "심화 학습, 언어 기반 결과물, 발표·토론 기회를 조금씩 늘리며 자신만의 강점을 밖으로 드러내게 하는 것이 좋습니다.",
+      parent:
+        "겉으로 조용하다고 약한 것이 아닙니다. 속으로 깊게 사고하므로 기다려주고, 표현 기회를 안정적으로 열어주는 것이 중요합니다.",
+      path:
+        "어문, 정치외교, 신문방송, 법조, 외교관, 교수 계열과 잘 맞습니다.",
+      danger:
+        "실천보다 사고에 머물러 결과물이 늦어질 수 있습니다.",
+      talk:
+        "생각이 깊다는 건 큰 강점이야. 이제 그 생각을 바깥으로 조금씩 보여주자.",
+      color: "#6d28d9",
+    },
+    meta: {
+      label: "깊이형 사색가",
+      tagline: "조용하지만 깊고 강한 언어 감각형",
+      emoji: "🪄",
+      aura: "from-purple-500/25 via-violet-400/10 to-fuchsia-300/20",
+    },
+  },
+  {
+    key: "ECOS",
+    aliases: ["ECOs", "ECoS", "ECos", "ECmS", "ECms", "eCmS", "eCms"],
+    report: {
+      title: "문과 모범형A",
       subtitle: "4%~10% 미만",
-      summary: "자기주도성과 계획 실행의 균형이 좋은 내성적 상위권 문과형입니다.",
-      strategy: "내신 최상위권 유지, 시험 불안 관리, 개념 정리, 규칙적인 멘토링이 효과적입니다.",
-      parent: "지나친 간섭보다 정기적인 대화와 점검이 적합합니다.",
-      path: "경영, 경제, 행정, 교대, 법조 계열과 잘 맞습니다.",
-      danger: "도움 요청 시점을 놓칠 수 있습니다.",
-      talk: "‘혼자 감당하지 말고 막히는 지점을 같이 보자’는 태도가 좋습니다.",
+      summary:
+        "내신이 고르고 안정적이며 자기주도와 계획·실천이 조화를 이루는 상위권 문과 모범형입니다.",
+      strategy:
+        "일반고에서 내신 최상위권 유지 전략이 잘 맞고, 교과 중심 학종과 규칙적인 멘토링이 효과적입니다.",
+      parent:
+        "시험불안과 멘탈 관리를 주기적으로 챙겨주고, 규칙적 대화 창구를 만들어 주는 것이 좋습니다.",
+      path:
+        "경영, 경제, 행정, 교대, 법조, 교수, 고위직 공무원 계열과 잘 맞습니다.",
+      danger:
+        "내성적일수록 도움 요청을 늦게 할 수 있어, 쉬운 부분의 실수가 멘탈에 큰 영향을 줄 수 있습니다.",
+      talk:
+        "혼자 버티는 힘도 크지만, 막히는 지점은 같이 정리하면 더 빨리 올라갈 수 있어.",
       color: "#0284c7",
     },
     meta: {
       label: "정교한 실천가",
-      tagline: "차분하고 정교하게 계획을 현실로 만드는 유형",
+      tagline: "내신과 실천이 안정적인 문과 모범형",
       emoji: "🧩",
       aura: "from-cyan-500/25 via-blue-400/10 to-slate-300/20",
     },
   },
   {
-    key: "ECOS_B",
-    aliases: ["eCoS", "eCos", "eCOS", "ECOf"],
+    key: "pCOS",
+    aliases: ["pCoS", "pCmS"],
+    report: {
+      title: "(내성적) 문과 모범형",
+      subtitle: "4%~10% 미만",
+      summary:
+        "조용하지만 안정적이고 자기주도적인 상위권 문과형입니다. 계획과 실천이 잘 맞물리는 편입니다.",
+      strategy:
+        "내신 최상위 유지, 개념 정리, 정기 멘토링, 시험불안 관리 중심의 전략이 효과적입니다.",
+      parent:
+        "간섭보다 규칙적 점검이 더 잘 맞습니다. 내성적이라도 실력은 충분하니 안정감을 유지해 주세요.",
+      path:
+        "경영, 경제, 행정, 교대, 법조 계열과 잘 맞습니다.",
+      danger:
+        "조용히 혼자 해결하려다 어려움을 오래 끌 수 있습니다.",
+      talk:
+        "혼자서도 잘하지만, 힘든 구간은 같이 나누면 훨씬 편해질 수 있어.",
+      color: "#0ea5e9",
+    },
+    meta: {
+      label: "차분한 모범생",
+      tagline: "내성적이지만 자기주도와 계획성이 강한 유형",
+      emoji: "🛡️",
+      aura: "from-sky-500/25 via-cyan-400/10 to-blue-300/20",
+    },
+  },
+  {
+    key: "eCoS",
+    aliases: ["eCos", "eCOS", "ECOf"],
     report: {
       title: "문과모범형B",
       subtitle: "4%~10% 미만",
-      summary: "상위권 성적을 안정적으로 유지하면서 리더십과 대외 활동 역량도 함께 갖춘 유형입니다.",
-      strategy: "내신 유지와 활동 경험을 균형 있게 관리하면 강점이 잘 살아납니다.",
-      parent: "학습 방식은 비교적 안정적이므로 멘탈과 리듬 유지에 집중해서 도와주는 것이 좋습니다.",
-      path: "정치외교, 경영, 신문방송, 기자, PD, 외교관 계열과 잘 맞습니다.",
-      danger: "관계와 활동 에너지가 큰 만큼 자신의 학습 리듬이 흐트러질 수 있습니다.",
-      talk: "‘네 페이스를 먼저 지키는 게 중요해’라는 식의 대화가 효과적입니다.",
+      summary:
+        "상위권 성적을 유지하면서도 대외 활동과 리더십 역량이 비교적 잘 살아 있는 문과 모범형입니다.",
+      strategy:
+        "내신 유지와 활동 경험을 균형 있게 설계하면 강점이 극대화됩니다.",
+      parent:
+        "학습 방식은 비교적 안정적이지만, 외부 활동과 관계가 학습 리듬을 흔들지 않도록 균형 점검이 필요합니다.",
+      path:
+        "신문방송, 정치외교, 경영, 교수, PD, 기자, 외교관, 정치인 계열과 잘 맞습니다.",
+      danger:
+        "분위기와 대외 활동 비중이 커지면 학습 루틴이 무너질 수 있습니다.",
+      talk:
+        "네 강점은 많지만, 결국 가장 중요한 건 네 페이스를 지키는 거야.",
       color: "#059669",
     },
     meta: {
       label: "리더형 모범생",
-      tagline: "성적과 대외 역량을 균형 있게 이끄는 유형",
+      tagline: "대외활동과 성실함이 함께 강한 문과형",
       emoji: "🌟",
       aura: "from-emerald-500/25 via-teal-400/10 to-green-300/20",
     },
   },
   {
-    key: "PCMS",
-    aliases: ["PCMF", "PCMf", "pCMF", "pCMf", "pCMs", "PCMs", "ECmF", "ECOF", "ECof", "eCOF", "eCOf", "eCoF", "eCof"],
+    key: "PCMF",
+    aliases: ["PCMf", "pCMF", "pCMf", "pCMs", "ECmF", "ECOF", "ECof", "eCOF", "eCOf", "eCoF", "eCof"],
     report: {
       title: "(외향적) 문과뺀질이형",
       subtitle: "20% 미만",
-      summary: "관심 과목에서는 강점을 보이지만 관계 에너지와 분위기의 영향을 크게 받는 유형입니다.",
-      strategy: "관심 과목 결과물을 동기로 삼고 균형 잡힌 과목 관리와 절대 학습시간 확보가 필요합니다.",
-      parent: "분위기에 휩쓸리지 않도록 관리형 환경을 만들어 주는 것이 중요합니다.",
-      path: "신문방송, 정치, 호텔경영, PD, 엔터테인먼트 계열과 잘 맞습니다.",
-      danger: "공부보다 관계와 분위기에 에너지를 더 쓸 수 있습니다.",
-      talk: "‘얼마나 했는지 숫자와 결과로 확인해보자’는 방식이 좋습니다.",
+      summary:
+        "관심 있는 과목만 상위권을 유지하고 분위기와 인간관계 영향을 크게 받는 외향형 문과 편차 유형입니다.",
+      strategy:
+        "관심 과목의 결과물을 동력으로 삼되, 감독관 있는 통제적 환경과 절대 학습시간 확보가 필수입니다.",
+      parent:
+        "주변 친구와 분위기의 힘이 큰 만큼, 환경을 먼저 설계해 주는 것이 중요합니다.",
+      path:
+        "신문방송, 정치, 호텔경영, PD, 엔터테인먼트, 통역, 여행 가이드 계열과 잘 맞습니다.",
+      danger:
+        "관계 형성 에너지가 큰 대신 자기통제가 약해져 공부보다 분위기에 에너지를 쏟을 수 있습니다.",
+      talk:
+        "사람과 분위기에서 강점이 크니까, 그 힘을 공부 결과로 연결하는 훈련을 해보자.",
       color: "#9333ea",
     },
     meta: {
       label: "무드 드라이버",
-      tagline: "분위기와 관계 에너지 속에서 움직이는 외향형",
+      tagline: "관계와 분위기의 영향을 크게 받는 외향형",
       emoji: "🎤",
       aura: "from-purple-500/25 via-pink-400/10 to-fuchsia-300/20",
     },
   },
   {
-    key: "PCMF",
-    aliases: ["PCmF", "PCmf", "PCms", "pCmF", "pCmf", "PCoF", "PCof", "pCoF"],
+    key: "PCMs",
+    aliases: ["PCmF", "PCmf", "pCmF", "pCmf", "PCoF", "PCof", "pCoF"],
     report: {
-      title: "(내향적) 문과 뺀질이",
+      title: "(내향적)문과 뺀질이",
       subtitle: "20% 미만",
-      summary: "조용하지만 관심 분야에는 강하게 몰입하며, 학습 균형과 마무리 능력이 핵심인 유형입니다.",
-      strategy: "통제적 환경, 절대 학습시간 확보, 관심 분야 성과물을 전체 성적 향상의 발판으로 활용하는 것이 중요합니다.",
-      parent: "겉으로 드러나지 않아 방심하기 쉽지만 조용히 흐트러질 수 있어 세심한 관찰이 필요합니다.",
-      path: "자유전공, 철학, 애니메이션, 사학, 문헌정보 계열과 잘 맞습니다.",
-      danger: "마무리가 약해 성과로 연결되지 못할 수 있습니다.",
-      talk: "‘끝까지 간 걸 함께 확인하자’는 식의 대화가 좋습니다.",
+      summary:
+        "관심 과목만 고득점하는 경향이 있고, 겉으로는 조용하지만 속내 파악이 어려운 내향형 편차 유형입니다.",
+      strategy:
+        "통제적 환경, 절대 학습시간 확보, 관심 분야 결과물을 전체 성적 동력으로 연결하는 전략이 필요합니다.",
+      parent:
+        "겉으로 조용해 보여도 방심하면 안 됩니다. 조용히 흐트러질 수 있어 세심한 관찰이 중요합니다.",
+      path:
+        "자유전공, 철학, 애니메이션, 사학, 문헌정보, 방송 관련 직업과 잘 맞습니다.",
+      danger:
+        "많은 일을 시작해도 끝맺음이 약할 수 있고, 관심 밖 과목은 쉽게 손을 놓을 수 있습니다.",
+      talk:
+        "조용히 잘하는 힘이 있으니까, 이제 끝까지 완성하는 힘만 같이 만들자.",
       color: "#a21caf",
     },
     meta: {
       label: "조용한 몰입러",
-      tagline: "겉은 조용하지만 좋아하는 일엔 강하게 빠지는 유형",
+      tagline: "겉은 조용하지만 관심 영역 편차가 큰 유형",
       emoji: "🌙",
       aura: "from-fuchsia-500/25 via-purple-400/10 to-violet-300/20",
     },
   },
   {
-    key: "PCOF",
-    aliases: ["PCOF", "PCOf", "PCOS", "PCOs", "PCoS", "PCos", "PCMS", "PCmS", "pCOF", "pCOf", "pCOs", "pCos", "pCms", "pCof", "eCOs", "pCOS", "pCoS"],
+    key: "PCOS",
+    aliases: ["PCOs", "PCoS", "PCos", "PCOF", "PCOf", "eCOs", "pCof", "pCOF", "pCOf", "pCOs", "pCos", "pCms", "PCMS", "PCmS", "PCms"],
     report: {
-      title: "문과 잠재성장형",
+      title: "문과 진주형",
       subtitle: "70% 내외",
-      summary: "차분한 기반 위에서 성장 가능성이 큰 유형입니다.",
-      strategy: "선행보다 내신 중심 학습이 적합하며 작은 성취를 반복적으로 만드는 것이 중요합니다.",
-      parent: "비교보다 성취 경험의 축적이 우선입니다.",
-      path: "아동, 심리, 사범, 사회복지, 상담, 교육 관련 계열과 잘 맞습니다.",
-      danger: "막연한 계획만 세우고 쉽게 지칠 수 있습니다.",
-      talk: "‘이번엔 어디까지 해냈는지 같이 확인하자’는 대화가 좋습니다.",
+      summary:
+        "아직 특출한 과목이 선명하지 않지만, 발견 시점에 따라 가능성이 크게 열릴 수 있는 문과 대기만성형입니다.",
+      strategy:
+        "선행보다 내신 중심, 선택과 집중, 선호 과목부터 자신감을 붙이는 단계형 전략이 가장 잘 맞습니다.",
+      parent:
+        "막연한 기대보다 구체적이고 작은 목표가 중요합니다. 비교보다 자신감 회복에 초점을 맞춰주세요.",
+      path:
+        "아동, 심리, 사범대, 사회복지, 유치원교사, 상담, 교육 계열과 잘 맞습니다.",
+      danger:
+        "구체적 목표 의식이 부족하면 쉽게 무기력해질 수 있고, 집중시간이 확보되지 않으면 성장이 더딜 수 있습니다.",
+      talk:
+        "지금 당장 모든 걸 잘할 필요는 없어. 한 단계씩 쌓이면 충분히 커질 수 있어.",
       color: "#ea580c",
     },
     meta: {
       label: "따뜻한 성장형",
-      tagline: "작은 성공을 발판 삼아 천천히 커지는 문과 잠재형",
+      tagline: "작은 성취를 쌓을수록 크게 커지는 대기만성형",
       emoji: "☀️",
       aura: "from-orange-500/25 via-yellow-400/10 to-amber-300/20",
     },
   },
   {
-    key: "HYB_ERMS",
-    aliases: ["ErMS", "ErMs", "EcMS", "EcMs", "erMS", "ecMS", "ErMF", "ErMf", "ErmF", "Ermf", "EcMF", "EcMf", "EcmF", "Ecmf", "erMF", "erMf", "ecMF", "ecMf"],
+    key: "eCmF",
+    aliases: ["eCmf", "eCMF", "eCMf"],
+    report: {
+      title: "문과 예체능 영재형",
+      subtitle: "3% 미만",
+      summary:
+        "예체능 특정 과목에서 강점이 뚜렷하고 감성과 상상력이 풍부한 예체능 영재형입니다.",
+      strategy:
+        "적성을 빠르게 찾고 전공과 연결하며, 대회·수상·특기자 스펙을 조기에 설계하는 것이 매우 중요합니다.",
+      parent:
+        "자유로운 영혼처럼 보여도 방향만 잡히면 몰입이 강합니다. 재능을 빨리 발견해 진로와 연결해 주세요.",
+      path:
+        "연기, 음악, 미술, 체육, 예술가, 연출, 영화, 운동선수, 관련 전문직과 잘 맞습니다.",
+      danger:
+        "균형 잡힌 수능 등급 관리가 무너지면 실기·특기 강점이 충분히 살지 못할 수 있습니다.",
+      talk:
+        "좋아하는 걸 힘 있게 밀어주되, 입시와 연결될 기본 루틴도 같이 잡아보자.",
+      color: "#e11d48",
+    },
+    meta: {
+      label: "예체능 감성러",
+      tagline: "감성과 상상력이 풍부한 예체능 영재형",
+      emoji: "🎭",
+      aura: "from-rose-500/25 via-pink-400/10 to-red-300/20",
+    },
+  },
+
+  {
+    key: "ErMS",
+    aliases: ["ErMs", "EcMS", "EcMs", "erMS", "ecMS", "ErMF", "ErMf", "ErmF", "Ermf", "EcMF", "EcMf", "EcmF", "Ecmf", "erMF", "erMf", "ecMF", "ecMf"],
     report: {
       title: "문·이과 혼합 영재형",
       subtitle: "4% 미만",
-      summary: "문·이과 전 영역을 두루 소화할 수 있는 융합형 상위권 영재입니다.",
-      strategy: "전 과목을 고르게 유지하면서도 시작한 일을 결과물로 연결하는 훈련이 중요합니다.",
-      parent: "산만함과 독특함을 약점으로 보기보다 강점으로 연결될 수 있도록 마무리와 집중을 도와주는 것이 좋습니다.",
-      path: "자유전공, 국제통상, 통계, 건축, 행정, 외교, 예술 융합 계열과 잘 맞습니다.",
-      danger: "관심사가 넓어 선택과 집중이 흐려질 수 있습니다.",
-      talk: "‘우선순위를 같이 정해보자’는 식의 대화가 효과적입니다.",
+      summary:
+        "문·이과 전 과목을 고르게 소화하며 상위권을 유지하는 융합형 영재입니다. 넓은 재능과 독특한 개성이 동시에 강합니다.",
+      strategy:
+        "전과목 균형 유지와 동시에 시작한 일을 성과물로 끝까지 연결하는 훈련이 중요합니다.",
+      parent:
+        "산만하고 엉뚱해 보이는 점도 강점의 일부일 수 있습니다. 개성을 억누르기보다 결과로 연결되게 돕는 것이 좋습니다.",
+      path:
+        "산업경영, 한의대, 건축, 행정, 국제통상, 통계, 자유전공, 외교관, 한의사, 건축가 계열과 잘 맞습니다.",
+      danger:
+        "관심사가 넓고 분위기에 좌우되면 집중이 흩어질 수 있습니다.",
+      talk:
+        "재능이 넓은 만큼, 지금은 우선순위를 잡아 끝까지 완성하는 힘을 키워보자.",
       color: "#0f766e",
     },
     meta: {
       label: "융합 설계자",
-      tagline: "문·이과를 넘나드는 통합적 사고를 가진 융합형",
+      tagline: "문·이과를 넘나드는 상위권 융합 영재형",
       emoji: "🧭",
       aura: "from-teal-500/25 via-sky-400/10 to-indigo-300/20",
     },
   },
   {
-    key: "HYB_EROS",
-    aliases: ["ErOS", "ErOs", "EroS", "Eros", "EcOS", "EcOs", "EcoS", "Ecos", "erOS", "eroS", "ecOS", "ecoS", "ErmS", "Erms", "ermS", "erms", "EcmS", "Ecms", "ecmS", "ecms", "ErOf", "EcOf"],
+    key: "ErOS",
+    aliases: ["ErOs", "EroS", "Eros", "EcOS", "EcOs", "EcoS", "Ecos", "erOS", "eroS", "ecOS", "ecoS", "ErmS", "Erms", "ermS", "erms", "EcmS", "Ecms", "ecmS", "ecms", "ErOf", "EcOf"],
     report: {
       title: "문·이과 혼합 모범형",
       subtitle: "10% 미만",
-      summary: "문·이과를 모두 무난하게 해내며 실리적으로 성과를 쌓는 안정형 상위권입니다.",
-      strategy: "내신, 활동, 시험 리듬을 균형 있게 유지하면 가장 효율적으로 성장할 수 있습니다.",
-      parent: "활동과 관계 에너지가 커질 수 있으니 학습 리듬만 잘 잡아주면 좋습니다.",
-      path: "사회과학, 경제, 자연과학, 통계, 공무원, 교사, 변호사 계열과 잘 맞습니다.",
-      danger: "다 잘하려다 체력과 집중력이 먼저 떨어질 수 있습니다.",
-      talk: "‘잘하고 있는 것 중 꼭 챙길 것만 남기자’는 정리형 대화가 좋습니다.",
+      summary:
+        "문·이과를 모두 안정적으로 해내며 실리적으로 성과를 쌓는 균형형 상위권입니다.",
+      strategy:
+        "전과목 내신 균형, 학종 관리, 시험불안 관리, 활동과 리더십의 균형이 핵심입니다.",
+      parent:
+        "적극적 성향이 있어 친구나 외부 활동으로 리듬이 깨지지 않도록만 잡아주면 안정적으로 성장합니다.",
+      path:
+        "사회과학, 경제, 자연과학, 한의학, 수의학, 통계, 공무원, 교사, 변호사 계열과 잘 맞습니다.",
+      danger:
+        "다 잘하려다 체력과 리듬이 먼저 무너질 수 있습니다.",
+      talk:
+        "균형감이 큰 강점이야. 꼭 필요한 것만 남기고 리듬을 지키면 훨씬 멀리 갈 수 있어.",
       color: "#0891b2",
     },
     meta: {
       label: "균형 운영자",
-      tagline: "실리와 균형을 바탕으로 안정적으로 성장하는 유형",
+      tagline: "실리와 균형을 바탕으로 안정적인 혼합형",
       emoji: "⚖️",
       aura: "from-sky-500/25 via-teal-400/10 to-cyan-300/20",
     },
   },
   {
-    key: "HYB_PRMS",
-    aliases: ["PrMS", "PrmS", "Prms", "prMS"],
+    key: "PrmS",
+    aliases: ["PcmS", "prMS", "prmS", "pcMS", "pcmS", "prOS", "pcOS", "proS", "pcoS"],
     report: {
       title: "문·이과 혼합 수동적모범형",
       subtitle: "10% 미만",
-      summary: "성실성과 안정감으로 꾸준한 상위권을 지키는 혼합형 학생입니다.",
-      strategy: "개념 정리, 시험 불안 관리, 보다 적극적인 대외 활동 경험이 성장 포인트입니다.",
-      parent: "실력은 있으나 자기주장이 약할 수 있어 발표 경험을 조금씩 쌓게 해주는 것이 좋습니다.",
-      path: "경영, 경제, 응용통계, 회계, 간호, 교대 계열과 잘 맞습니다.",
-      danger: "실력에 비해 존재감이 약해 기회를 놓칠 수 있습니다.",
-      talk: "‘드러내는 연습도 중요한 실력이다’라고 말해주는 것이 좋습니다.",
+      summary:
+        "성실성과 안정감으로 꾸준한 상위권을 유지하는 혼합형입니다. 위기 시 크게 흔들리지 않는 편입니다.",
+      strategy:
+        "내신 균형 유지, 개념 정리, 멘탈 관리, 그리고 리더십과 대외활동 경험을 조금씩 확장하는 것이 좋습니다.",
+      parent:
+        "자기주장이 약할 수 있으니, 안정감을 유지하면서도 스스로 드러낼 기회를 만들어 주는 것이 중요합니다.",
+      path:
+        "경영, 경제, 응용통계, 회계, 간호, 교대, 공무원, 약사, 회계사, 변리사 계열과 잘 맞습니다.",
+      danger:
+        "실력 대비 존재감이 약해 기회를 놓칠 수 있고, 시험불안이 쌓이면 스스로 위축될 수 있습니다.",
+      talk:
+        "조용히 강한 힘이 있으니까, 이제는 그 힘을 조금 더 드러내는 연습도 해보자.",
       color: "#0284c7",
     },
     meta: {
       label: "차곡차곡 성과형",
-      tagline: "꾸준함으로 결과를 만들어내는 혼합 모범형",
+      tagline: "꾸준함으로 상위권을 유지하는 혼합형",
       emoji: "🏅",
       aura: "from-blue-500/25 via-cyan-400/10 to-slate-300/20",
     },
   },
   {
-    key: "HYB_PRMF",
-    aliases: ["PrMF", "PrMf", "PrmF", "Prmf"],
+    key: "PrMF",
+    aliases: [
+      "PrMf", "PrmF", "Prmf", "prMF", "prMf", "prmF", "prmf",
+      "PcMF", "PcMf", "PcmF", "Pcmf", "pcMF", "pcMf", "pcmF", "pcmf",
+      "PrMs", "prMs", "PcMs", "pcMs", "proF", "pcoF",
+      "erOF", "erOf", "eroF", "erof", "ecOF", "ecOf", "ecoF", "ecof",
+      "EroF", "Erof", "EcoF", "Ecof", "ErOF", "EcOF",
+      "ermF", "ermf", "ecmF", "ecmf", "erMs", "ecMs",
+    ],
     report: {
       title: "문·이과 혼합 뺀질이형",
       subtitle: "20% 미만",
-      summary: "관심 과목만 잘하는 편차형이지만 융합적 재능과 아이디어가 살아 있는 유형입니다.",
-      strategy: "균형 잡힌 과목 관리, 감독이 있는 환경, 관심 분야 결과물을 전체 성적으로 연결하는 전략이 중요합니다.",
-      parent: "통제적 환경과 마무리 점검이 필요합니다. 시작은 빠르지만 끝까지 가는 힘을 만들어주는 것이 핵심입니다.",
-      path: "자유전공, 건축, 자연과학, 철학, 어문, 방송 관련 계열과 잘 맞습니다.",
-      danger: "넓은 재능이 오히려 산만함으로 보일 수 있습니다.",
-      talk: "‘재능은 충분하니 끝까지 연결하는 힘을 만들자’는 대화가 효과적입니다.",
+      summary:
+        "관심 과목만 1등급 수준으로 유지하는 편차형이지만, 재능은 넓고 아이디어가 살아 있는 혼합형입니다.",
+      strategy:
+        "통제적 환경, 균형 잡힌 과목 관리, 절대 학습시간 확보, 결과물 중심 경험 설계가 핵심입니다.",
+      parent:
+        "분위기에 휩쓸리기 쉬우므로 환경 설계가 매우 중요합니다. 결과물을 만들어 본 경험이 전체 성적에 시너지를 줍니다.",
+      path:
+        "자유전공, 자연과학, 건축, 철학, 어문, 방송 관련 직종과 잘 맞습니다.",
+      danger:
+        "많은 일을 시작하고 끝맺음이 약해질 수 있으며, 선호 과목 외 영역은 쉽게 방치될 수 있습니다.",
+      talk:
+        "재능은 넓으니까, 이제는 관심 있는 걸 끝까지 완성해서 전체 성과로 연결해보자.",
       color: "#7c3aed",
     },
     meta: {
       label: "융합 아이디어러",
-      tagline: "재능은 넓고, 마무리 훈련이 중요한 융합 편차형",
+      tagline: "재능은 넓고 편차도 큰 혼합형",
       emoji: "💡",
       aura: "from-violet-500/25 via-indigo-400/10 to-fuchsia-300/20",
     },
   },
   {
-    key: "HYB_PROS",
-    aliases: ["PrOF", "PrOf", "ProF", "Prof", "prOF", "prOf", "proF", "prof", "erOF", "erOf", "eroF", "erof"],
+    key: "PrOF",
+    aliases: [
+      "PrOf", "ProF", "Prof", "PcOF", "PcOf", "PcoF", "Pcof",
+      "PrOS", "PrOs", "ProS", "Pros", "prOs", "pros",
+      "PcOS", "PcOs", "PcoS", "Pcos", "pcOs", "pcos",
+      "prOF", "prOf", "pcOF", "pcOf", "prof", "pcof",
+      "erOs", "eros", "ecOs", "ecos", "Prms", "Pcms", "PrMS", "PcMS", "prms", "pcms",
+    ],
     report: {
-      title: "융합 잠재성장형",
+      title: "문·이과 혼합 진주형",
       subtitle: "70% 내외",
-      summary: "현재 특별히 두드러진 과목이 없더라도 생활 속 훈련과 경험에 따라 성장 폭이 크게 달라질 수 있는 유형입니다.",
-      strategy: "선행보다 내신 중심으로 접근하고 선택과 집중을 통해 작은 성취 경험을 반복적으로 만드는 것이 중요합니다.",
-      parent: "막연한 기대보다 단계적 목표가 필요합니다. 선호 과목에서 자신감을 얻으면 다른 과목으로 확장될 수 있습니다.",
-      path: "심리, 사범, 사회복지, 건축, 간호, 상담 관련 계열과 잘 맞습니다.",
-      danger: "구체적 목표가 없으면 쉽게 무기력해질 수 있습니다.",
-      talk: "‘오늘은 이 한 가지를 끝내보자’처럼 작은 목표가 효과적입니다.",
+      summary:
+        "아직 특별히 잘하거나 관심 있는 과목이 선명하지 않지만, 발견 시점에 따라 성장 폭이 크게 달라질 수 있는 혼합형입니다.",
+      strategy:
+        "내신 중심, 선택과 집중, 선호 과목부터 자신감을 붙이는 단계형 전략이 가장 효율적입니다.",
+      parent:
+        "결단력과 현실성이 약해 보일 수 있어도 가능성이 없는 것은 아닙니다. 구체적 목표를 잘게 나눠주는 것이 중요합니다.",
+      path:
+        "심리, 사범대, 사회복지, 건축, 간호, 식품영양, 의상, 교육, 상담, 복지 계열과 잘 맞습니다.",
+      danger:
+        "막연한 목표와 낮은 집중도로 시간이 흘러가면 성장 속도가 매우 느려질 수 있습니다.",
+      talk:
+        "지금은 방향을 찾는 시기야. 한 가지씩 끝내는 경험이 쌓이면 생각보다 크게 달라질 수 있어.",
       color: "#ea580c",
     },
     meta: {
       label: "가능성 탐험가",
-      tagline: "생활 속 경험이 쌓일수록 잠재력이 열리는 성장형",
+      tagline: "발견 시점에 따라 가능성이 크게 열리는 혼합형",
       emoji: "🌈",
       aura: "from-orange-500/25 via-amber-400/10 to-rose-300/20",
     },
   },
+
   {
     key: "DEFAULT",
-    aliases: ["DEFAULT"],
+    aliases: [],
     report: {
       title: "학습성향 분석 결과",
       subtitle: "기본 리포트",
-      summary: "현재 입력된 응답을 바탕으로 가장 가까운 학습 성향으로 분류한 결과입니다.",
-      strategy: "기본 학습 루틴을 먼저 안정화하고 강점 과목 중심으로 성취 경험을 늘리는 것이 좋습니다.",
-      parent: "현재 방식에 맞는 환경과 전략을 함께 찾는 접근이 효과적입니다.",
-      path: "상세 결과 DB 확장에 따라 더 정밀한 추천으로 연결될 수 있습니다.",
-      danger: "강점이 선명하지 않을수록 비교의 영향을 더 크게 받을 수 있습니다.",
-      talk: "‘네 방식에 맞는 방법을 같이 찾아가자’는 접근이 좋습니다.",
+      summary:
+        "현재 입력된 응답을 바탕으로 가장 가까운 학습 성향으로 분류한 결과입니다.",
+      strategy:
+        "기본 학습 루틴을 먼저 안정화하고 강점 과목 중심으로 성취 경험을 늘리는 것이 좋습니다.",
+      parent:
+        "현재 방식에 맞는 환경과 전략을 함께 찾는 접근이 효과적입니다.",
+      path:
+        "상세 결과 DB 확장에 따라 더 정밀한 추천으로 연결될 수 있습니다.",
+      danger:
+        "강점이 선명하지 않을수록 비교의 영향을 더 크게 받을 수 있습니다.",
+      talk:
+        "네 방식에 맞는 방법을 같이 찾아가자.",
       color: "#475569",
     },
     meta: {
@@ -702,63 +979,46 @@ const CHARACTER_META: Record<string, CharacterMeta> = Object.fromEntries(
   RESULT_DEFINITIONS.map((item) => [item.key, item.meta])
 );
 
+function getCharacterBadge(key: string) {
+  const meta = CHARACTER_META[key];
+
+  if (meta) {
+    return {
+      emoji: meta.emoji,
+      nickname: meta.label,
+    };
+  }
+
+  return {
+    emoji: "✨",
+    nickname: "성향 분석 캐릭터",
+  };
+}
+
 const RESULT_ALIAS_MAP: Record<string, string> = RESULT_DEFINITIONS.reduce(
   (acc, item) => {
     acc[item.key] = item.key;
     item.aliases.forEach((alias) => {
       acc[alias] = item.key;
-      acc[alias.toUpperCase()] = item.key;
     });
     return acc;
   },
   {} as Record<string, string>
 );
 
-function makeScores(answers: number[]) {
-  const total: Record<string, number> = {
-    E: 0,
-    P: 0,
-    R: 0,
-    C: 0,
-    M: 0,
-    O: 0,
-    S: 0,
-    F: 0,
-  };
-
-  answers.forEach((answer, idx) => {
-    if (answer !== 1) return;
-    const map = SCORE_MAP[idx] || {};
-    Object.entries(map).forEach(([key, value]) => {
-      total[key] += Number(value);
-    });
-  });
-
-  return total;
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
-}
-
-function normalizeAxis(left: number, right: number) {
-  const total = left + right;
-  if (total === 0) return 0;
-  return clamp(((right - left) / total) * 2, -2, 2);
-}
-
 function buildDisplayCode(scores: Record<string, number>) {
-  const socialDiff = Math.abs(scores.E - scores.P);
-  const judgmentDiff = Math.abs(scores.R - scores.C);
-  const trackDiff = Math.abs(scores.M - scores.O);
-  const styleDiff = Math.abs(scores.S - scores.F);
+  const socialDiff = Math.abs((scores.E ?? 0) - (scores.P ?? 0));
+  const judgmentDiff = Math.abs((scores.R ?? 0) - (scores.C ?? 0));
+  const trackDiff = Math.abs((scores.M ?? 0) - (scores.O ?? 0));
+  const styleDiff = Math.abs((scores.S ?? 0) - (scores.F ?? 0));
 
-  const socialLetter = scores.E >= scores.P ? "E" : "P";
-  const judgmentLetter = scores.R >= scores.C ? "R" : "C";
-  const trackLetter = scores.M >= scores.O ? "M" : "O";
-  const styleLetter = scores.S >= scores.F ? "S" : "F";
+  const socialLetter = (scores.E ?? 0) >= (scores.P ?? 0) ? "E" : "P";
+  const judgmentLetter = (scores.R ?? 0) >= (scores.C ?? 0) ? "R" : "C";
+  const trackLetter = (scores.M ?? 0) >= (scores.O ?? 0) ? "M" : "O";
+  const styleLetter = (scores.S ?? 0) >= (scores.F ?? 0) ? "S" : "F";
 
-  const formatLetter = (letter: string, diff: number) => (diff <= 2 ? letter.toLowerCase() : letter.toUpperCase());
+  const formatLetter = (letter: string, diff: number) =>
+    diff <= 2 ? letter.toLowerCase() : letter.toUpperCase();
 
   const code =
     formatLetter(socialLetter, socialDiff) +
@@ -778,74 +1038,7 @@ function buildDisplayCode(scores: Record<string, number>) {
 function normalizeResultCode(code: string) {
   const clean = code.replace(/[^A-Za-z]/g, "");
   if (!clean) return "DEFAULT";
-
-  if (RESULT_ALIAS_MAP[clean]) return RESULT_ALIAS_MAP[clean];
-
-  const upper = clean.toUpperCase();
-  if (RESULT_ALIAS_MAP[upper]) return RESULT_ALIAS_MAP[upper];
-
-  const chars = upper.split("");
-  const social = chars[0] === "P" ? "P" : "E";
-  const judgment = chars[1] === "C" ? "C" : "R";
-  const track = chars[2] === "O" ? "O" : "M";
-  const style = chars[3] === "F" ? "F" : "S";
-  const normalized4 = `${social}${judgment}${track}${style}`;
-
-  if (RESULT_ALIAS_MAP[normalized4]) return RESULT_ALIAS_MAP[normalized4];
-
-  const fallbackCandidates = [
-    normalized4,
-    `${social}${judgment}${track}S`,
-    `${social}${judgment}${track}F`,
-    `${social}${judgment}M${style}`,
-    `${social}${judgment}O${style}`,
-    `${social}${judgment}MS`,
-    `${social}${judgment}MF`,
-    `${social}${judgment}OS`,
-    `${social}${judgment}OF`,
-    normalized4.toLowerCase(),
-  ];
-
-  for (const candidate of fallbackCandidates) {
-    if (RESULT_ALIAS_MAP[candidate]) return RESULT_ALIAS_MAP[candidate];
-    const candidateUpper = candidate.toUpperCase();
-    if (RESULT_ALIAS_MAP[candidateUpper]) return RESULT_ALIAS_MAP[candidateUpper];
-  }
-
-  switch (normalized4) {
-    case "ERMS":
-      return "ERMS";
-    case "ERMF":
-      return "ERMF";
-    case "EROS":
-      return "EROS";
-    case "EROF":
-      return "EROF";
-    case "PRMS":
-      return "PROS_PASSIVE";
-    case "PRMF":
-      return "PRMF";
-    case "PROS":
-    case "PROF":
-      return "PROS";
-    case "ECMS":
-      return "ECMS";
-    case "ECMF":
-      return "ECMF";
-    case "ECOS":
-    case "ECOF":
-      return "ECOS";
-    case "PCOS":
-      return "PCOS";
-    case "PCMS":
-      return "PCOF";
-    case "PCMF":
-      return "PCMF";
-    case "PCOF":
-      return "PCOF";
-    default:
-      return "DEFAULT";
-  }
+  return RESULT_ALIAS_MAP[clean] || "DEFAULT";
 }
 
 function resolveResult(scores: Record<string, number>): ResolvedResult {
