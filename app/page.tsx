@@ -4,6 +4,7 @@ import ResultScreen from "@/components/shared-result-screen";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 type Step = "landing" | "form" | "test" | "loading" | "result";
+type TestType = "elementary" | "high";
 
 type StudentInfo = {
   name: string;
@@ -79,6 +80,7 @@ type ResultPayload = {
     style: number;
   };
   meta: {
+    testType: TestType | null;
     totalAnswered: number;
     totalQuestions: number;
   };
@@ -89,10 +91,19 @@ function buildResultPayload(params: {
   resolved: ResolvedResult;
   report: Report;
   scores: Record<string, number>;
+  testType: TestType | null;
   totalAnswered: number;
   totalQuestions: number;
 }): ResultPayload {
-  const { student, resolved, report, scores, totalAnswered, totalQuestions } = params;
+  const {
+    student,
+    resolved,
+    report,
+    scores,
+    testType,
+    totalAnswered,
+    totalQuestions,
+  } = params;
 
   const social = Math.abs((scores.E ?? 0) - (scores.P ?? 0));
   const judgment = Math.abs((scores.R ?? 0) - (scores.C ?? 0));
@@ -140,13 +151,14 @@ function buildResultPayload(params: {
       style,
     },
     meta: {
+      testType,
       totalAnswered,
       totalQuestions,
     },
   };
 }
 
-const QUESTIONS: string[] = [
+const QUESTIONS_ELEMENTARY: string[] = [
   "정해진 규칙을 잘 지킨다는 소리를 듣는다",
   "시험 보기 일주일 전부터는 봉사활동 등 학교의 다른 활동에 참여하지 않는다",
   "모둠 과제 발표는 주로 내가 하며 적극적으로 내 의견을 주장한다",
@@ -227,6 +239,89 @@ const QUESTIONS: string[] = [
   "판단하고 결정할 때 항상 다른 사람들의 의견을 따른다",
   "계획대로 여행하지 않고 그때 기분과 상황에 따라 여행 계획을 바꾸기도 한다",
   "사람마다 성격과 취향이 다르기 마련이므로 다른 사람들의 방법을 따라하고 싶지는 않다",
+];
+
+const QUESTIONS_HIGH: string[] = [
+  "성격이 원칙적이라는 얘기를 듣는 편이다.",
+  "시험기간 일주일 전의 동아리 활동, 봉사 활동은 부담되어 빠지는 편이다.",
+  "팀 과제를 할 때 주로 발표를 하며 자기 의견을 적극 주장한다.",
+  "자기계발 도서를 신뢰하는 편이라 따라해 보려 노력해 봤다.",
+  "영화 내용을 이야기할 때 장면, 등장 인물 위주로 전달한다.",
+  "자주 자신의 새로운 방식대로 일을 진행시킨다.",
+  "마감일이 되어야 능력이 발휘되는 편이다.",
+  "개성적이며 독특하다는 얘기를 자주 듣는다",
+  "친구들을 쉽게 사귀는 편이며 주위에 친구들이 따르는 편이다.",
+  "암기 과목을 선호하며 잘한다.",
+  "논리적이고 이성적이다는 평가가 좋다.",
+  "대체로 나의 느낌과 순발력을 믿는다",
+  "집중력이 강하다.",
+  "실수하는 것이 싫어서 시간이 많이 걸려도 천천히 진행한다.",
+  "단어를 활용한 게임에 강하다.",
+  "단순 암기보다는 원리 파악이 더 흥미롭다.",
+  "자신의 감정을 되도록 짧고 간단한 문장으로 표현한다",
+  "순간의 느낌(촉)보다는 계획한대로 일을 진행한다",
+  "옳고 그름을 판단할 때 사례나 통계를 근거로 생각 하는 편이다.",
+  "영화 내용을 얘기할 때 사건 위주로 전달한다.",
+  "원고를 작성할 때 여러 차례 수정을 하기 때문에 시간이 오래 걸린다.",
+  "노력한 것보다 만족스럽지 못한 결과가 자주 나오는 편이다.",
+  "미리 계획을 세워 학습과 과제를 한다.",
+  "이성과 논리를 중시한다.",
+  "숫자와 관련된 게임에 강하다.",
+  "타인을 설득할 때 주로 감정에 호소하는 편이다.",
+  "일의 결과치보단 과정이 더욱 중요하다고 생각한다",
+  "대화의 논제는 결론이 날 때까지 주도적으로 끌고 나가는 편이다",
+  "평가받는 것은 여전히 부담스럽다.",
+  "다른 사람의 감정과 기분을 잘 이해한다.",
+  "규칙을 준수하는 것이 더 효과적이라 생각한다.",
+  "일을 진행할 때 결단력이 있고 빠르게 진행한다.",
+  "의사를 결정할 때 주위의 의견을 물어보고 수렴하는 편이다.",
+  "은유나 비유로 자신의 감정을 표현하는 것이 더 효과적이라고 생각한다.",
+  "옳고 그름을 판단할 때 동기나 행동 원인을 중시한다.",
+  "규제보다는 자유로움 속에서 사고가 확장되어 일이 잘 된다.",
+  "새로운 메뉴는 먼저 먹어 본다.",
+  "사고하는 방식이 창의적이고 독특하다는 얘기를 듣는다.",
+  "일을 할 때 시간에 구애받는 편은 아니다.",
+  "객관적인 판단 능력이 뛰어나다.",
+  "문장으로 개념 설명을 해야 이해가 쉽다.",
+  "시험 기간이라도 모든 대외 활동은 수행 가능하다.",
+  "중요한 의사 결정은 내 생각과 의지에 따른다.",
+  "시작한 일은 꼭 마무리를 짓고 다른 일을 시작하려고 한다.",
+  "결과물이 마음에 안 들어도 공들인 시간이 아까워서 포기하지 못한다.",
+  "타인을 설득할 때 객관적인 데이터 제공을 선호하는 편이다.",
+  "어지럽고 지저분한 내 책상도 내 방식대로 질서에 맞게 정리된 것이다.",
+  "원고를 쓸 때 순간의 생각과 느낌대로 작성하며 수정 작업은 적은 편이다.",
+  "마음먹고하면 항상 스스로 만족스러운 결과를 얻는 편이다.",
+  "내 기분과 생각에 따라 대화 중 논제가 바뀌기도 한다.",
+  "내 생각과 다르더라도 다수의 의견에 따르는 편이다.",
+  "벼락치기를 해도 좋은 결과가 자주 나온다",
+  "각자의 개성을 인정하는 편이다.",
+  "결과물이 마음에 안 들면 처음부터 다시 시작한다.",
+  "도표, 간단한 공식을 통한 개념 설명이 이해가 쉽다.",
+  "첫인상과 느낌이 중요하다.",
+  "내 의견과 같지 않다면 다수의 의견이라도 수용하기 싫다.",
+  "여행 계획은 사전 준비를 철저히 해서 시행착오 없이 진행한다.",
+  "수업 중 모르는 것은 적극적으로 질문하는 편이다.",
+  "시간을 효율적으로 사용하는 편이다.",
+  "쑥스러워서 바로 질문하기보다는 되도록 혼자서 해 보려고 한다.",
+  "정해진 틀에서 벗어나면 부담된다.",
+  "책상 정리가 잘 되어 있을 때 학습 효과가 더 크다고 생각한다.",
+  "자신의 판단과 결정에 자신감을 갖는 편이다.",
+  "오랜 시간 집중하기 힘들다.",
+  "성실하다는 말을 제일 많이 듣는다.",
+  "일의 결과에 많은 비중을 둔다.",
+  "몰아서 일을 하면 좋은 결과가 나오지 않는 편이다.",
+  "객관적이며 정당한 평가를 선호한다.",
+  "익숙한 음식이 좋다.",
+  "나보다 나은 사람에게서 자극을 받는다.",
+  "칭찬은 나를 발전시키는 제1의 원동력이다",
+  "시작한 일을 끝내지 못하고 새로운 일을 시작하는 경우가 많다.",
+  "발표보다는 자료 수집과 편집에 더 관심이 많다.",
+  "새로운 친구를 사귀는 데 시간이 필요한 편이다.",
+  "남의 칭찬보다는 내 만족도가 더 중요하다.",
+  "성품이 바르고 인성 교육이 잘 되어 있다는 평가가 좋다.",
+  "판단, 의사 결정을 할 때 주변인들의 의견을 전적으로 따르는 편이다.",
+  "철저한 계획보다는 순간의 느낌과 상황에 맞춰 여행 계획을 바꾸기도 한다.",
+  "각자의 성향은 다르기 때문에 타인의 방식을 따라하고 싶지는 않다.",
 ];
 
 const SCORE_MAP: Record<string, number>[] = [
@@ -371,7 +466,7 @@ const RESULT_DEFINITIONS: Array<{
       path:
         "고교선택: 일반고(중위권 이상)/ 대학선택: SKY, 의대/ 학과선택: 의대, 치대, 한의대, 자연과학, 공학, 수의학/ 직업선택: 의사, 치과의사, 한의사, 교수, 연구원, 수의사, 약사",
       danger:
-        "적극적인 성향 때문에 외부 활동으로 공부 리듬이 흔들릴 수 있고, 시험불안 관리가 필요합니다.(주기적인 희망고문 필요)",
+        "적극적인 성향 때문에 외부 활동으로 공부 리듬이 흔들 수 있고, 시험불안 관리가 필요합니다.(주기적인 희망고문 필요)",
       talk:
         "지금 리듬만 잘 지키면 충분히 높은 목표까지 갈 수 있어.",
       color: "#0891b2",
@@ -1055,7 +1150,10 @@ function resolveResult(scores: Record<string, number>): ResolvedResult {
 
 function hexToRgba(hex: string, alpha: number) {
   const normalized = hex.replace("#", "");
-  const full = normalized.length === 3 ? normalized.split("").map((c) => c + c).join("") : normalized;
+  const full =
+    normalized.length === 3
+      ? normalized.split("").map((c) => c + c).join("")
+      : normalized;
   const num = parseInt(full, 16);
   const r = (num >> 16) & 255;
   const g = (num >> 8) & 255;
@@ -1725,13 +1823,19 @@ function SectionCard({
     <section
       className="rounded-[28px] border bg-white/85 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur"
       style={{
-        borderColor: accentColor ? hexToRgba(accentColor, 0.18) : "rgba(255,255,255,0.8)",
-        boxShadow: accentColor ? `0 18px 60px ${hexToRgba(accentColor, 0.1)}` : "0 18px 60px rgba(15,23,42,0.08)",
+        borderColor: accentColor
+          ? hexToRgba(accentColor, 0.18)
+          : "rgba(255,255,255,0.8)",
+        boxShadow: accentColor
+          ? `0 18px 60px ${hexToRgba(accentColor, 0.1)}`
+          : "0 18px 60px rgba(15,23,42,0.08)",
       }}
     >
       <div className="mb-4">
         <h3 className="text-lg font-black text-slate-900">{title}</h3>
-        {desc ? <p className="mt-1 text-sm leading-6 text-slate-500">{desc}</p> : null}
+        {desc ? (
+          <p className="mt-1 text-sm leading-6 text-slate-500">{desc}</p>
+        ) : null}
       </div>
       {children}
     </section>
@@ -1741,8 +1845,12 @@ function SectionCard({
 function InfoItem({ title, value }: { title: string; value: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">{title}</div>
-      <div className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">{value}</div>
+      <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
+        {title}
+      </div>
+      <div className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">
+        {value}
+      </div>
     </div>
   );
 }
@@ -1760,7 +1868,10 @@ function AxisBars({ scores }: { scores: Record<string, number> }) {
       {axes.map((axis) => {
         const pair = toFiveScalePair(scores[axis.left], scores[axis.right]);
         return (
-          <div key={axis.name} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div
+            key={axis.name}
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
             <div className="mb-3 flex items-center justify-between text-sm font-bold text-slate-700">
               <span>{axis.leftLabel}</span>
               <span className="text-slate-400">{axis.name}</span>
@@ -1785,7 +1896,15 @@ function AxisBars({ scores }: { scores: Record<string, number> }) {
   );
 }
 
-function ProgressBar({ current, total, color }: { current: number; total: number; color: string }) {
+function ProgressBar({
+  current,
+  total,
+  color,
+}: {
+  current: number;
+  total: number;
+  color: string;
+}) {
   const progress = Math.round((current / total) * 100);
   return (
     <div>
@@ -1794,13 +1913,23 @@ function ProgressBar({ current, total, color }: { current: number; total: number
         <span>{progress}%</span>
       </div>
       <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-        <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${color}, #0f172a)` }} />
+        <div
+          className="h-full rounded-full transition-all duration-300"
+          style={{
+            width: `${progress}%`,
+            background: `linear-gradient(90deg, ${color}, #0f172a)`,
+          }}
+        />
       </div>
     </div>
   );
 }
 
-function LandingScreen({ onStart }: { onStart: () => void }) {
+function LandingScreen({
+  onSelect,
+}: {
+  onSelect: (type: TestType) => void;
+}) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="rounded-[32px] bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
@@ -1821,6 +1950,10 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
             <span className="font-bold text-slate-900">
               방법이 안 맞았던 걸 수도 있습니다
             </span>
+          </p>
+
+          <p className="mt-5 text-sm font-bold text-slate-500">
+            학년에 맞는 검사 유형을 선택해 주세요
           </p>
         </div>
 
@@ -1844,12 +1977,21 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
           </div>
         </div>
 
-        <button
-          onClick={onStart}
-          className="mt-8 w-full animate-[pulseSoft_2.2s_ease-in-out_infinite] rounded-[24px] bg-[#FEE500] py-5 text-lg font-black text-slate-900 shadow-md transition hover:-translate-y-0.5"
-        >
-          검사 시작하기 🚀
-        </button>
+        <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          <button
+            onClick={() => onSelect("elementary")}
+            className="w-full rounded-[24px] bg-[#FEE500] py-5 text-lg font-black text-slate-900 shadow-md transition hover:-translate-y-0.5"
+          >
+            초·중등용 시작 🚀
+          </button>
+
+          <button
+            onClick={() => onSelect("high")}
+            className="w-full rounded-[24px] bg-slate-900 py-5 text-lg font-black text-white shadow-md transition hover:-translate-y-0.5"
+          >
+            고등용 시작 🎓
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -1857,32 +1999,52 @@ function LandingScreen({ onStart }: { onStart: () => void }) {
 
 function FormScreen({
   student,
+  testType,
   onChange,
   onNext,
   onBack,
 }: {
   student: StudentInfo;
+  testType: TestType | null;
   onChange: (field: keyof StudentInfo, value: string) => void;
   onNext: () => void;
   onBack: () => void;
 }) {
-  const isValid = student.name.trim() && student.grade.trim() && student.phone.trim();
-  const fields: Array<{ key: keyof StudentInfo; label: string; placeholder: string }> = [
+  const isValid =
+    student.name.trim() && student.grade.trim() && student.phone.trim();
+
+  const fields: Array<{
+    key: keyof StudentInfo;
+    label: string;
+    placeholder: string;
+  }> = [
     { key: "name", label: "학생 이름", placeholder: "예: 홍길동" },
     { key: "grade", label: "학년", placeholder: "예: 중2 / 고1" },
     { key: "school", label: "학교명", placeholder: "예: OO중학교" },
     { key: "phone", label: "전화번호", placeholder: "예: 010-1234-5678" },
   ];
 
+  const testTypeLabel =
+    testType === "high" ? "고등용 검사" : "초·중등용 검사";
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="rounded-[32px] border border-white/70 bg-white/90 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
+        <div className="mb-3 inline-flex rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-700">
+          {testTypeLabel}
+        </div>
+
         <h2 className="text-3xl font-black text-slate-900">기본 정보 입력</h2>
-        <p className="mt-3 text-slate-600">검사 결과 리포트에 표시될 학생 정보를 입력해 주세요.</p>
+        <p className="mt-3 text-slate-600">
+          검사 결과 리포트에 표시될 학생 정보를 입력해 주세요.
+        </p>
+
         <div className="mt-8 grid gap-5">
           {fields.map((field) => (
             <label key={field.key} className="grid gap-2">
-              <span className="text-sm font-black text-slate-700">{field.label}</span>
+              <span className="text-sm font-black text-slate-700">
+                {field.label}
+              </span>
               <input
                 value={student[field.key]}
                 onChange={(e) => onChange(field.key, e.target.value)}
@@ -1892,10 +2054,16 @@ function FormScreen({
             </label>
           ))}
         </div>
+
         <div className="mt-8 flex items-center justify-between gap-3">
-          <button type="button" onClick={onBack} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700">
+          <button
+            type="button"
+            onClick={onBack}
+            className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700"
+          >
             이전
           </button>
+
           <button
             type="button"
             disabled={!isValid}
@@ -1911,32 +2079,41 @@ function FormScreen({
 }
 
 function TestScreen({
+  questions,
+  testType,
   currentIndex,
   answers,
   onAnswer,
   onNext,
   onPrev,
 }: {
+  questions: string[];
+  testType: TestType | null;
   currentIndex: number;
   answers: number[];
   onAnswer: (value: number) => void;
   onNext: () => void;
   onPrev: () => void;
 }) {
-  const question = QUESTIONS[currentIndex];
+  const question = questions[currentIndex];
   const currentAnswer = answers[currentIndex];
+  const progress = Math.round(((currentIndex + 1) / questions.length) * 100);
 
-  const progress = Math.round(((currentIndex + 1) / QUESTIONS.length) * 100);
+  const testTypeLabel =
+    testType === "high" ? "고등용 검사" : "초·중등용 검사";
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-
       <div className="rounded-[32px] bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+        <div className="mb-4 inline-flex rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-700">
+          {testTypeLabel}
+        </div>
 
-        {/* 진행률 */}
         <div className="mb-6">
           <div className="flex justify-between text-xs font-black text-slate-400">
-            <span>{currentIndex + 1} / {QUESTIONS.length}</span>
+            <span>
+              {currentIndex + 1} / {questions.length}
+            </span>
             <span>{progress}%</span>
           </div>
 
@@ -1948,16 +2125,13 @@ function TestScreen({
           </div>
         </div>
 
-        {/* 질문 */}
         <div className="text-center">
           <h2 className="text-xl font-black leading-8 text-slate-900">
             {question}
           </h2>
         </div>
 
-        {/* 선택 */}
         <div className="mt-8 grid gap-4">
-
           <button
             onClick={() => onAnswer(1)}
             className={`rounded-[24px] p-6 text-lg font-black transition ${
@@ -1979,12 +2153,9 @@ function TestScreen({
           >
             아니다 👎
           </button>
-
         </div>
 
-        {/* 버튼 */}
         <div className="mt-8 flex justify-between">
-
           <button
             onClick={onPrev}
             className="rounded-full bg-slate-100 px-5 py-3 text-sm font-black"
@@ -1997,11 +2168,9 @@ function TestScreen({
             disabled={currentAnswer === -1}
             className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white disabled:opacity-30"
           >
-            {currentIndex === QUESTIONS.length - 1 ? "결과 보기" : "다음"}
+            {currentIndex === questions.length - 1 ? "결과 보기" : "다음"}
           </button>
-
         </div>
-
       </div>
     </div>
   );
@@ -2052,83 +2221,113 @@ function LoadingScreen() {
 
 export default function Page() {
   const [step, setStep] = useState<Step>("landing");
+  const [testType, setTestType] = useState<TestType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [hasSavedResult, setHasSavedResult] = useState(false);
-  const [student, setStudent] = useState<StudentInfo>({ name: "", grade: "", school: "", phone: "" });
-  const [answers, setAnswers] = useState<number[]>(() => Array(QUESTIONS.length).fill(-1));
 
-  const answeredCount = useMemo(() => answers.filter((answer) => answer !== -1).length, [answers]);
-  const isComplete = answeredCount === QUESTIONS.length;
+  const [student, setStudent] = useState<StudentInfo>({
+    name: "",
+    grade: "",
+    school: "",
+    phone: "",
+  });
+
+  const activeQuestions = useMemo(() => {
+    return testType === "high" ? QUESTIONS_HIGH : QUESTIONS_ELEMENTARY;
+  }, [testType]);
+
+  const [answers, setAnswers] = useState<number[]>(
+    () => Array(QUESTIONS_ELEMENTARY.length).fill(-1)
+  );
+
+  const answeredCount = useMemo(
+    () => answers.filter((answer) => answer !== -1).length,
+    [answers]
+  );
+
+  const isComplete = answeredCount === activeQuestions.length;
   const scores = useMemo(() => makeScores(answers), [answers]);
   const resolved = useMemo(() => resolveResult(scores), [scores]);
   const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
 
-useEffect(() => {
-  if (step !== "result" || hasSavedResult || !isComplete) return;
+  useEffect(() => {
+    if (step !== "result" || hasSavedResult || !isComplete) return;
 
-  let cancelled = false;
+    let cancelled = false;
 
-  const run = async () => {
-    try {
-      const resultPayload = buildResultPayload({
-        student,
-        resolved,
-        report,
-        scores,
-        totalAnswered: answeredCount,
-        totalQuestions: QUESTIONS.length,
-      });
+    const run = async () => {
+      try {
+        const resultPayload = buildResultPayload({
+          student,
+          resolved,
+          report,
+          scores,
+          testType,
+          totalAnswered: answeredCount,
+          totalQuestions: activeQuestions.length,
+        });
 
-      const response = await fetch("/api/submissions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          student_name: student.name,
-          grade: student.grade,
-          school: student.school,
-          phone: student.phone,
+        const response = await fetch("/api/submissions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            student_name: student.name,
+            grade: student.grade,
+            school: student.school,
+            phone: student.phone,
 
-          result_code: resolved.code,
-          result_full_code: resolved.fullCode,
-          result_title: report.title,
-          result_subtitle: report.subtitle,
+            result_code: resolved.code,
+            result_full_code: resolved.fullCode,
+            result_title: report.title,
+            result_subtitle: report.subtitle,
 
-          e_score: scores.E ?? 0,
-          p_score: scores.P ?? 0,
-          r_score: scores.R ?? 0,
-          c_score: scores.C ?? 0,
-          m_score: scores.M ?? 0,
-          o_score: scores.O ?? 0,
-          s_score: scores.S ?? 0,
-          f_score: scores.F ?? 0,
+            e_score: scores.E ?? 0,
+            p_score: scores.P ?? 0,
+            r_score: scores.R ?? 0,
+            c_score: scores.C ?? 0,
+            m_score: scores.M ?? 0,
+            o_score: scores.O ?? 0,
+            s_score: scores.S ?? 0,
+            f_score: scores.F ?? 0,
 
-          result_payload: resultPayload,
-        }),
-      });
+            result_payload: resultPayload,
+          }),
+        });
 
-      const json = await response.json();
+        const json = await response.json();
 
-      if (!response.ok || !json?.ok) {
-        throw new Error(json?.error || "결과 저장 실패");
+        if (!response.ok || !json?.ok) {
+          throw new Error(json?.error || "결과 저장 실패");
+        }
+
+        if (!cancelled) {
+          setHasSavedResult(true);
+        }
+      } catch (error) {
+        console.error("결과 저장 실패:", error);
       }
+    };
 
-      if (!cancelled) {
-        setHasSavedResult(true);
-      }
-    } catch (error) {
-      console.error("결과 저장 실패:", error);
-    }
-  };
+    void run();
 
-  void run();
-
-  return () => {
-    cancelled = true;
-  };
-}, [step, hasSavedResult, isComplete, student, resolved, report, scores, answeredCount]);
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    step,
+    hasSavedResult,
+    isComplete,
+    student,
+    resolved,
+    report,
+    scores,
+    testType,
+    answeredCount,
+    activeQuestions.length,
+  ]);
 
   const moveSafely = (next: () => void) => {
     setIsTransitioning(true);
@@ -2142,6 +2341,19 @@ useEffect(() => {
     setStudent((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleSelectTestType = (type: TestType) => {
+    const questions = type === "high" ? QUESTIONS_HIGH : QUESTIONS_ELEMENTARY;
+
+    moveSafely(() => {
+      setTestType(type);
+      setStudent({ name: "", grade: "", school: "", phone: "" });
+      setAnswers(Array(questions.length).fill(-1));
+      setCurrentIndex(0);
+      setHasSavedResult(false);
+      setStep("form");
+    });
+  };
+
   const handleAnswer = (value: number) => {
     setAnswers((prev) => {
       const next = [...prev];
@@ -2150,21 +2362,21 @@ useEffect(() => {
     });
   };
 
-const goNext = () => {
-  if (step === "test" && currentIndex === QUESTIONS.length - 1) {
-    moveSafely(() => setStep("loading"));
+  const goNext = () => {
+    if (step === "test" && currentIndex === activeQuestions.length - 1) {
+      moveSafely(() => setStep("loading"));
 
-    window.setTimeout(() => {
-      setStep("result");
-    }, 1600);
+      window.setTimeout(() => {
+        setStep("result");
+      }, 1600);
 
-    return;
-  }
+      return;
+    }
 
-  if (step === "test") {
-    moveSafely(() => setCurrentIndex((prev) => prev + 1));
-  }
-};
+    if (step === "test") {
+      moveSafely(() => setCurrentIndex((prev) => prev + 1));
+    }
+  };
 
   const goPrev = () => {
     if (step === "form") {
@@ -2183,8 +2395,9 @@ const goNext = () => {
   };
 
   const restart = () => {
+    setTestType(null);
     setStudent({ name: "", grade: "", school: "", phone: "" });
-    setAnswers(Array(QUESTIONS.length).fill(-1));
+    setAnswers(Array(QUESTIONS_ELEMENTARY.length).fill(-1));
     setCurrentIndex(0);
     setHasSavedResult(false);
     setStep("landing");
@@ -2192,40 +2405,49 @@ const goNext = () => {
 
   return (
     <Shell>
-      <div className={`${isTransitioning ? "opacity-80" : "opacity-100"} transition-opacity duration-150`}>
-       {step === "landing" && <LandingScreen onStart={() => moveSafely(() => setStep("form"))} />}
+      <div
+        className={`${
+          isTransitioning ? "opacity-80" : "opacity-100"
+        } transition-opacity duration-150`}
+      >
+        {step === "landing" && (
+          <LandingScreen onSelect={handleSelectTestType} />
+        )}
 
-{step === "form" && (
-  <FormScreen
-    student={student}
-    onChange={handleStudentChange}
-    onNext={() => moveSafely(() => setStep("test"))}
-    onBack={() => moveSafely(() => setStep("landing"))}
-  />
-)}
+        {step === "form" && (
+          <FormScreen
+            student={student}
+            testType={testType}
+            onChange={handleStudentChange}
+            onNext={() => moveSafely(() => setStep("test"))}
+            onBack={() => moveSafely(() => setStep("landing"))}
+          />
+        )}
 
-{step === "test" && (
-  <TestScreen
-    currentIndex={currentIndex}
-    answers={answers}
-    onAnswer={handleAnswer}
-    onNext={goNext}
-    onPrev={goPrev}
-  />
-)}
+        {step === "test" && (
+          <TestScreen
+            questions={activeQuestions}
+            testType={testType}
+            currentIndex={currentIndex}
+            answers={answers}
+            onAnswer={handleAnswer}
+            onNext={goNext}
+            onPrev={goPrev}
+          />
+        )}
 
-{step === "loading" && <LoadingScreen />}
+        {step === "loading" && <LoadingScreen />}
 
-{step === "result" && (
-  <ResultScreen
-    student={student}
-    scores={scores}
-    resolved={resolved}
-    report={report}
-    meta={CHARACTER_META[resolved.key]}
-    onRestart={restart}
-  />
-)}
+        {step === "result" && (
+          <ResultScreen
+            student={student}
+            scores={scores}
+            resolved={resolved}
+            report={report}
+            meta={CHARACTER_META[resolved.key]}
+            onRestart={restart}
+          />
+        )}
       </div>
     </Shell>
   );
