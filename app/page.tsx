@@ -2222,6 +2222,7 @@ const goNext = () => {
     scores={scores}
     resolved={resolved}
     report={report}
+    meta={CHARACTER_META[resolved.key]}
     onRestart={restart}
   />
 )}

@@ -28,12 +28,66 @@ type ResolvedResult = {
   fullCode: string;
 };
 
-type ResultScreenProps = {
+type CharacterMeta = {
+  label: string;
+  tagline: string;
+  emoji: string;
+  aura: string;
+};
+
+type ResultPayload = {
+  version: number;
+  submittedAt: string;
   student: StudentInfo;
-  scores: Record<string, number>;
-  resolved: ResolvedResult;
-  report: Report;
-  onRestart: () => void;
+  result: {
+    key: string;
+    code: string;
+    fullCode: string;
+    diffText: string;
+    title: string;
+    subtitle: string;
+    summary: string;
+    strategy: string;
+    parent: string;
+    path: string;
+    danger: string;
+    talk: string;
+    color: string;
+  };
+  scores: {
+    E: number;
+    P: number;
+    R: number;
+    C: number;
+    M: number;
+    O: number;
+    S: number;
+    F: number;
+  };
+  diffs: {
+    social: number;
+    judgment: number;
+    track: number;
+    style: number;
+  };
+  meta: {
+    totalAnswered: number;
+    totalQuestions: number;
+  };
+};
+
+type ResultScreenProps = {
+  payload?: ResultPayload;
+
+  student?: StudentInfo;
+  scores?: Record<string, number>;
+  resolved?: ResolvedResult;
+  report?: Report;
+  meta?: CharacterMeta;
+
+  onRestart?: () => void;
+  shareUrl?: string;
+  restartLabel?: string;
 };
 
 function hexToRgba(hex: string, alpha: number) {
@@ -54,72 +108,137 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function buildShareText(title: string) {
+function buildShareText(title: string, url: string) {
   return `우리 아이 학습유형 결과 😮
 
 👉 ${title}
 
-생각보다 정확해서 놀람...
-무료 테스트 해보세요👇
-https://study-type-test-app-zbmw.vercel.app`;
+결과 보러가기👇
+${url}`;
 }
 
-async function copyToClipboard(text: string) {
+async function fallbackCopyText(text: string) {
   try {
-    await navigator.clipboard.writeText(text);
-    alert("링크가 복사됐어요 👍");
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      alert("결과 링크가 복사됐어요 👍");
+      return true;
+    }
   } catch {
-    alert("복사에 실패했어요. 다시 시도해 주세요.");
+    // fallback below
   }
+
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    textarea.style.top = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    const success = document.execCommand("copy");
+    document.body.removeChild(textarea);
+
+    if (success) {
+      alert("결과 링크가 복사됐어요 👍");
+      return true;
+    }
+  } catch {
+    // ignore
+  }
+
+  alert(`링크 복사에 실패했어요.\n아래 주소를 직접 복사해 주세요.\n${text}`);
+  return false;
 }
 
-async function shareNative(text: string) {
+async function shareNative(title: string, url: string) {
+  const text = buildShareText(title, url);
+
   try {
     if (navigator.share) {
       await navigator.share({
-        title: "학습성향 검사",
+        title: "학습성향 검사 결과",
         text,
-        url: "https://study-type-test-app-zbmw.vercel.app",
+        url,
       });
       return;
     }
-
-    await copyToClipboard(text);
   } catch {
-    // 공유 취소 포함 무시
+    // share cancelled or failed
   }
+
+  await fallbackCopyText(url);
 }
 
-function getPercentile(key: string) {
-  if (key.includes("ERMS") || key.includes("ECMF")) return 1;
-  if (key.includes("ERMF") || key.includes("ECMS")) return 3;
-  if (key.includes("EROS") || key.includes("ECOS")) return 10;
-  if (key.includes("PRMF") || key.includes("PCMF")) return 20;
-  return 70;
+function getPercentileFromSubtitle(subtitle: string) {
+  if (subtitle.includes("1% 미만")) return "1% 미만";
+  if (subtitle.includes("2% 미만")) return "2% 미만";
+  if (subtitle.includes("3% 미만")) return "3% 미만";
+  if (subtitle.includes("4%~6% 미만")) return "4%~6% 미만";
+  if (subtitle.includes("4%~10% 미만")) return "4%~10% 미만";
+  if (subtitle.includes("7%~10% 미만")) return "7%~10% 미만";
+  if (subtitle.includes("10% 미만")) return "10% 미만";
+  if (subtitle.includes("20% 미만")) return "20% 미만";
+  if (subtitle.includes("70%")) return "70% 내외";
+  return subtitle || "분석 결과";
 }
 
 function getTraits(key: string) {
-  if (key.includes("ER")) {
+  if (["ERMs", "ERMS", "eRMF"].includes(key)) {
     return [
-      "발표·소통 상황에서 에너지가 살아나요",
-      "리더 역할을 맡을 때 강점이 드러나요",
-      "외부 자극이 있을수록 추진력이 올라가요",
+      "이과 과목에서 압도적 강점이 드러나요",
+      "깊게 몰입하면 성과 폭이 매우 커요",
+      "난도가 높을수록 오히려 재미를 느끼기 쉬워요",
     ];
   }
 
-  if (key.includes("PC")) {
+  if (["eROS", "eRmS"].includes(key)) {
     return [
-      "혼자 집중할 때 몰입이 높아요",
-      "조용하지만 생각의 깊이가 있는 편이에요",
-      "겉보다 속이 단단한 스타일이에요",
+      "계획과 실천이 비교적 안정적인 편이에요",
+      "내신과 시험 리듬을 꾸준히 유지할 수 있어요",
+      "성실함이 실력으로 연결되는 타입이에요",
     ];
   }
 
-  if (key.includes("PR")) {
+  if (["PRMF", "EROF"].includes(key)) {
     return [
-      "관심 있는 과목은 확실히 잘해요",
-      "싫은 건 미루기 쉬운 편이에요",
-      "환경에 따라 성과 차이가 커질 수 있어요",
+      "좋아하는 과목에서는 확실히 잘해요",
+      "싫은 과목은 미루기 쉬워요",
+      "환경에 따라 결과 차이가 크게 날 수 있어요",
+    ];
+  }
+
+  if (["ECMF", "ECMS", "ECMs", "pCMS"].includes(key)) {
+    return [
+      "언어 감각과 표현력이 강한 편이에요",
+      "생각이 깊고 해석력이 좋아요",
+      "관심 분야에서는 높은 몰입을 보여줄 수 있어요",
+    ];
+  }
+
+  if (["ECOS", "pCOS", "eCoS"].includes(key)) {
+    return [
+      "문과 과목을 비교적 안정적으로 운영해요",
+      "계획을 세우면 차분히 쌓아가는 편이에요",
+      "시험불안 관리만 잘되면 성과가 좋아질 가능성이 커요",
+    ];
+  }
+
+  if (["PCMF", "PCMs"].includes(key)) {
+    return [
+      "관심 과목만 강하게 파고드는 편이에요",
+      "겉보다 속생각이 많은 타입이에요",
+      "마무리 습관이 붙으면 확 달라질 수 있어요",
+    ];
+  }
+
+  if (["ErMS", "ErOS", "PrmS", "PrMF", "PrOF"].includes(key)) {
+    return [
+      "문·이과를 함께 보는 융합 감각이 있어요",
+      "여러 분야를 동시에 이해하려는 경향이 있어요",
+      "균형을 잡으면 크게 성장할 가능성이 커요",
     ];
   }
 
@@ -131,23 +250,23 @@ function getTraits(key: string) {
 }
 
 function getFuture(key: string) {
-  if (key.includes("ER")) {
-    return "리더형, 기획형, 활동 중심 역할에서 강점이 드러날 가능성이 큽니다.";
+  if (["ERMs", "ERMS", "eRMF", "eROS", "eRmS", "PRMF", "EROF"].includes(key)) {
+    return "이공계, 의학, 공학, 자연과학, IT·연구 분야에서 강점이 살아날 가능성이 큽니다.";
   }
 
-  if (key.includes("EC")) {
-    return "전문직, 분석형, 언어/연구 계열에서 깊이 있는 성장 가능성이 높습니다.";
+  if (["ECMF", "ECMS", "ECMs", "pCMS", "ECOS", "pCOS", "eCoS", "PCMF", "PCMs", "eCmF", "PCOS"].includes(key)) {
+    return "어문, 경영, 법조, 행정, 신문방송, 상담·교육, 예체능 분야에서 강점이 드러날 가능성이 큽니다.";
   }
 
-  if (key.includes("PR") || key.includes("PC")) {
-    return "특정 분야에 강하게 몰입하는 전문가형으로 성장할 가능성이 큽니다.";
+  if (["ErMS", "ErOS", "PrmS", "PrMF", "PrOF"].includes(key)) {
+    return "자유전공, 통계, 건축, 사회과학, 융합전공처럼 여러 역량을 함께 쓰는 분야에서 성장 가능성이 높습니다.";
   }
 
   return "균형형 인재로 다양한 진로 선택지 속에서 안정적으로 성장할 수 있습니다.";
 }
 
 function getDangerPattern(key: string) {
-  if (key.includes("PR") || key.includes("PC")) {
+  if (["PRMF", "EROF", "PCMF", "PCMs", "PrMF"].includes(key)) {
     return [
       "좋아하는 것만 하는 패턴",
       "마무리 부족",
@@ -155,31 +274,39 @@ function getDangerPattern(key: string) {
     ];
   }
 
-  if (key.includes("ER")) {
+  if (["ERMs", "ERMS", "eRMF", "ECMF", "ECMS", "ECMs", "pCMS", "ErMS", "eCmF"].includes(key)) {
     return [
-      "집중력 분산",
-      "활동이 과해질 수 있음",
-      "계획이 흐트러질 수 있음",
+      "재능에 비해 루틴 관리가 흔들릴 수 있음",
+      "완벽주의나 부담감 누적",
+      "환경이 맞지 않으면 흥미가 급격히 떨어질 수 있음",
     ];
   }
 
-  return ["목표 없이 흐름만 유지", "성장 속도가 느려질 수 있음"];
+  return [
+    "목표 없이 흐름만 유지",
+    "학습 리듬이 느슨해질 수 있음",
+    "작은 실수에 자신감이 흔들릴 수 있음",
+  ];
 }
 
 function getAction(key: string) {
-  if (key.includes("PR") || key.includes("PC")) {
-    return "하루 1시간이라도 무조건 끝까지 앉아있는 습관 만들기";
+  if (["PRMF", "EROF", "PCMF", "PCMs", "PrMF"].includes(key)) {
+    return "하루 1시간이라도 무조건 끝까지 앉아 있는 습관 만들기";
   }
 
-  if (key.includes("ER")) {
-    return "활동 시간을 조금 줄이고 공부 시간을 고정하기";
+  if (["eROS", "eRmS", "ECOS", "pCOS", "eCoS", "ErOS", "PrmS"].includes(key)) {
+    return "매일 같은 시간에 시작하는 고정 공부 루틴 만들기";
+  }
+
+  if (["ERMs", "ERMS", "eRMF", "ECMF", "ECMS", "ECMs", "pCMS", "ErMS", "eCmF"].includes(key)) {
+    return "강점 과목 1개를 정해서 결과물까지 완성해 보는 경험 만들기";
   }
 
   return "하루 학습 루틴을 일정하게 유지하기";
 }
 
 function getChatScenario(key: string) {
-  if (key.includes("PR") || key.includes("PC")) {
+  if (["PRMF", "PCMF", "PCMs", "PrMF"].includes(key)) {
     return [
       { type: "parent" as const, text: "요즘 왜 이렇게 공부를 미루는 것 같지?" },
       { type: "child" as const, text: "해야 하는 건 아는데... 딱 꽂히는 게 아니면 잘 안 잡혀..." },
@@ -188,20 +315,20 @@ function getChatScenario(key: string) {
     ];
   }
 
-  if (key.includes("ER")) {
+  if (["EROF", "eROS", "ErOS", "eCoS", "PCMF"].includes(key)) {
     return [
-      { type: "parent" as const, text: "너는 분명 잘할 수 있는데 왜 공부 리듬이 자꾸 흔들릴까?" },
-      { type: "child" as const, text: "혼자 하면 좀 심심하고... 뭔가 자극이 있어야 더 잘돼." },
-      { type: "parent" as const, text: "친구들이나 분위기 영향을 많이 받는 편이구나?" },
+      { type: "parent" as const, text: "분명 잘할 수 있는데 왜 공부 리듬이 자꾸 흔들릴까?" },
+      { type: "child" as const, text: "혼자 하면 좀 심심하고... 분위기 타면 더 잘돼." },
+      { type: "parent" as const, text: "친구들이나 환경 영향을 많이 받는 편이구나?" },
       { type: "child" as const, text: "응! 분위기 좋으면 진짜 열심히 해." },
     ];
   }
 
-  if (key.includes("EC")) {
+  if (["ECMF", "ECMS", "ECMs", "pCMS", "PCMs"].includes(key)) {
     return [
-      { type: "parent" as const, text: "겉으로는 티가 안 나는데 속으로 생각이 많지?" },
+      { type: "parent" as const, text: "겉으로는 조용한데 속으로 생각이 많지?" },
       { type: "child" as const, text: "응... 머릿속으론 많이 생각하는데 바로 말하긴 좀 그래." },
-      { type: "parent" as const, text: "그래도 한번 시작하면 되게 깊게 하더라." },
+      { type: "parent" as const, text: "그래도 한번 이해되면 깊게 가더라." },
       { type: "child" as const, text: "맞아. 이해되면 끝까지 파고드는 건 재밌어." },
     ];
   }
@@ -212,58 +339,6 @@ function getChatScenario(key: string) {
     { type: "parent" as const, text: "하나씩 맞는 방법을 찾으면 훨씬 좋아질 수 있겠네." },
     { type: "child" as const, text: "맞아. 나한테 맞는 방식이면 더 잘할 수 있을 것 같아." },
   ];
-}
-
-function getCharacterBadge(key: string) {
-  if (key.includes("ERMS")) {
-    return { emoji: "🧠", nickname: "창의 연구자" };
-  }
-
-  if (key.includes("ERMF")) {
-    return { emoji: "⚡", nickname: "몰입 발명가" };
-  }
-
-  if (key.includes("EROS")) {
-    return { emoji: "📘", nickname: "엘리트 플래너" };
-  }
-
-  if (key.includes("EROF")) {
-    return { emoji: "🚀", nickname: "에너지 크리에이터" };
-  }
-
-  if (key.includes("PRMF")) {
-    return { emoji: "🎯", nickname: "자유로운 문제해결사" };
-  }
-
-  if (key.includes("PROS") || key.includes("PRMS")) {
-    return { emoji: "🌱", nickname: "성장 새싹" };
-  }
-
-  if (key.includes("ECMF")) {
-    return { emoji: "🎨", nickname: "감각 스토리텔러" };
-  }
-
-  if (key.includes("ECMS")) {
-    return { emoji: "👑", nickname: "품격 있는 우등생" };
-  }
-
-  if (key.includes("ECOS")) {
-    return { emoji: "📚", nickname: "깊이형 사색가" };
-  }
-
-  if (key.includes("PCOS")) {
-    return { emoji: "🧩", nickname: "정교한 실천가" };
-  }
-
-  if (key.includes("PCMF")) {
-    return { emoji: "🌙", nickname: "조용한 몰입러" };
-  }
-
-  if (key.includes("PCOF") || key.includes("PCMS")) {
-    return { emoji: "☀️", nickname: "따뜻한 성장형" };
-  }
-
-  return { emoji: "✨", nickname: "성향 분석 캐릭터" };
 }
 
 function printReport(html: string) {
@@ -294,7 +369,7 @@ function generatePrintableReport({
   report: Report;
   resultCode: string;
   student: StudentInfo;
-  percentile: number;
+  percentile: string;
   traits: string[];
   dangerPatterns: string[];
   future: string;
@@ -302,6 +377,7 @@ function generatePrintableReport({
   characterBadge: {
     emoji: string;
     nickname: string;
+    tagline: string;
   };
 }) {
   const safe = (value?: string) =>
@@ -311,20 +387,9 @@ function generatePrintableReport({
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
 
-  const traitItems = traits
-    .map(
-      (item) => `
-        <div class="chip">${safe(item)}</div>
-      `
-    )
-    .join("");
-
+  const traitItems = traits.map((item) => `<div class="chip">${safe(item)}</div>`).join("");
   const dangerItems = dangerPatterns
-    .map(
-      (item) => `
-        <div class="danger-item">${safe(item)}</div>
-      `
-    )
+    .map((item) => `<div class="danger-item">${safe(item)}</div>`)
     .join("");
 
   return `
@@ -334,217 +399,64 @@ function generatePrintableReport({
   <meta charset="utf-8" />
   <title>${safe(report.title)} 결과 리포트</title>
   <style>
-    @page {
-      size: A4;
-      margin: 16mm;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-
+    @page { size: A4; margin: 16mm; }
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     html, body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-      color: #111827;
-      background: #fff8d9;
+      color: #111827; background: #fff8d9;
     }
-
-    body {
-      line-height: 1.65;
-      font-size: 12.5px;
-    }
-
-    .page {
-      width: 100%;
-    }
-
+    body { line-height: 1.65; font-size: 12.5px; }
+    .page { width: 100%; }
     .hero {
       background: linear-gradient(135deg, #fee500 0%, #fff3a6 100%);
-      border-radius: 28px;
-      padding: 28px;
-      border: 1px solid #f1d74c;
+      border-radius: 28px; padding: 28px; border: 1px solid #f1d74c;
       color: #111827;
     }
-
-    .hero-sub {
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      font-weight: 900;
-      color: #6b7280;
-    }
-
-    .char-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 14px;
-      align-items: center;
-    }
-
+    .hero-sub { font-size: 11px; letter-spacing: 0.14em; font-weight: 900; color: #6b7280; }
+    .char-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
     .char-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 999px;
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.75);
-      border: 1px solid rgba(17,24,39,0.08);
-      font-size: 12px;
-      font-weight: 900;
-      color: #111827;
+      display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 8px 12px;
+      background: rgba(255,255,255,0.75); border: 1px solid rgba(17,24,39,0.08);
+      font-size: 12px; font-weight: 900; color: #111827;
     }
-
-    .hero-title {
-      margin-top: 12px;
-      font-size: 30px;
-      line-height: 1.2;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      color: #111827;
-    }
-
-    .hero-summary {
-      margin-top: 14px;
-      max-width: 92%;
-      font-size: 14px;
-      line-height: 1.8;
-      color: #374151;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 18px;
-    }
-
+    .hero-title { margin-top: 12px; font-size: 30px; line-height: 1.2; font-weight: 900; letter-spacing: -0.03em; color: #111827; }
+    .hero-tagline { margin-top: 10px; font-size: 13px; font-weight: 800; line-height: 1.7; color: #4b5563; }
+    .hero-summary { margin-top: 14px; max-width: 92%; font-size: 14px; line-height: 1.8; color: #374151; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
     .badge {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 7px 12px;
-      font-size: 11px;
-      font-weight: 900;
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(17,24,39,0.08);
-      color: #111827;
+      display: inline-flex; align-items: center; border-radius: 999px; padding: 7px 12px;
+      font-size: 11px; font-weight: 900; background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(17,24,39,0.08); color: #111827;
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-top: 18px;
-    }
-
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
     .card {
-      border: 1px solid #e5e7eb;
-      border-radius: 22px;
-      padding: 18px;
-      background: #ffffff;
-      page-break-inside: avoid;
-      break-inside: avoid;
+      border: 1px solid #e5e7eb; border-radius: 22px; padding: 18px; background: #ffffff;
+      page-break-inside: avoid; break-inside: avoid;
     }
-
-    .tint {
-      background: #fffdf5;
-      border: 1px solid #f3e28d;
-    }
-
-    .danger {
-      background: #fff1f2;
-      border: 1px solid #fecdd3;
-    }
-
+    .tint { background: #fffdf5; border: 1px solid #f3e28d; }
+    .danger { background: #fff1f2; border: 1px solid #fecdd3; }
     .section-title {
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      margin: 0 0 10px 0;
-      color: #111827;
+      font-size: 18px; font-weight: 900; letter-spacing: -0.02em; margin: 0 0 10px 0; color: #111827;
     }
-
-    .body-copy {
-      font-size: 12.5px;
-      line-height: 1.9;
-      color: #374151;
-      white-space: pre-wrap;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    .info-item {
-      border-radius: 16px;
-      padding: 12px;
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
-    }
-
-    .info-label {
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 0.16em;
-      color: #9ca3af;
-      text-transform: uppercase;
-    }
-
-    .info-value {
-      margin-top: 6px;
-      font-size: 12px;
-      line-height: 1.8;
-      color: #374151;
-      white-space: pre-wrap;
-    }
-
-    .chip-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
+    .body-copy { font-size: 12.5px; line-height: 1.9; color: #374151; white-space: pre-wrap; }
+    .info-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .info-item { border-radius: 16px; padding: 12px; background: #f8fafc; border: 1px solid #e5e7eb; }
+    .info-label { font-size: 10px; font-weight: 900; letter-spacing: 0.16em; color: #9ca3af; text-transform: uppercase; }
+    .info-value { margin-top: 6px; font-size: 12px; line-height: 1.8; color: #374151; white-space: pre-wrap; }
+    .chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
     .chip {
-      border-radius: 999px;
-      padding: 8px 12px;
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
-      font-size: 12px;
-      font-weight: 800;
-      color: #374151;
+      border-radius: 999px; padding: 8px 12px; background: #f8fafc; border: 1px solid #e5e7eb;
+      font-size: 12px; font-weight: 800; color: #374151;
     }
-
-    .danger-list {
-      display: grid;
-      gap: 8px;
-    }
-
+    .danger-list { display: grid; gap: 8px; }
     .danger-item {
-      border-radius: 16px;
-      padding: 10px 12px;
-      background: white;
-      border: 1px solid #fecdd3;
-      font-size: 12px;
-      font-weight: 800;
-      color: #be123c;
+      border-radius: 16px; padding: 10px 12px; background: white; border: 1px solid #fecdd3;
+      font-size: 12px; font-weight: 800; color: #be123c;
     }
-
     .action-box {
-      margin-top: 12px;
-      border-radius: 18px;
-      padding: 14px;
-      background: #fff8d9;
-      border: 1px solid #f3e28d;
-      font-size: 14px;
-      font-weight: 900;
-      color: #111827;
-      line-height: 1.8;
+      margin-top: 12px; border-radius: 18px; padding: 14px; background: #fff8d9;
+      border: 1px solid #f3e28d; font-size: 14px; font-weight: 900; color: #111827; line-height: 1.8;
     }
   </style>
 </head>
@@ -559,10 +471,11 @@ function generatePrintableReport({
       </div>
 
       <div class="hero-title">${safe(report.title)}</div>
+      <div class="hero-tagline">${safe(characterBadge.tagline)}</div>
       <div class="hero-summary">${safe(report.summary)}</div>
 
       <div class="badge-row">
-        <div class="badge">상위 ${safe(String(percentile))}% 경향</div>
+        <div class="badge">상위 ${safe(percentile)}</div>
         <div class="badge">결과코드 ${safe(resultCode)}</div>
         <div class="badge">학생 ${safe(student.name)}</div>
         <div class="badge">학교 ${safe(student.school)}</div>
@@ -574,37 +487,21 @@ function generatePrintableReport({
         <section class="card">
           <h2 class="section-title">학생 기본 정보</h2>
           <div class="info-grid">
-            <div class="info-item">
-              <div class="info-label">이름</div>
-              <div class="info-value">${safe(student.name)}</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">학년</div>
-              <div class="info-value">${safe(student.grade)}</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">학교</div>
-              <div class="info-value">${safe(student.school)}</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">전화번호</div>
-              <div class="info-value">${safe(student.phone)}</div>
-            </div>
+            <div class="info-item"><div class="info-label">이름</div><div class="info-value">${safe(student.name)}</div></div>
+            <div class="info-item"><div class="info-label">학년</div><div class="info-value">${safe(student.grade)}</div></div>
+            <div class="info-item"><div class="info-label">학교</div><div class="info-value">${safe(student.school)}</div></div>
+            <div class="info-item"><div class="info-label">전화번호</div><div class="info-value">${safe(student.phone)}</div></div>
           </div>
         </section>
 
         <section class="card tint" style="margin-top:16px;">
           <h2 class="section-title">이 아이 실제 모습</h2>
-          <div class="chip-wrap">
-            ${traitItems}
-          </div>
+          <div class="chip-wrap">${traitItems}</div>
         </section>
 
         <section class="card danger" style="margin-top:16px;">
           <h2 class="section-title">주의 패턴</h2>
-          <div class="danger-list">
-            ${dangerItems}
-          </div>
+          <div class="danger-list">${dangerItems}</div>
         </section>
       </div>
 
@@ -687,9 +584,7 @@ function BubbleCard({
           <h3 className="text-[17px] font-black tracking-[-0.03em] text-slate-900">
             {title}
           </h3>
-          {desc ? (
-            <p className="mt-1 text-sm leading-6 text-slate-500">{desc}</p>
-          ) : null}
+          {desc ? <p className="mt-1 text-sm leading-6 text-slate-500">{desc}</p> : null}
         </div>
       </div>
 
@@ -721,9 +616,7 @@ function ChatBubble({
         <div
           className={[
             "relative rounded-[24px] px-4 py-3 text-sm font-bold leading-7 shadow-sm",
-            isParent
-              ? "bg-[#FFF3A6] text-slate-900"
-              : "bg-slate-900 text-white",
+            isParent ? "bg-[#FFF3A6] text-slate-900" : "bg-slate-900 text-white",
           ].join(" ")}
         >
           {children}
@@ -740,40 +633,166 @@ function ChatBubble({
   );
 }
 
+function buildFallbackPayload(params: {
+  student?: StudentInfo;
+  scores?: Record<string, number>;
+  resolved?: ResolvedResult;
+  report?: Report;
+}): ResultPayload {
+  const student = params.student ?? {
+    name: "",
+    grade: "",
+    school: "",
+    phone: "",
+  };
+
+  const scores = {
+    E: Number(params.scores?.E ?? 0),
+    P: Number(params.scores?.P ?? 0),
+    R: Number(params.scores?.R ?? 0),
+    C: Number(params.scores?.C ?? 0),
+    M: Number(params.scores?.M ?? 0),
+    O: Number(params.scores?.O ?? 0),
+    S: Number(params.scores?.S ?? 0),
+    F: Number(params.scores?.F ?? 0),
+  };
+
+  const resolved = params.resolved ?? {
+    key: "DEFAULT",
+    code: "",
+    diffText: "",
+    fullCode: "",
+  };
+
+  const report = params.report ?? {
+    title: "학습성향 분석 결과",
+    subtitle: "기본 리포트",
+    summary: "",
+    strategy: "",
+    parent: "",
+    path: "",
+    danger: "",
+    talk: "",
+    color: "#475569",
+  };
+
+  return {
+    version: 1,
+    submittedAt: "",
+    student,
+    result: {
+      key: resolved.key,
+      code: resolved.code,
+      fullCode: resolved.fullCode,
+      diffText: resolved.diffText,
+      title: report.title,
+      subtitle: report.subtitle,
+      summary: report.summary,
+      strategy: report.strategy,
+      parent: report.parent,
+      path: report.path,
+      danger: report.danger,
+      talk: report.talk,
+      color: report.color,
+    },
+    scores,
+    diffs: {
+      social: Math.abs(scores.E - scores.P),
+      judgment: Math.abs(scores.R - scores.C),
+      track: Math.abs(scores.M - scores.O),
+      style: Math.abs(scores.S - scores.F),
+    },
+    meta: {
+      totalAnswered: 0,
+      totalQuestions: 0,
+    },
+  };
+}
+
 export default function ResultScreen({
+  payload,
   student,
   scores,
   resolved,
   report,
+  meta,
   onRestart,
+  shareUrl,
+  restartLabel = "다시 검사하기",
 }: ResultScreenProps) {
-  const percentile = useMemo(() => getPercentile(resolved.key), [resolved.key]);
-  const traits = useMemo(() => getTraits(resolved.key), [resolved.key]);
-  const future = useMemo(() => getFuture(resolved.key), [resolved.key]);
-  const dangerPatterns = useMemo(
-    () => getDangerPattern(resolved.key),
-    [resolved.key]
-  );
-  const actionText = useMemo(() => getAction(resolved.key), [resolved.key]);
-  const chatScenario = useMemo(
-    () => getChatScenario(resolved.key),
-    [resolved.key]
-  );
-  const characterBadge = useMemo(
-    () => getCharacterBadge(resolved.key),
-    [resolved.key]
+  const finalPayload = useMemo(
+    () =>
+      payload ??
+      buildFallbackPayload({
+        student,
+        scores,
+        resolved,
+        report,
+      }),
+    [payload, student, scores, resolved, report]
   );
 
+  const finalStudent = finalPayload.student;
+  const finalResolved: ResolvedResult = {
+    key: finalPayload.result.key,
+    code: finalPayload.result.code,
+    diffText: finalPayload.result.diffText,
+    fullCode: finalPayload.result.fullCode,
+  };
+  const finalReport: Report = {
+    title: finalPayload.result.title,
+    subtitle: finalPayload.result.subtitle,
+    summary: finalPayload.result.summary,
+    strategy: finalPayload.result.strategy,
+    parent: finalPayload.result.parent,
+    path: finalPayload.result.path,
+    danger: finalPayload.result.danger,
+    talk: finalPayload.result.talk,
+    color: finalPayload.result.color,
+  };
+
+  const percentile = useMemo(
+    () => getPercentileFromSubtitle(finalReport.subtitle),
+    [finalReport.subtitle]
+  );
+
+  const traits = useMemo(() => getTraits(finalResolved.key), [finalResolved.key]);
+  const future = useMemo(() => getFuture(finalResolved.key), [finalResolved.key]);
+  const dangerPatterns = useMemo(() => getDangerPattern(finalResolved.key), [finalResolved.key]);
+  const actionText = useMemo(() => getAction(finalResolved.key), [finalResolved.key]);
+  const chatScenario = useMemo(() => getChatScenario(finalResolved.key), [finalResolved.key]);
+
+  const characterBadge = useMemo(() => {
+    if (meta) {
+      return {
+        emoji: meta.emoji,
+        nickname: meta.label,
+        tagline: meta.tagline,
+      };
+    }
+
+    return {
+      emoji: "✨",
+      nickname: "성향 분석 캐릭터",
+      tagline: "현재 응답을 바탕으로 가장 가까운 성향을 분석했어요.",
+    };
+  }, [meta]);
+
   const handleShare = async () => {
-    const text = buildShareText(report.title);
-    await shareNative(text);
+    const url =
+      shareUrl ||
+      (typeof window !== "undefined"
+        ? window.location.href
+        : "https://study-type-test-app-zbmw.vercel.app");
+
+    await shareNative(finalReport.title, url);
   };
 
   const handlePrint = () => {
     const html = generatePrintableReport({
-      report,
-      resultCode: resolved.fullCode,
-      student,
+      report: finalReport,
+      resultCode: finalResolved.fullCode,
+      student: finalStudent,
       percentile,
       traits,
       dangerPatterns,
@@ -815,18 +834,22 @@ export default function ResultScreen({
               </span>
             </div>
 
+            <p className="mt-3 text-[14px] font-bold leading-6 text-slate-500">
+              {characterBadge.tagline}
+            </p>
+
             <h1 className="mt-3 break-keep text-[28px] font-black tracking-[-0.05em] text-slate-950 sm:text-[36px]">
-              {report.title}
+              {finalReport.title}
             </h1>
 
             <p className="mt-2 text-[15px] font-bold leading-7 text-slate-600">
-              {report.subtitle}
+              {finalReport.subtitle}
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              <KakaoBadge>상위 {percentile}% 경향</KakaoBadge>
-              <KakaoBadge>{resolved.code}</KakaoBadge>
-              <KakaoBadge>{resolved.diffText}</KakaoBadge>
+              <KakaoBadge>상위 {percentile}</KakaoBadge>
+              <KakaoBadge>{finalResolved.code}</KakaoBadge>
+              <KakaoBadge>{finalResolved.diffText}</KakaoBadge>
             </div>
           </div>
 
@@ -836,27 +859,25 @@ export default function ResultScreen({
             </div>
 
             <div className="mt-1 text-[22px] font-black tracking-[-0.03em] text-slate-950">
-              {resolved.code}
+              {finalResolved.code}
             </div>
 
             <div className="mt-1 text-[12px] font-bold text-slate-500">
-              {resolved.fullCode}
+              {finalResolved.fullCode}
             </div>
 
             <div className="mt-4 rounded-[20px] bg-white/80 p-4">
-              <div className="text-[11px] font-black text-slate-400">
-                학생 정보
-              </div>
+              <div className="text-[11px] font-black text-slate-400">학생 정보</div>
 
               <div className="mt-3 grid gap-2 text-sm font-bold text-slate-700">
                 <div className="rounded-xl bg-slate-50 px-3 py-2">
-                  이름 · {student.name || "이름 미입력"}
+                  이름 · {finalStudent.name || "이름 미입력"}
                 </div>
                 <div className="rounded-xl bg-slate-50 px-3 py-2">
-                  학년 · {student.grade || "학년 미입력"}
+                  학년 · {finalStudent.grade || "학년 미입력"}
                 </div>
                 <div className="rounded-xl bg-slate-50 px-3 py-2">
-                  학교 · {student.school || "학교 미입력"}
+                  학교 · {finalStudent.school || "학교 미입력"}
                 </div>
               </div>
             </div>
@@ -866,13 +887,9 @@ export default function ResultScreen({
         <div className="relative z-10 mt-6 rounded-[28px] border border-[#F4E38F] bg-[#FFFDF5] p-5">
           <div className="mb-2 flex items-center gap-2">
             <span className="text-lg">🫶</span>
-            <span className="text-[14px] font-black text-slate-900">
-              한 줄 요약
-            </span>
+            <span className="text-[14px] font-black text-slate-900">한 줄 요약</span>
           </div>
-          <p className="text-[15px] leading-7 text-slate-700">
-            {report.summary}
-          </p>
+          <p className="text-[15px] leading-7 text-slate-700">{finalReport.summary}</p>
         </div>
       </section>
 
@@ -882,7 +899,7 @@ export default function ResultScreen({
             title="실제 대화 느낌"
             desc="부모님이 자주 느끼는 반응을 카톡처럼 풀어봤어요."
             icon="💬"
-            accentColor={report.color}
+            accentColor={finalReport.color}
           >
             <div className="flex flex-col gap-3">
               {chatScenario.map((item, index) => (
@@ -897,7 +914,7 @@ export default function ResultScreen({
             title="이 아이 실제 모습"
             desc="부모 입장에서 ‘맞다’ 싶은 포인트를 모았어요."
             icon="😮"
-            accentColor={report.color}
+            accentColor={finalReport.color}
           >
             <div className="flex flex-wrap gap-2">
               {traits.map((trait) => (
@@ -910,22 +927,18 @@ export default function ResultScreen({
             title="추천 학습 전략"
             desc="이 성향에서 가장 효과적으로 먹히는 방향이에요."
             icon="📘"
-            accentColor={report.color}
+            accentColor={finalReport.color}
           >
-            <p className="text-[15px] leading-7 text-slate-700">
-              {report.strategy}
-            </p>
+            <p className="text-[15px] leading-7 text-slate-700">{finalReport.strategy}</p>
           </BubbleCard>
 
           <BubbleCard
             title="보호자 가이드"
             desc="부모님이 옆에서 도와줄 때 특히 중요한 포인트예요."
             icon="👨‍👩‍👧"
-            accentColor={report.color}
+            accentColor={finalReport.color}
           >
-            <p className="text-[15px] leading-7 text-slate-700">
-              {report.parent}
-            </p>
+            <p className="text-[15px] leading-7 text-slate-700">{finalReport.parent}</p>
           </BubbleCard>
         </div>
 
@@ -934,7 +947,7 @@ export default function ResultScreen({
             title="이대로 가면 위험"
             desc="결과가 흔들릴 때 자주 보이는 패턴이에요."
             icon="⚠️"
-            accentColor={report.color}
+            accentColor={finalReport.color}
           >
             <div className="grid gap-2">
               {dangerPatterns.map((item) => (
@@ -952,7 +965,7 @@ export default function ResultScreen({
             title="지금 당장 해야 할 1가지"
             desc="많이 말고, 이 한 가지부터 잡으면 좋아요."
             icon="🚀"
-            accentColor={report.color}
+            accentColor={finalReport.color}
           >
             <div className="rounded-[22px] border border-[#F2DE78] bg-[#FFF8D9] px-4 py-4 text-[16px] font-black leading-7 text-slate-900">
               {actionText}
@@ -963,19 +976,13 @@ export default function ResultScreen({
             title="미래 성장 시나리오"
             desc="앞으로 강점이 살아날 수 있는 방향이에요."
             icon="🧠"
-            accentColor={report.color}
+            accentColor={finalReport.color}
           >
-            <p className="text-[15px] leading-7 text-slate-700">
-              {future}
-            </p>
+            <p className="text-[15px] leading-7 text-slate-700">{future}</p>
 
             <div className="mt-4 rounded-[20px] bg-slate-50 p-4">
-              <div className="text-[12px] font-black text-slate-500">
-                추천 진로 방향
-              </div>
-              <p className="mt-2 text-sm leading-7 text-slate-700">
-                {report.path}
-              </p>
+              <div className="text-[12px] font-black text-slate-500">추천 진로 방향</div>
+              <p className="mt-2 text-sm leading-7 text-slate-700">{finalReport.path}</p>
             </div>
           </BubbleCard>
 
@@ -983,10 +990,10 @@ export default function ResultScreen({
             title="아이에게 이렇게 말해보세요"
             desc="말투 하나만 바뀌어도 반응이 달라질 수 있어요."
             icon="💛"
-            accentColor={report.color}
+            accentColor={finalReport.color}
           >
             <div className="rounded-[22px] border border-[#F2DE78] bg-[#FFF8D9] px-4 py-4 text-[15px] font-black leading-7 text-slate-800">
-              “{report.talk}”
+              “{finalReport.talk}”
             </div>
           </BubbleCard>
         </div>
@@ -1008,10 +1015,10 @@ export default function ResultScreen({
         </button>
 
         <button
-          onClick={onRestart}
+          onClick={onRestart ?? (() => {})}
           className="h-14 rounded-[22px] bg-slate-900 text-[15px] font-black text-white shadow-[0_16px_32px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5"
         >
-          다시 검사하기
+          {restartLabel}
         </button>
       </div>
     </div>
