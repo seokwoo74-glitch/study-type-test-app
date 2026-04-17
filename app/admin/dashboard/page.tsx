@@ -46,6 +46,7 @@ type ResultPayload = {
     style?: number;
   };
   meta?: {
+    testType?: "elementary" | "high" | null;
     totalAnswered?: number;
     totalQuestions?: number;
   };
@@ -121,6 +122,7 @@ type NormalizedPayload = {
     style: number;
   };
   meta: {
+    testType: "elementary" | "high" | null;
     totalAnswered: number;
     totalQuestions: number;
   };
@@ -470,6 +472,7 @@ function getPayloadFromRow(row: Row): NormalizedPayload {
     scores: { E, P, R, C, M, O, S, F },
     diffs: { social, judgment, track, style },
     meta: {
+      testType: payload.meta?.testType === "high" ? "high" : "elementary",
       totalAnswered: toNumber(payload.meta?.totalAnswered ?? 0),
       totalQuestions: toNumber(payload.meta?.totalQuestions ?? 0),
     },
@@ -524,6 +527,26 @@ function InfoMini({ label, value }: { label: string; value: string }) {
   );
 }
 
+function TestTypeBadge({
+  testType,
+}: {
+  testType?: "elementary" | "high" | null;
+}) {
+  const isHigh = testType === "high";
+
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-black ${
+        isHigh
+          ? "bg-slate-900 text-white"
+          : "bg-yellow-300 text-slate-900"
+      }`}
+    >
+      {isHigh ? "고등용" : "초·중등용"}
+    </span>
+  );
+}
+
 function AdminResultPreview({
   row,
   editMemo,
@@ -559,9 +582,14 @@ function AdminResultPreview({
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm font-medium text-white/80">검사 결과</p>
-              <h2 className="mt-2 text-3xl font-black tracking-tight">
-                {payload.result.title || "결과명 없음"}
-              </h2>
+
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <h2 className="text-3xl font-black tracking-tight">
+                  {payload.result.title || "결과명 없음"}
+                </h2>
+                <TestTypeBadge testType={payload.meta.testType} />
+              </div>
+
               <p className="mt-2 text-base font-medium text-white/85">
                 {payload.result.subtitle || ""}
               </p>
@@ -623,8 +651,12 @@ function AdminResultPreview({
 
       <section className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
         <p className="text-sm font-semibold text-slate-500">기록 정보</p>
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
           <InfoMini label="저장 시각" value={formatDateTime(payload.submittedAt)} />
+          <InfoMini
+            label="검사 유형"
+            value={payload.meta.testType === "high" ? "고등용" : "초·중등용"}
+          />
           <InfoMini
             label="응답 수"
             value={
@@ -1077,9 +1109,13 @@ export default function AdminDashboardPage() {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-base font-black text-slate-900">
-                            {payload.student.name || "이름 없음"}
-                          </p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-base font-black text-slate-900">
+                              {payload.student.name || "이름 없음"}
+                            </p>
+                            <TestTypeBadge testType={payload.meta.testType} />
+                          </div>
+
                           <p className="mt-1 text-sm font-medium text-slate-500">
                             {payload.student.school || "-"} / {payload.student.grade || "-"}
                           </p>
