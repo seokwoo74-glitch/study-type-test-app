@@ -1953,7 +1953,7 @@ function LandingScreen({
           </p>
 
           <p className="mt-5 text-sm font-bold text-slate-500">
-            학년에 맞는 검사 유형을 선택해 주세요
+            뚜렷하지 않을 경우 100점 만점에 51점 이상일 경우 "그렇다"에 체크하세요
           </p>
         </div>
 
