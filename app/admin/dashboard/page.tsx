@@ -749,6 +749,7 @@ export default function AdminDashboardPage() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | number | null>(null);
+  const [typeFilter, setTypeFilter] = useState<"all" | "elementary" | "high">("all");
 
   const [password, setPassword] = useState("");
   const [unlocked, setUnlocked] = useState(false);
@@ -851,10 +852,17 @@ export default function AdminDashboardPage() {
 
   const filteredRows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return rows;
 
     return rows.filter((row) => {
       const payload = getPayloadFromRow(row);
+
+      const matchesType =
+        typeFilter === "all" ? true : payload.meta.testType === typeFilter;
+
+      if (!matchesType) return false;
+
+      if (!q) return true;
+
       const fields = [
         payload.student.name,
         payload.student.grade,
@@ -869,7 +877,7 @@ export default function AdminDashboardPage() {
 
       return fields.some((value) => value.toLowerCase().includes(q));
     });
-  }, [rows, query]);
+  }, [rows, query, typeFilter]);
 
   const selectedRow = useMemo(() => {
     return (
@@ -883,6 +891,21 @@ export default function AdminDashboardPage() {
     () => rows.filter((row) => Boolean(row.is_consulted)).length,
     [rows]
   );
+
+  useEffect(() => {
+    if (!filteredRows.length) {
+      setSelectedId(null);
+      return;
+    }
+
+    const exists = filteredRows.some(
+      (row) => String(row.id) === String(selectedId)
+    );
+
+    if (!exists) {
+      setSelectedId(filteredRows[0].id);
+    }
+  }, [filteredRows, selectedId]);
 
   useEffect(() => {
     if (!selectedRow) {
@@ -1042,7 +1065,16 @@ export default function AdminDashboardPage() {
             <div className="grid gap-3 md:grid-cols-4">
               <InfoMini label="전체 검사" value={`${rows.length}건`} />
               <InfoMini label="상담 완료" value={`${consultedCount}건`} />
-              <InfoMini label="검색 결과" value={`${filteredRows.length}건`} />
+              <InfoMini
+                label="검색 결과"
+                value={`${filteredRows.length}건${
+                  typeFilter === "all"
+                    ? ""
+                    : typeFilter === "high"
+                    ? " · 고등용"
+                    : " · 초·중등용"
+                }`}
+              />
               <button
                 type="button"
                 onClick={handleLock}
@@ -1055,13 +1087,53 @@ export default function AdminDashboardPage() {
         </section>
 
         <section className="mb-5 rounded-[28px] border border-white/70 bg-white/90 p-4 shadow-sm">
-          <div className="flex flex-col gap-3 md:flex-row">
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="이름, 학교, 연락처, 결과코드, 결과명, 메모 검색"
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
-            />
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setTypeFilter("all")}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  typeFilter === "all"
+                    ? "bg-slate-900 text-white"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                전체
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTypeFilter("elementary")}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  typeFilter === "elementary"
+                    ? "bg-yellow-300 text-slate-900"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                초·중등용
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTypeFilter("high")}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  typeFilter === "high"
+                    ? "bg-slate-900 text-white"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                고등용
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3 md:flex-row">
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="이름, 학교, 연락처, 결과코드, 결과명, 메모 검색"
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
+              />
+            </div>
           </div>
         </section>
 

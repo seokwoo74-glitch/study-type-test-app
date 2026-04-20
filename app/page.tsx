@@ -783,7 +783,7 @@ const RESULT_DEFINITIONS: Array<{
     key: "PCMF",
     aliases: ["PCMf", "pCMF", "pCMf", "pCMs", "ECmF", "ECOF", "ECof", "eCOF", "eCOf", "eCoF", "eCof"],
     report: {
-      title: "외향적 문과뺀질이형",
+      title: "문과뺀질이형",
       subtitle: "20% 미만",
       summary:
         "특정 관심 있는 과목만 상위권을 유지하고 분위기와 친구관계 영향을 크게 받는 유형입니다.",
