@@ -1179,7 +1179,7 @@ function LandingScreen({
           </h1>
 
           <p className="mt-4 text-base leading-7 text-slate-600">
-            공부를 못하는 이유가 아니라
+            공부에 재능이 없는게 아니라
             <br />
             <span className="font-bold text-slate-900">
               방법이 안 맞았던 걸 수도 있습니다
