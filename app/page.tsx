@@ -1412,39 +1412,38 @@ function TestScreen({
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => onAnswer(1)}
-                    className={`max-w-[88%] rounded-[22px] rounded-br-[8px] px-5 py-4 text-right shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition duration-150 active:scale-[0.985] ${
-                      currentAnswer === 1
-                        ? "bg-[#FEE500] text-slate-900 shadow-[0_12px_30px_rgba(254,229,0,0.35)]"
-                        : "bg-[#ffef6b] text-slate-900 hover:bg-[#ffe95a]"
-                    }`}
-                  >
-                    <div className="text-lg font-black sm:text-xl">그렇다 👍</div>
-                    <div className="mt-1 text-xs font-semibold text-slate-700/70">
-                      나와 꽤 비슷한 편이다
-                    </div>
-                  </button>
-                </div>
+              <div className="mt-6 grid grid-cols-2 gap-3">
+  {/* 그렇다 */}
+  <button
+    onClick={() => onAnswer(1)}
+    className={`rounded-[20px] px-4 py-4 text-center shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition duration-150 active:scale-[0.97] ${
+      currentAnswer === 1
+        ? "bg-[#FEE500] text-slate-900 shadow-[0_12px_30px_rgba(254,229,0,0.35)]"
+        : "bg-[#ffef6b] text-slate-900 hover:bg-[#ffe95a]"
+    }`}
+  >
+    <div className="text-lg font-black">그렇다 👍</div>
+    <div className="mt-1 text-xs font-semibold text-slate-700/70">
+      나와 비슷하다
+    </div>
+  </button>
 
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => onAnswer(0)}
-                    className={`max-w-[88%] rounded-[22px] rounded-br-[8px] px-5 py-4 text-right shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition duration-150 active:scale-[0.985] ${
-                      currentAnswer === 0
-                        ? "bg-[#e9eef2] text-slate-900 shadow-[0_12px_30px_rgba(148,163,184,0.22)]"
-                        : "bg-white text-slate-900 hover:bg-slate-50"
-                    }`}
-                  >
-                    <div className="text-lg font-black sm:text-xl">아니다 👎</div>
-                    <div className="mt-1 text-xs font-semibold text-slate-500">
-                      나와는 조금 다른 편이다
-                    </div>
-                  </button>
-                </div>
-              </div>
+  {/* 아니다 */}
+  <button
+    onClick={() => onAnswer(0)}
+    className={`rounded-[20px] px-4 py-4 text-center shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition duration-150 active:scale-[0.97] ${
+      currentAnswer === 0
+        ? "bg-[#e9eef2] text-slate-900 shadow-[0_12px_30px_rgba(148,163,184,0.22)]"
+        : "bg-white text-slate-900 hover:bg-slate-50"
+    }`}
+  >
+    <div className="text-lg font-black">아니다 👎</div>
+    <div className="mt-1 text-xs font-semibold text-slate-500">
+      조금 다르다
+    </div>
+  </button>
+</div>
+                
             </div>
 
             <div className="mt-8 flex items-center justify-between">
@@ -1459,9 +1458,7 @@ function TestScreen({
                 이전
               </button>
 
-              <div className="text-xs font-bold text-slate-600">
-                {isLast ? "선택 시 결과 보기" : "선택 시 자동 이동"}
-              </div>
+              
             </div>
           </div>
         </div>
