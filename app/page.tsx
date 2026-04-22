@@ -360,11 +360,6 @@ function makeScores(answers: number[]) {
   return total;
 }
 
-const CHOICES = [
-  { label: "그렇다", value: 1 },
-  { label: "아니다", value: 0 },
-];
-
 const RESULT_DEFINITIONS: Array<{
   key: string;
   aliases: string[];
@@ -783,7 +778,7 @@ const RESULT_DEFINITIONS: Array<{
     key: "PCMF",
     aliases: ["PCMf", "pCMF", "pCMf", "pCMs", "ECmF", "ECOF", "ECof", "eCOF", "eCOf", "eCoF", "eCof"],
     report: {
-      title: "문과뺀질이형",
+      title: "외향적 문과뺀질이형",
       subtitle: "20% 미만",
       summary:
         "특정 관심 있는 과목만 상위권을 유지하고 분위기와 친구관계 영향을 크게 받는 유형입니다.",
@@ -1074,22 +1069,6 @@ const CHARACTER_META: Record<string, CharacterMeta> = Object.fromEntries(
   RESULT_DEFINITIONS.map((item) => [item.key, item.meta])
 );
 
-function getCharacterBadge(key: string) {
-  const meta = CHARACTER_META[key];
-
-  if (meta) {
-    return {
-      emoji: meta.emoji,
-      nickname: meta.label,
-    };
-  }
-
-  return {
-    emoji: "✨",
-    nickname: "성향 분석 캐릭터",
-  };
-}
-
 const RESULT_ALIAS_MAP: Record<string, string> = RESULT_DEFINITIONS.reduce(
   (acc, item) => {
     acc[item.key] = item.key;
@@ -1172,756 +1151,11 @@ function toFiveScalePair(left: number, right: number) {
   };
 }
 
-async function saveSubmissionToApi(params: {
-  student: StudentInfo;
-  answers: number[];
-  resultKey: string;
-  resultCode: string;
-  reportTitle: string;
-  scores: Record<string, number>;
-}) {
-  const res = await fetch("/api/submissions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params),
-  });
-
-  if (!res.ok) {
-    const data = await res.json().catch(() => null);
-    throw new Error(data?.error || "결과 저장에 실패했습니다.");
-  }
-
-  return res.json().catch(() => ({ ok: true }));
-}
-
-function printReport(html: string) {
-  const win = window.open("", "_blank", "width=960,height=1200");
-  if (!win) return;
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
-  win.focus();
-  setTimeout(() => win.print(), 250);
-}
-
-function generateAxisNarratives(scores: Record<string, number>) {
-  const social =
-    scores.E >= scores.P
-      ? "외향성이 더 강해 사람과의 상호작용, 발표, 협업 환경에서 에너지가 살아날 가능성이 큽니다."
-      : "내향성이 더 강해 혼자 집중하는 시간, 조용한 환경, 자기 속도에 맞춘 학습에서 안정적으로 실력을 발휘할 가능성이 큽니다.";
-
-  const judgment =
-    scores.R >= scores.C
-      ? "논리 성향이 더 강해 근거와 원리, 명확한 기준이 있는 설명에서 이해가 빠른 편입니다."
-      : "창의 성향이 더 강해 다양한 관점, 확장 해석, 자유로운 아이디어 연결에서 강점이 나타날 가능성이 큽니다.";
-
-  const track =
-    scores.M >= scores.O
-      ? "모범 성향이 더 강해 계획표, 체크리스트, 정해진 흐름 안에서 꾸준히 성과를 쌓는 방식이 잘 맞습니다."
-      : "자율 성향이 더 강해 스스로 선택권이 있을 때 몰입도가 올라가며, 통제보다 자율성이 성과에 더 긍정적으로 작용할 수 있습니다.";
-
-  const style =
-    scores.S >= scores.F
-      ? "안정 성향이 더 강해 예측 가능한 일정과 익숙한 루틴 속에서 실수 없이 실력을 쌓아가는 방식이 효과적입니다."
-      : "도전 성향이 더 강해 새로운 과제, 변화 있는 환경, 목표가 분명한 경쟁 상황에서 동기와 집중력이 살아날 가능성이 큽니다.";
-
-  return [
-    { title: "외향·내향 해석", body: social },
-    { title: "논리·창의 해석", body: judgment },
-    { title: "모범·자율 해석", body: track },
-    { title: "안정·도전 해석", body: style },
-  ];
-}
-
-function generatePrintableReport({
-  report,
-  resultCode,
-  student,
-  axes,
-  axisNarratives,
-}: {
-  report: Report;
-  resultCode: string;
-  student: StudentInfo;
-  axes: Array<{
-    name: string;
-    left: string;
-    right: string;
-    leftValue: number;
-    rightValue: number;
-  }>;
-  axisNarratives: Array<{
-    title: string;
-    body: string;
-  }>;
-}) {
-  const safe = (value?: string) =>
-    (value || "-")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-
-  const axisCards = axes
-    .map((axis) => {
-      const leftWidth = `${Math.max(8, axis.leftValue * 20)}%`;
-      const rightWidth = `${Math.max(8, axis.rightValue * 20)}%`;
-
-      return `
-        <div class="axis-card">
-          <div class="axis-head">
-            <span>${safe(axis.left)}</span>
-            <span class="axis-name">${safe(axis.name)}</span>
-            <span>${safe(axis.right)}</span>
-          </div>
-
-          <div class="axis-track">
-            <div class="axis-left" style="width:${leftWidth}"></div>
-            <div class="axis-right" style="width:${rightWidth}"></div>
-          </div>
-
-          <div class="axis-score-row">
-            <span>${axis.leftValue} / 5</span>
-            <span>${axis.rightValue} / 5</span>
-          </div>
-        </div>
-      `;
-    })
-    .join("");
-
-  const narrativeCards = axisNarratives
-    .map(
-      (item) => `
-        <div class="mini-card">
-          <div class="mini-title">${safe(item.title)}</div>
-          <div class="mini-body">${safe(item.body)}</div>
-        </div>
-      `
-    )
-    .join("");
-
-  return `
-<!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <title>${safe(report.title)} 결과 리포트</title>
-  <style>
-    @page {
-      size: A4;
-      margin: 16mm;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-      color: #0f172a;
-      background: #ffffff;
-    }
-
-    body {
-      line-height: 1.65;
-      font-size: 12.5px;
-    }
-
-    .page {
-      width: 100%;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .logo-box {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 170px;
-      height: 54px;
-      border-radius: 16px;
-      border: 1.5px dashed #cbd5e1;
-      background: #f8fafc;
-      color: #64748b;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-    }
-
-    .doc-mark {
-      font-size: 11px;
-      color: #64748b;
-      font-weight: 800;
-      letter-spacing: 0.16em;
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 24px;
-      padding: 28px;
-      color: white;
-      background: linear-gradient(135deg, ${report.color} 0%, #0f172a 100%);
-    }
-
-    .hero-sub {
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      opacity: 0.85;
-      font-weight: 800;
-    }
-
-    .hero-title {
-      margin-top: 10px;
-      font-size: 30px;
-      line-height: 1.2;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-    }
-
-    .hero-summary {
-      margin-top: 14px;
-      max-width: 92%;
-      font-size: 14px;
-      line-height: 1.8;
-      opacity: 0.96;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 18px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 7px 12px;
-      font-size: 11px;
-      font-weight: 800;
-      background: rgba(255,255,255,0.16);
-      border: 1px solid rgba(255,255,255,0.22);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.08fr 0.92fr;
-      gap: 16px;
-      margin-top: 18px;
-    }
-
-    .card {
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 18px;
-      background: #ffffff;
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-
-    .soft-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 18px;
-      background: #f8fafc;
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-
-    .warm-card {
-      border: 1px solid #fde68a;
-      border-radius: 20px;
-      padding: 18px;
-      background: #fffbeb;
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-
-    .green-card {
-      border: 1px solid #a7f3d0;
-      border-radius: 20px;
-      padding: 18px;
-      background: #ecfdf5;
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-
-    .danger-card {
-      border: 1px solid #fecdd3;
-      border-radius: 20px;
-      padding: 18px;
-      background: #fff1f2;
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      margin: 0 0 10px 0;
-    }
-
-    .section-desc {
-      margin: 0 0 14px 0;
-      color: #64748b;
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .info-item {
-      border-radius: 16px;
-      padding: 12px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-    }
-
-    .info-label {
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 0.16em;
-      color: #94a3b8;
-      text-transform: uppercase;
-    }
-
-    .info-value {
-      margin-top: 6px;
-      font-size: 12px;
-      line-height: 1.8;
-      color: #334155;
-      white-space: pre-wrap;
-    }
-
-    .axis-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .axis-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 14px;
-      background: #f8fafc;
-    }
-
-    .axis-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 11px;
-      font-weight: 800;
-      color: #334155;
-      margin-bottom: 10px;
-    }
-
-    .axis-name {
-      color: #94a3b8;
-      font-weight: 900;
-    }
-
-    .axis-track {
-      position: relative;
-      height: 12px;
-      border-radius: 999px;
-      background: #e2e8f0;
-      overflow: hidden;
-      display: flex;
-    }
-
-    .axis-left {
-      height: 100%;
-      background: linear-gradient(90deg, #0f172a, ${report.color});
-      border-radius: 999px 0 0 999px;
-    }
-
-    .axis-right {
-      height: 100%;
-      background: linear-gradient(90deg, ${report.color}, #0f172a);
-      border-radius: 0 999px 999px 0;
-      margin-left: auto;
-    }
-
-    .axis-score-row {
-      margin-top: 8px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 10px;
-      font-weight: 800;
-      color: #64748b;
-    }
-
-    .mini-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .mini-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      background: #ffffff;
-      padding: 12px;
-    }
-
-    .mini-title {
-      font-size: 11px;
-      font-weight: 900;
-      color: #0f172a;
-      margin-bottom: 4px;
-    }
-
-    .mini-body {
-      font-size: 12px;
-      line-height: 1.75;
-      color: #475569;
-      white-space: pre-wrap;
-    }
-
-    .body-copy {
-      font-size: 12.5px;
-      line-height: 1.9;
-      color: #334155;
-      white-space: pre-wrap;
-    }
-
-    .comment-card {
-      margin-top: 18px;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 20px;
-      background: #ffffff;
-      padding: 18px;
-    }
-
-    .comment-box {
-      margin-top: 10px;
-      min-height: 120px;
-      border: 1.5px dashed #cbd5e1;
-      border-radius: 16px;
-      background: #f8fafc;
-      padding: 14px;
-    }
-
-    .comment-lines {
-      margin-top: 8px;
-    }
-
-    .comment-line {
-      height: 22px;
-      border-bottom: 1px dashed #cbd5e1;
-    }
-
-    .signature-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .signature-box {
-      border: 1.5px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 16px;
-      background: #ffffff;
-      min-height: 92px;
-    }
-
-    .signature-title {
-      font-size: 11px;
-      font-weight: 900;
-      color: #64748b;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .signature-line {
-      margin-top: 34px;
-      border-bottom: 1px solid #94a3b8;
-      height: 1px;
-    }
-
-    .footer {
-      margin-top: 18px;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 10px;
-      font-size: 10px;
-      color: #94a3b8;
-      text-align: center;
-    }
-
-    @media print {
-      .page {
-        width: 100%;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="page">
-    <div class="topbar">
-      <div class="logo-box">LOGO / 학원명 자리</div>
-      <div class="doc-mark">LEARNING TYPE REPORT</div>
-    </div>
-
-    <section class="hero">
-      <div class="hero-sub">${safe(report.subtitle)}</div>
-      <div class="hero-title">${safe(report.title)}</div>
-      <div class="hero-summary">${safe(report.summary)}</div>
-
-      <div class="badge-row">
-        <div class="badge">결과코드 ${safe(resultCode)}</div>
-        <div class="badge">학생 ${safe(student.name)}</div>
-        <div class="badge">학년 ${safe(student.grade)}</div>
-        <div class="badge">학교 ${safe(student.school)}</div>
-      </div>
-    </section>
-
-    <div class="grid">
-      <div>
-        <section class="card">
-          <h2 class="section-title">학생 기본 정보</h2>
-          <div class="info-grid">
-            <div class="info-item">
-              <div class="info-label">이름</div>
-              <div class="info-value">${safe(student.name)}</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">학년</div>
-              <div class="info-value">${safe(student.grade)}</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">학교</div>
-              <div class="info-value">${safe(student.school)}</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">전화번호</div>
-              <div class="info-value">${safe(student.phone)}</div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card" style="margin-top:16px;">
-          <h2 class="section-title">축 분석</h2>
-          <p class="section-desc">네 가지 핵심 축에서 현재 응답 경향을 시각적으로 정리한 결과입니다.</p>
-          <div class="axis-list">
-            ${axisCards}
-          </div>
-        </section>
-
-        <section class="card" style="margin-top:16px;">
-          <h2 class="section-title">축별 해석</h2>
-          <p class="section-desc">점수 차이를 실제 학습 지도 문장으로 해석했습니다.</p>
-          <div class="mini-list">
-            ${narrativeCards}
-          </div>
-        </section>
-      </div>
-
-      <div>
-        <section class="soft-card">
-          <h2 class="section-title">핵심 특징</h2>
-          <div class="body-copy">${safe(report.summary)}</div>
-        </section>
-
-        <section class="warm-card" style="margin-top:16px;">
-          <h2 class="section-title">부모 코칭 방법</h2>
-          <div class="body-copy">${safe(report.parent)}</div>
-        </section>
-
-        <section class="card" style="margin-top:16px;">
-          <h2 class="section-title">추천 학습 전략</h2>
-          <div class="body-copy">${safe(report.strategy)}</div>
-        </section>
-
-        <section class="green-card" style="margin-top:16px;">
-          <h2 class="section-title">추천 진로 방향</h2>
-          <div class="body-copy">${safe(report.path)}</div>
-        </section>
-
-        <section class="danger-card" style="margin-top:16px;">
-          <h2 class="section-title">주의할 점</h2>
-          <div class="body-copy">${safe(report.danger)}</div>
-        </section>
-
-        <section class="card" style="margin-top:16px;">
-          <h2 class="section-title">추천 대화법</h2>
-          <div class="body-copy">${safe(report.talk)}</div>
-        </section>
-      </div>
-    </div>
-
-    <section class="comment-card">
-      <h2 class="section-title">상담 코멘트</h2>
-      <p class="section-desc">상담자가 학생의 현재 상태, 보완 포인트, 향후 지도 방향을 직접 기록하는 영역입니다.</p>
-      <div class="comment-box">
-        <div class="comment-lines">
-          <div class="comment-line"></div>
-          <div class="comment-line"></div>
-          <div class="comment-line"></div>
-          <div class="comment-line"></div>
-          <div class="comment-line"></div>
-        </div>
-      </div>
-    </section>
-
-    <div class="signature-wrap">
-      <div class="signature-box">
-        <div class="signature-title">상담 교사 서명</div>
-        <div class="signature-line"></div>
-      </div>
-      <div class="signature-box">
-        <div class="signature-title">학부모 확인</div>
-        <div class="signature-line"></div>
-      </div>
-    </div>
-
-    <div class="footer">
-      학습성향검사 결과 리포트 · 학생의 현재 응답 경향을 바탕으로 생성된 참고용 자료입니다.
-    </div>
-  </div>
-</body>
-</html>
-  `;
-}
-
 function Shell({ children }: { children: ReactNode }) {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_35%),linear-gradient(180deg,#f8fbff_0%,#f8fafc_100%)] text-slate-900">
       {children}
     </main>
-  );
-}
-
-function SectionCard({
-  title,
-  desc,
-  accentColor,
-  children,
-}: {
-  title: string;
-  desc?: string;
-  accentColor: string;
-  children: ReactNode;
-}) {
-  return (
-    <section
-      className="rounded-[28px] border bg-white/85 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur"
-      style={{
-        borderColor: accentColor
-          ? hexToRgba(accentColor, 0.18)
-          : "rgba(255,255,255,0.8)",
-        boxShadow: accentColor
-          ? `0 18px 60px ${hexToRgba(accentColor, 0.1)}`
-          : "0 18px 60px rgba(15,23,42,0.08)",
-      }}
-    >
-      <div className="mb-4">
-        <h3 className="text-lg font-black text-slate-900">{title}</h3>
-        {desc ? (
-          <p className="mt-1 text-sm leading-6 text-slate-500">{desc}</p>
-        ) : null}
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function InfoItem({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">
-        {title}
-      </div>
-      <div className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">
-        {value}
-      </div>
-    </div>
-  );
-}
-
-function AxisBars({ scores }: { scores: Record<string, number> }) {
-  const axes = [
-    { name: "외향 ↔ 내향", left: "E", right: "P", leftLabel: "외향", rightLabel: "내향" },
-    { name: "논리 ↔ 창의", left: "R", right: "C", leftLabel: "논리", rightLabel: "창의" },
-    { name: "모범 ↔ 자율", left: "M", right: "O", leftLabel: "모범", rightLabel: "자율" },
-    { name: "안정 ↔ 도전", left: "S", right: "F", leftLabel: "안정", rightLabel: "도전" },
-  ] as const;
-
-  return (
-    <div className="grid gap-6">
-      {axes.map((axis) => {
-        const pair = toFiveScalePair(scores[axis.left], scores[axis.right]);
-        return (
-          <div
-            key={axis.name}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-          >
-            <div className="mb-3 flex items-center justify-between text-sm font-bold text-slate-700">
-              <span>{axis.leftLabel}</span>
-              <span className="text-slate-400">{axis.name}</span>
-              <span>{axis.rightLabel}</span>
-            </div>
-
-            <div className="relative h-4 w-full rounded-full bg-slate-200">
-              <div
-                className="absolute top-0 left-0 h-4 rounded-full bg-gradient-to-r from-slate-700 to-indigo-500 transition-all"
-                style={{ width: `${pair.rightValue * 20}%` }}
-              />
-            </div>
-
-            <div className="mt-3 flex justify-between text-xs font-bold text-slate-500">
-              <span>{pair.leftValue} / 5</span>
-              <span>{pair.rightValue} / 5</span>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function ProgressBar({
-  current,
-  total,
-  color,
-}: {
-  current: number;
-  total: number;
-  color: string;
-}) {
-  const progress = Math.round((current / total) * 100);
-  return (
-    <div>
-      <div className="mb-2 flex items-center justify-between text-xs font-black tracking-[0.16em] text-slate-400">
-        <span>PROGRESS</span>
-        <span>{progress}%</span>
-      </div>
-      <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-        <div
-          className="h-full rounded-full transition-all duration-300"
-          style={{
-            width: `${progress}%`,
-            background: `linear-gradient(90deg, ${color}, #0f172a)`,
-          }}
-        />
-      </div>
-    </div>
   );
 }
 
@@ -2084,7 +1318,6 @@ function TestScreen({
   currentIndex,
   answers,
   onAnswer,
-  onNext,
   onPrev,
 }: {
   questions: string[];
@@ -2092,7 +1325,6 @@ function TestScreen({
   currentIndex: number;
   answers: number[];
   onAnswer: (value: number) => void;
-  onNext: () => void;
   onPrev: () => void;
 }) {
   const question = questions[currentIndex];
@@ -2119,25 +1351,29 @@ function TestScreen({
 
           <div className="mt-2 h-3 rounded-full bg-slate-200">
             <div
-              className="h-3 rounded-full bg-yellow-300 transition-all"
+              className="h-3 rounded-full bg-yellow-300 transition-all duration-200"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
         <div className="text-center">
-          <h2 className="text-xl font-black leading-8 text-slate-900">
+          <h2 className="text-xl font-black leading-8 text-slate-900 sm:text-2xl">
             {question}
           </h2>
+        </div>
+
+        <div className="mt-3 text-center text-sm font-semibold text-slate-400">
+          선택하면 바로 다음 문항으로 넘어갑니다
         </div>
 
         <div className="mt-8 grid gap-4">
           <button
             onClick={() => onAnswer(1)}
-            className={`rounded-[24px] p-6 text-lg font-black transition ${
+            className={`rounded-[24px] p-6 text-lg font-black transition active:scale-[0.98] ${
               currentAnswer === 1
                 ? "bg-yellow-300 text-slate-900 shadow-lg"
-                : "bg-slate-100 text-slate-700"
+                : "bg-slate-100 text-slate-700 hover:bg-yellow-100"
             }`}
           >
             그렇다 👍
@@ -2145,30 +1381,22 @@ function TestScreen({
 
           <button
             onClick={() => onAnswer(0)}
-            className={`rounded-[24px] p-6 text-lg font-black transition ${
+            className={`rounded-[24px] p-6 text-lg font-black transition active:scale-[0.98] ${
               currentAnswer === 0
                 ? "bg-slate-900 text-white shadow-lg"
-                : "bg-slate-100 text-slate-700"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
             아니다 👎
           </button>
         </div>
 
-        <div className="mt-8 flex justify-between">
+        <div className="mt-8 flex justify-start">
           <button
             onClick={onPrev}
-            className="rounded-full bg-slate-100 px-5 py-3 text-sm font-black"
+            className="rounded-full bg-slate-100 px-5 py-3 text-sm font-black text-slate-800"
           >
             이전
-          </button>
-
-          <button
-            onClick={onNext}
-            disabled={currentAnswer === -1}
-            className="rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white disabled:opacity-30"
-          >
-            {currentIndex === questions.length - 1 ? "결과 보기" : "다음"}
           </button>
         </div>
       </div>
@@ -2355,27 +1583,31 @@ export default function Page() {
   };
 
   const handleAnswer = (value: number) => {
+    if (isTransitioning) return;
+
+    setIsTransitioning(true);
+
     setAnswers((prev) => {
       const next = [...prev];
       next[currentIndex] = value;
       return next;
     });
-  };
 
-  const goNext = () => {
-    if (step === "test" && currentIndex === activeQuestions.length - 1) {
-      moveSafely(() => setStep("loading"));
+    window.setTimeout(() => {
+      if (currentIndex === activeQuestions.length - 1) {
+        setStep("loading");
 
-      window.setTimeout(() => {
-        setStep("result");
-      }, 1600);
+        window.setTimeout(() => {
+          setStep("result");
+          setIsTransitioning(false);
+        }, 1600);
 
-      return;
-    }
+        return;
+      }
 
-    if (step === "test") {
-      moveSafely(() => setCurrentIndex((prev) => prev + 1));
-    }
+      setCurrentIndex((prev) => prev + 1);
+      setIsTransitioning(false);
+    }, 110);
   };
 
   const goPrev = () => {
@@ -2431,7 +1663,6 @@ export default function Page() {
             currentIndex={currentIndex}
             answers={answers}
             onAnswer={handleAnswer}
-            onNext={goNext}
             onPrev={goPrev}
           />
         )}
