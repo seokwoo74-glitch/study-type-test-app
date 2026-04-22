@@ -1334,70 +1334,136 @@ function TestScreen({
   const testTypeLabel =
     testType === "high" ? "고등용 검사" : "초·중등용 검사";
 
+  const isFirst = currentIndex === 0;
+  const isLast = currentIndex === questions.length - 1;
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="rounded-[32px] bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-        <div className="mb-4 inline-flex rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-700">
-          {testTypeLabel}
-        </div>
+    <div className="mx-auto max-w-3xl px-4 py-5 sm:px-6 sm:py-8">
+      <div className="overflow-hidden rounded-[32px] border border-[#f1f5f9] bg-[#bfe7ff] shadow-[0_24px_80px_rgba(15,23,42,0.10)]">
+        <div className="border-b border-black/5 bg-[#a9ddfb] px-4 py-4 sm:px-6">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
+                😊
+              </div>
+              <div>
+                <div className="text-sm font-black text-slate-900">
+                  학습성향 검사
+                </div>
+                <div className="text-xs font-semibold text-slate-600">
+                  {testTypeLabel}
+                </div>
+              </div>
+            </div>
 
-        <div className="mb-6">
-          <div className="flex justify-between text-xs font-black text-slate-400">
-            <span>
+            <div className="rounded-full bg-white px-3 py-1.5 text-xs font-black text-slate-700 shadow-sm">
               {currentIndex + 1} / {questions.length}
-            </span>
-            <span>{progress}%</span>
+            </div>
           </div>
 
-          <div className="mt-2 h-3 rounded-full bg-slate-200">
+          <div className="mt-4">
+            <div className="mb-2 flex items-center justify-between text-[11px] font-black tracking-[0.14em] text-slate-600">
+              <span>PROGRESS</span>
+              <span>{progress}%</span>
+            </div>
+
+            <div className="h-2.5 overflow-hidden rounded-full bg-white/70">
+              <div
+                className="h-full rounded-full bg-[#FEE500] transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="min-h-[68vh] bg-[#bfe7ff] px-4 py-5 sm:px-6">
+          <div className="mx-auto max-w-2xl">
+            <div className="mb-5 flex justify-center">
+              <div className="rounded-full bg-black/10 px-4 py-1.5 text-xs font-bold text-slate-700 backdrop-blur-sm">
+                {isLast
+                  ? "마지막 문항이에요 · 선택하면 결과로 이동해요"
+                  : "평소 모습에 더 가까운 답을 눌러주세요"}
+              </div>
+            </div>
+
             <div
-              className="h-3 rounded-full bg-yellow-300 transition-all duration-200"
-              style={{ width: `${progress}%` }}
-            />
+              key={currentIndex}
+              className="animate-[chatQuestionIn_320ms_ease]"
+            >
+              <div className="mb-6 flex items-start gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
+                  🧠
+                </div>
+
+                <div className="max-w-[86%]">
+                  <div className="mb-1 px-1 text-xs font-bold text-slate-600">
+                    질문 {currentIndex + 1}
+                  </div>
+
+                  <div className="relative rounded-[22px] rounded-tl-[8px] bg-white px-5 py-4 text-slate-900 shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
+                    <div className="text-[18px] font-black leading-8 sm:text-[22px] sm:leading-9">
+                      {question}
+                    </div>
+
+                    <div className="mt-3 text-xs font-semibold text-slate-400">
+                      너무 오래 고민하지 말고, 평소 내 모습에 더 가까운 쪽을 선택해 주세요
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => onAnswer(1)}
+                    className={`max-w-[88%] rounded-[22px] rounded-br-[8px] px-5 py-4 text-right shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition duration-150 active:scale-[0.985] ${
+                      currentAnswer === 1
+                        ? "bg-[#FEE500] text-slate-900 shadow-[0_12px_30px_rgba(254,229,0,0.35)]"
+                        : "bg-[#ffef6b] text-slate-900 hover:bg-[#ffe95a]"
+                    }`}
+                  >
+                    <div className="text-lg font-black sm:text-xl">그렇다 👍</div>
+                    <div className="mt-1 text-xs font-semibold text-slate-700/70">
+                      나와 꽤 비슷한 편이다
+                    </div>
+                  </button>
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => onAnswer(0)}
+                    className={`max-w-[88%] rounded-[22px] rounded-br-[8px] px-5 py-4 text-right shadow-[0_10px_30px_rgba(15,23,42,0.08)] transition duration-150 active:scale-[0.985] ${
+                      currentAnswer === 0
+                        ? "bg-[#e9eef2] text-slate-900 shadow-[0_12px_30px_rgba(148,163,184,0.22)]"
+                        : "bg-white text-slate-900 hover:bg-slate-50"
+                    }`}
+                  >
+                    <div className="text-lg font-black sm:text-xl">아니다 👎</div>
+                    <div className="mt-1 text-xs font-semibold text-slate-500">
+                      나와는 조금 다른 편이다
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex items-center justify-between">
+              <button
+                onClick={onPrev}
+                className={`rounded-full px-4 py-2.5 text-sm font-black transition ${
+                  isFirst
+                    ? "bg-white/70 text-slate-400"
+                    : "bg-white text-slate-800 shadow-sm hover:bg-slate-50"
+                }`}
+              >
+                이전
+              </button>
+
+              <div className="text-xs font-bold text-slate-600">
+                {isLast ? "선택 시 결과 보기" : "선택 시 자동 이동"}
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div className="text-center">
-          <h2 className="text-xl font-black leading-8 text-slate-900 sm:text-2xl">
-            {question}
-          </h2>
-        </div>
-
-        <div className="mt-3 text-center text-sm font-semibold text-slate-400">
-          선택하면 바로 다음 문항으로 넘어갑니다
-        </div>
-
-        <div className="mt-8 grid gap-4">
-          <button
-            onClick={() => onAnswer(1)}
-            className={`rounded-[24px] p-6 text-lg font-black transition active:scale-[0.98] ${
-              currentAnswer === 1
-                ? "bg-yellow-300 text-slate-900 shadow-lg"
-                : "bg-slate-100 text-slate-700 hover:bg-yellow-100"
-            }`}
-          >
-            그렇다 👍
-          </button>
-
-          <button
-            onClick={() => onAnswer(0)}
-            className={`rounded-[24px] p-6 text-lg font-black transition active:scale-[0.98] ${
-              currentAnswer === 0
-                ? "bg-slate-900 text-white shadow-lg"
-                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-            }`}
-          >
-            아니다 👎
-          </button>
-        </div>
-
-        <div className="mt-8 flex justify-start">
-          <button
-            onClick={onPrev}
-            className="rounded-full bg-slate-100 px-5 py-3 text-sm font-black text-slate-800"
-          >
-            이전
-          </button>
         </div>
       </div>
     </div>
@@ -1607,7 +1673,7 @@ export default function Page() {
 
       setCurrentIndex((prev) => prev + 1);
       setIsTransitioning(false);
-    }, 110);
+    }, 180);
   };
 
   const goPrev = () => {
