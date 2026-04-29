@@ -100,14 +100,6 @@ type ChatLine = {
   text: string;
 };
 
-type CareerBucket = {
-  icon: string;
-  title: string;
-  desc: string;
-  jobs: string;
-  tint: string;
-};
-
 type AnalysisBlock = {
   traits: string[];
   futureTitle: string;
@@ -115,7 +107,6 @@ type AnalysisBlock = {
   dangerPatterns: string[];
   actionText: string;
   chatScenario: ChatLine[];
-  careerBuckets: CareerBucket[];
 };
 
 function hexToRgba(hex: string, alpha: number) {
@@ -911,29 +902,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "재능에 맞는 학원을 잘 찾아보자" },
       { type: "child", text: "응, 제대로 해볼 수 있는 환경이면 더 잘할 수 있어." },
     ],
-    careerBuckets: [
-      {
-        icon: "🧪",
-        title: "의학 · 보건 분야",
-        desc: "정교한 이해력과 집중력을 바탕으로 높은 전문성을 키우기 좋아요.",
-        jobs: "의사, 치과의사, 한의사, 약사, 수의사",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "💻",
-        title: "공학 · IT 분야",
-        desc: "문제 해결력과 구조적 사고를 살리기 좋은 분야예요.",
-        jobs: "개발자, 엔지니어, IT연구원, 데이터 분석가",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🔬",
-        title: "연구 · 과학 분야",
-        desc: "탐구심을 깊게 확장할 수 있는 방향이에요.",
-        jobs: "교수, 연구원, 과학자, 발명가",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   ERMS: {
     traits: [
@@ -957,29 +925,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "목표가 높아서 자꾸 더 잘 해야 될 것 같아." },
       { type: "parent", text: "실력은 충분하니 리듬과 멘탈을 같이 챙기자." },
       { type: "child", text: "응, 오래 가려면 그게 필요할 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "👑",
-        title: "메디컬 분야",
-        desc: "안정적 최상위 성취를 유지하며 전문성을 키우기 좋아요.",
-        jobs: "의사, 치과의사, 한의사",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "📐",
-        title: "최상위 공학 분야",
-        desc: "계획성과 고난도 문제 해결력을 함께 요구하는 방향이에요.",
-        jobs: "공학자, 연구개발 엔지니어, 교수",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🏛️",
-        title: "학문 · 연구 분야",
-        desc: "장기적 성과와 집중력이 필요한 학문형 트랙에 잘 맞아요.",
-        jobs: "교수, 연구원, 학자",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   eRMF: {
@@ -1005,29 +950,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "그 강점을 더 크게 키우되, 끝내는 힘도 키워보자." },
       { type: "child", text: "응, 그게 되면 진짜 더 잘 할 수 있을 것 같아." },
     ],
-    careerBuckets: [
-      {
-        icon: "⚙️",
-        title: "전기전자 · 공학",
-        desc: "깊은 몰입과 구조적 사고를 살리기 좋은 방향이에요.",
-        jobs: "전기전자공학자, 엔지니어, 연구원",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "➗",
-        title: "수학 · 이론 분야",
-        desc: "압도적 이해력과 추상적 사고가 강점이 될 수 있어요.",
-        jobs: "수학자, 교수, 연구원",
-        tint: "bg-[#F4F7FF]",
-      },
-      {
-        icon: "💡",
-        title: "발명 · 기술개발",
-        desc: "독창적 아이디어를 기술로 연결하는 데 유리해요.",
-        jobs: "발명가, IT연구원, 개발자",
-        tint: "bg-[#FFF7E8]",
-      },
-    ],
   },
   eROS: {
     traits: [
@@ -1051,29 +973,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "응, 흐름만 안 깨지면 나도 꽤 안정적으로 할 수 있어." },
       { type: "parent", text: "그럼 친구나 활동 때문에 리듬만 안 무너지게 같이 관리하자." },
       { type: "child", text: "그게 되면 훨씬 편할 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "🩺",
-        title: "의치한 · 보건",
-        desc: "꾸준한 내신과 성실한 누적이 강점이 되는 분야예요.",
-        jobs: "의사, 치과의사, 한의사, 약사",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🧬",
-        title: "자연과학",
-        desc: "성실함과 개념 누적이 필요한 전공에 잘 맞아요.",
-        jobs: "연구원, 과학자, 교수",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🏗️",
-        title: "공학",
-        desc: "꾸준한 실행력과 문제 해결력을 살리기 좋아요.",
-        jobs: "엔지니어, 연구개발직, 설계직",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   eRmS: {
@@ -1099,29 +998,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "힘들면 언제든 얘기해 도와줄게!" },
       { type: "child", text: "응, 고마워." },
     ],
-    careerBuckets: [
-      {
-        icon: "🩺",
-        title: "메디컬 · 보건",
-        desc: "성실함과 안정성이 필요한 상위권 진로에 잘 맞아요.",
-        jobs: "의사, 치과의사, 한의사, 약사",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "📘",
-        title: "자연과학 · 공학",
-        desc: "차근차근 쌓는 힘이 중요한 전공에서 강점이 살아나요.",
-        jobs: "연구원, 교수, 엔지니어",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🛠️",
-        title: "전문 실무 분야",
-        desc: "꾸준한 실행력과 꼼꼼함이 필요한 영역과 잘 맞아요.",
-        jobs: "수의사, 연구직, 전문직",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   PRMF: {
     traits: [
@@ -1145,29 +1021,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "관심 없는 건 손이 잘 안 가... 근데 좋아하면 진짜 오래 할 수 있어." },
       { type: "parent", text: "그 재능을 살리되, 골고루 균형 있게 공부하는 힘도 같이 만들자." },
       { type: "child", text: "응, 그게 되면 성적도 더 안정될 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "💻",
-        title: "IT · 기술 분야",
-        desc: "흥미가 생기면 빠르게 성과가 나는 구조와 잘 맞아요.",
-        jobs: "개발자, IT연구원, 엔지니어",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🧠",
-        title: "연구 · 탐구 분야",
-        desc: "좋아하는 영역에 몰입해 전문성을 키우기 좋아요.",
-        jobs: "연구원, 과학자, 창업가",
-        tint: "bg-[#F4F7FF]",
-      },
-      {
-        icon: "🏢",
-        title: "기술 기반 경영",
-        desc: "재능과 아이디어를 실전 문제 해결로 연결할 수 있어요.",
-        jobs: "CEO, 기술기획자, 프로젝트 리더",
-        tint: "bg-[#FFF7E8]",
-      },
     ],
   },
   EROF: {
@@ -1193,29 +1046,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "그럼 환경을 먼저 점검해서 끝까지 가보자." },
       { type: "child", text: "좋아. 더 해볼게" },
     ],
-    careerBuckets: [
-      {
-        icon: "🏗️",
-        title: "건축 · 설계",
-        desc: "아이디어와 실행력을 함께 쓰는 분야에 잘 맞아요.",
-        jobs: "건축가, 설계자, 공간기획자",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🧪",
-        title: "자연과학 · 연구",
-        desc: "활동성과 탐구심을 함께 살릴 수 있는 방향이에요.",
-        jobs: "연구원, 과학자",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🚀",
-        title: "이공계 기획형 분야",
-        desc: "환경과 팀 에너지를 활용해 성과를 내기 좋아요.",
-        jobs: "기술기획자, 프로젝트 매니저, CEO",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   PROF: {
     traits: [
@@ -1239,29 +1069,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "응, 뭘 먼저 해야 할지 모르겠어." },
       { type: "parent", text: "그럼 이번엔 00과목만 확실히 끝내보자." },
       { type: "child", text: "그 정도면 해볼 수 있을 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "🏥",
-        title: "보건 · 간호 분야",
-        desc: "성실한 단계형 성장과 안정성이 중요한 진로예요.",
-        jobs: "간호사, 물리치료사, 약사",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🏫",
-        title: "교육 · 사범 분야",
-        desc: "꾸준함과 책임감을 살리기 좋은 방향이에요.",
-        jobs: "교사, 교육직, 사범계열",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "📋",
-        title: "안정형 전문직",
-        desc: "성취를 하나씩 쌓아가며 성장하기 좋은 분야예요.",
-        jobs: "공무원, 회계사, 전문직",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   ECMF: {
@@ -1287,29 +1094,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "그 독특함은 강점이야. 이제 그걸 결과물로 연결해보자." },
       { type: "child", text: "응, 보여줄 수 있게 만들면 더 좋을 것 같아." },
     ],
-    careerBuckets: [
-      {
-        icon: "🎬",
-        title: "미디어 · 콘텐츠",
-        desc: "표현력과 창의성이 곧 경쟁력이 되는 분야예요.",
-        jobs: "언론인, 방송PD, 콘텐츠 기획자",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🎨",
-        title: "예술 · 스토리텔링",
-        desc: "자기만의 서사와 감각을 살리기 좋아요.",
-        jobs: "영화감독, 연출가, 광고기획자",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🗣️",
-        title: "어문 · 커뮤니케이션",
-        desc: "말과 글, 표현으로 영향력을 넓히기 좋은 방향이에요.",
-        jobs: "교수, 작가, 커뮤니케이터",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   ECMS: {
     traits: [
@@ -1333,29 +1117,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "응, 그냥 내 방식대로 가면 꽤 잘 되는 편이야." },
       { type: "parent", text: "좋아. 그 대신 체력과 멘탈은 같이 챙기자." },
       { type: "child", text: "그건 확실히 필요할 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "⚖️",
-        title: "법 · 행정 분야",
-        desc: "완성도 높은 자기관리와 논리적 사고를 살리기 좋아요.",
-        jobs: "법조인, 고위공무원, 행정가",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🏢",
-        title: "경영 · 전략 분야",
-        desc: "꾸준한 성과와 계획 실행력이 강점이 되는 방향이에요.",
-        jobs: "경영인, 전략기획자, 컨설턴트",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🌐",
-        title: "외교 · 국제 분야",
-        desc: "언어와 사고력, 안정성을 함께 살릴 수 있어요.",
-        jobs: "외교관, 국제전문가, 교수",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   ECMs: {
@@ -1381,29 +1142,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "좋아. 그 힘을 실천으로 연결하는 연습만 더 해보자." },
       { type: "child", text: "응, 그러면 훨씬 더 잘할 수 있을 것 같아." },
     ],
-    careerBuckets: [
-      {
-        icon: "🗞️",
-        title: "언론 · 미디어",
-        desc: "언어 감각과 통찰력을 바탕으로 영향력을 만들기 좋아요.",
-        jobs: "언론인, 기자, 방송작가",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🌍",
-        title: "국제 · 외교",
-        desc: "외국어와 사고력을 함께 활용할 수 있는 방향이에요.",
-        jobs: "외교관, 국제기구 전문가, 통역사",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "⚖️",
-        title: "법 · 정치외교",
-        desc: "해석력과 설득력이 중요한 분야와 잘 맞아요.",
-        jobs: "법조인, 정책전문가, 정치외교전문가",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   pCMS: {
     traits: [
@@ -1427,29 +1165,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "응, 멍하게 있는것 같아도 머릿속에선 계속 정리하고 있어." },
       { type: "parent", text: "그 깊은 생각은 강점이야. 이제 표현 기회를 조금씩 늘려보자." },
       { type: "child", text: "천천히라면 해볼 수 있을 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "📚",
-        title: "어문 · 학문 분야",
-        desc: "깊은 사고와 언어 감각을 기반으로 성장하기 좋아요.",
-        jobs: "교수, 연구자, 작가",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "📰",
-        title: "언론 · 신문방송",
-        desc: "생각을 해석과 서사로 풀어내는 강점이 살아나요.",
-        jobs: "언론인, 방송기획자, 저널리스트",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🏛️",
-        title: "정치외교 · 법",
-        desc: "깊은 해석과 조용한 설득이 중요한 분야예요.",
-        jobs: "외교관, 법조인, 정책전문가",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   ECOS: {
@@ -1475,29 +1190,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "그럴 땐 같이 정리하면 더 빨리 올라갈 수 있어." },
       { type: "child", text: "응, 그건 맞아." },
     ],
-    careerBuckets: [
-      {
-        icon: "💼",
-        title: "경영 · 경제",
-        desc: "차분한 누적과 계획 실행이 강점이 되는 분야예요.",
-        jobs: "경영인, 금융전문가, 회계사",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "⚖️",
-        title: "법 · 행정",
-        desc: "안정적 실력과 꼼꼼함을 살릴 수 있어요.",
-        jobs: "법조인, 공무원, 행정전문가",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🎓",
-        title: "학문 · 교육",
-        desc: "꾸준히 쌓는 스타일이 긴 호흡의 성장과 잘 맞아요.",
-        jobs: "교수, 교육자, 연구자",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   pCOS: {
     traits: [
@@ -1521,29 +1213,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "혼자 해결해보려는 편이라 바로 말하진 못할 때가 있어." },
       { type: "parent", text: "그래도 같이 나누면 훨씬 편해질 수 있어." },
       { type: "child", text: "응, 그건 알겠어." },
-    ],
-    careerBuckets: [
-      {
-        icon: "📊",
-        title: "경제 · 행정",
-        desc: "안정성과 자기주도성이 중요한 진로에 잘 맞아요.",
-        jobs: "행정전문가, 경제전문가, 공무원",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "⚖️",
-        title: "법 · 정책",
-        desc: "차분한 사고와 꾸준함이 경쟁력이 될 수 있어요.",
-        jobs: "법조인, 정책기획자",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🏫",
-        title: "교육 · 연구",
-        desc: "조용하지만 깊게 쌓는 방식과 잘 맞는 방향이에요.",
-        jobs: "교수, 교육자, 연구자",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   eCoS: {
@@ -1569,29 +1238,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "활동은 살리고, 내신은 더 단단히 잡아보자." },
       { type: "child", text: "응, 그러면 더 잘할 수 있을 것 같아." },
     ],
-    careerBuckets: [
-      {
-        icon: "🎤",
-        title: "미디어 · 방송",
-        desc: "활동성과 리더십, 소통 능력을 함께 살리기 좋아요.",
-        jobs: "PD, 기자, 콘텐츠 리더",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🌐",
-        title: "정치외교 · 공공리더십",
-        desc: "사람과 구조를 함께 보는 힘이 경쟁력이 될 수 있어요.",
-        jobs: "외교관, 정치인, 공공기획자",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🏢",
-        title: "경영 · 조직운영",
-        desc: "균형감과 활동성을 실전으로 연결할 수 있어요.",
-        jobs: "경영인, 조직리더, 기획자",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   PCMF: {
     traits: [
@@ -1615,29 +1261,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "응, 분위기 좋으면 훨씬 더 열심히 하게 돼." },
       { type: "parent", text: "그 힘을 목표성적으로 연결하는 훈련을 해보자." },
       { type: "child", text: "좋아. 그건 해볼 수 있을 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "🎤",
-        title: "미디어 · 소통 분야",
-        desc: "사람과 분위기의 힘을 장점으로 살리기 좋아요.",
-        jobs: "PD, 진행자, 콘텐츠 기획자",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🌍",
-        title: "정치외교 · 통역",
-        desc: "대인 감각과 언어 감각을 함께 활용할 수 있어요.",
-        jobs: "정치인, 통역사, 외교분야 종사자",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🏨",
-        title: "서비스 · 경영",
-        desc: "사람 중심의 장면을 운영하는 데 강점이 있어요.",
-        jobs: "호텔경영인, 운영매니저",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   PCMs: {
@@ -1663,29 +1286,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "공부머리는 있으니까, 이제 끝까지 완성하는 경험을 만들자." },
       { type: "child", text: "응, 그건 필요할 것 같아." },
     ],
-    careerBuckets: [
-      {
-        icon: "🎨",
-        title: "창작 · 애니메이션",
-        desc: "조용한 몰입을 결과물로 연결하기 좋은 분야예요.",
-        jobs: "애니메이션작가, 방송작가",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "📖",
-        title: "인문 · 철학",
-        desc: "자기만의 세계를 깊게 파고드는 강점이 살아나요.",
-        jobs: "연구자, 철학자, 사학 관련 직업",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "📚",
-        title: "문헌 · 정보 분야",
-        desc: "차분한 집중과 정리가 강점이 되는 방향이에요.",
-        jobs: "도서관사서, 기록전문가",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   PCOS: {
     traits: [
@@ -1709,29 +1309,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "응, 아직 뭘 잘하는지 잘 모르겠을 때가 있어." },
       { type: "parent", text: "한 과목씩 쌓으면 충분히 달라질 수 있어." },
       { type: "child", text: "그렇게 해보면 덜 막막할 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "🧒",
-        title: "아동 · 교육",
-        desc: "단계적 성장과 따뜻한 상호작용이 강점이 될 수 있어요.",
-        jobs: "유치원교사, 교사, 교육직",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🫶",
-        title: "심리 · 상담 · 복지",
-        desc: "사람을 안정적으로 돕는 방향과 잘 맞아요.",
-        jobs: "상담교사, 사회복지사, 심리관련 직업",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🌱",
-        title: "성장형 실무 분야",
-        desc: "작은 성취를 차근차근 쌓아가는 구조와 잘 맞아요.",
-        jobs: "사범계열, 실무전문직",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   eCmF: {
@@ -1757,29 +1334,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "그 재능을 입시와 연결해보자." },
       { type: "child", text: "좋아. 그러면 더 제대로 해볼 수 있을 것 같아." },
     ],
-    careerBuckets: [
-      {
-        icon: "🎭",
-        title: "공연 · 연기 분야",
-        desc: "감정 표현과 몰입이 그대로 강점이 될 수 있어요.",
-        jobs: "배우, 연출가, 공연기획자",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🎨",
-        title: "미술 · 디자인 분야",
-        desc: "상상력과 시각 감각을 입시와 진로로 연결하기 좋아요.",
-        jobs: "미술가, 디자이너, 예술가",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🏃",
-        title: "음악 · 체육 분야",
-        desc: "적성을 빠르게 찾을수록 강점이 더 선명해져요.",
-        jobs: "운동선수, 음악가, 체육전문가",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   ErMS: {
     traits: [
@@ -1803,29 +1357,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "응, 둘 다 좋아." },
       { type: "parent", text: "이제 우선순위를 정해 끝까지 가보자." },
       { type: "child", text: "좋아. 이과를 우선으로 할게" },
-    ],
-    careerBuckets: [
-      {
-        icon: "🏥",
-        title: "의학 · 메디컬",
-        desc: "폭넓은 이해력과 상위권 성취를 함께 요구하는 방향이에요.",
-        jobs: "의사, 치과의사, 한의사",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🏗️",
-        title: "건축 · 설계 · 통계",
-        desc: "문·이과 감각을 함께 활용할 수 있는 대표 분야예요.",
-        jobs: "건축가, 통계전문가, 설계전문가",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🌐",
-        title: "융합 · 자유전공",
-        desc: "여러 재능을 연결해 독자적 진로를 설계하기 좋아요.",
-        jobs: "외교관, 행정전문가, 자유전공형 인재",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   ErOS: {
@@ -1851,29 +1382,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "좋아. 대신 서두르지 말고 페이스를 유지하자." },
       { type: "child", text: "응, 그게 더 오래 갈 수 있을 것 같아." },
     ],
-    careerBuckets: [
-      {
-        icon: "🌿",
-        title: "한의학 · 보건",
-        desc: "균형감과 실리적 접근이 강점이 될 수 있어요.",
-        jobs: "한의사, 보건전문가",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "📈",
-        title: "경제 · 통계 · 사회과학",
-        desc: "문·이과 감각을 동시에 살릴 수 있는 방향이에요.",
-        jobs: "경제전문가, 통계전문가, 사회과학자",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🏛️",
-        title: "행정 · 법 · 공공분야",
-        desc: "실리와 안정감을 장기적으로 연결할 수 있어요.",
-        jobs: "고위공무원, 변호사, 정책전문가",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   PrmS: {
     traits: [
@@ -1897,29 +1405,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "앞에 나서는 건 부담스럽지만, 하라고 하면 하긴 해." },
       { type: "parent", text: "수업시간에 자주 발표하고 질문도 해보자." },
       { type: "child", text: "조금씩이라면 가능할 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "📊",
-        title: "경영 · 경제 · 통계",
-        desc: "안정적인 성과와 차분한 누적이 강점이 되는 분야예요.",
-        jobs: "경영전문가, 경제분석가, 통계전문가",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🏥",
-        title: "간호 · 보건",
-        desc: "성실함과 책임감이 중요한 전문직과 잘 맞아요.",
-        jobs: "간호사, 보건전문가",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🏫",
-        title: "교대 · 교육 · 공공분야",
-        desc: "꾸준히 성과를 쌓는 스타일이 안정적으로 살아나요.",
-        jobs: "교사, 공무원, 변리사, 작가",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   PrMF: {
@@ -1945,29 +1430,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "그러면 한학기에 한과목씩 늘려서 전 과목 성적으로 연결해보자." },
       { type: "child", text: "응, 그렇게 하면 좀 더 현실적일 것 같아." },
     ],
-    careerBuckets: [
-      {
-        icon: "🏗️",
-        title: "건축 · 설계",
-        desc: "아이디어와 융합적 사고를 실전으로 연결하기 좋아요.",
-        jobs: "건축가, 공간기획자",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🎬",
-        title: "기획 · 자유전공",
-        desc: "넓은 재능을 묶어 자기만의 방향을 만들 수 있어요.",
-        jobs: "기획자, 프로젝트 리더, 자유전공형 인재",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🧠",
-        title: "인문 · 철학 · 프리랜스형",
-        desc: "머리 좋은 베짱이형의 개성을 살릴 수 있는 방향이에요.",
-        jobs: "철학연구자, 프리랜서, PD",
-        tint: "bg-[#F4F7FF]",
-      },
-    ],
   },
   PrOF: {
     traits: [
@@ -1991,29 +1453,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "child", text: "응, 아직은 내가 뭘 잘할지 찾는 중이야." },
       { type: "parent", text: "그럼 네가 제일 좋아하는 과목부터 해보자." },
       { type: "child", text: "그렇게 하면 좀 더 해볼 만할 것 같아." },
-    ],
-    careerBuckets: [
-      {
-        icon: "🤝",
-        title: "사회복지 · 상담",
-        desc: "사람을 돕는 방향에서 안정적으로 성장할 수 있어요.",
-        jobs: "사회복지사, 상담관련 직업",
-        tint: "bg-[#FFF7E8]",
-      },
-      {
-        icon: "🏫",
-        title: "교육 · 간호",
-        desc: "차근차근 성취를 쌓아가는 구조와 잘 맞아요.",
-        jobs: "교사, 간호사",
-        tint: "bg-[#EEF7FF]",
-      },
-      {
-        icon: "🧵",
-        title: "생활 · 실무 전문분야",
-        desc: "방향이 잡히면 크게 성장할 수 있는 실무형 분야예요.",
-        jobs: "의류업, 요리사, 식품영양 관련 직업",
-        tint: "bg-[#F4F7FF]",
-      },
     ],
   },
   DEFAULT: {
@@ -2039,29 +1478,6 @@ const ANALYSIS_DB: Record<string, AnalysisBlock> = {
       { type: "parent", text: "하나씩 맞는 방법을 찾으면 훨씬 좋아질 수 있어." },
       { type: "child", text: "맞아. 그러면 더 잘할 수 있을 것 같아." },
     ],
-    careerBuckets: [
-      {
-        icon: "🌱",
-        title: "기초 역량 성장 분야",
-        desc: "작은 성공 경험을 쌓으며 안정적으로 성장할 수 있는 방향이에요.",
-        jobs: "교육, 보건, 행정, 상담",
-        tint: "bg-[#FFF8ED]",
-      },
-      {
-        icon: "📘",
-        title: "안정형 진로 분야",
-        desc: "꾸준함과 책임감을 살리기 좋은 분야예요.",
-        jobs: "교사, 간호사, 공무원, 사회복지사",
-        tint: "bg-[#F2FAF1]",
-      },
-      {
-        icon: "✨",
-        title: "잠재 확장 분야",
-        desc: "흥미를 찾을수록 가능성이 크게 열릴 수 있어요.",
-        jobs: "기획, 콘텐츠, 실무 전문직",
-        tint: "bg-[#F7F1FF]",
-      },
-    ],
   },
 };
 
@@ -2086,6 +1502,20 @@ function findProfileByKey(inputKey?: string) {
 function getAnalysisByKey(inputKey?: string): AnalysisBlock {
   const profile = findProfileByKey(inputKey);
   return ANALYSIS_DB[profile.key] || ANALYSIS_DB.DEFAULT;
+}
+
+function parsePathInfo(path: string) {
+  const getValue = (label: string) => {
+    const match = path.match(new RegExp(`${label}:\\s*([^/]+)`));
+    return match?.[1]?.trim() || "-";
+  };
+
+  return [
+    { icon: "🏫", label: "고교선택", value: getValue("고교선택") },
+    { icon: "🎓", label: "대학선택", value: getValue("대학선택") },
+    { icon: "📚", label: "학과선택", value: getValue("학과선택") },
+    { icon: "💼", label: "직업선택", value: getValue("직업선택") },
+  ];
 }
 
 function getPercentileFromSubtitle(subtitle: string) {
@@ -2513,6 +1943,11 @@ export default function ResultScreen({
     color: finalPayload.result.color || matchedProfile.report.color,
   };
 
+  const pathInfo = useMemo(
+  () => parsePathInfo(finalReport.path),
+  [finalReport.path]
+);
+
   const percentile = useMemo(
     () => getPercentileFromSubtitle(finalReport.subtitle),
     [finalReport.subtitle]
@@ -2706,31 +2141,24 @@ export default function ResultScreen({
             </div>
           </div>
 
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
-            {analysis.careerBuckets.map((item) => (
-              <div
-                key={item.title}
-                className={`rounded-[22px] border border-slate-100 p-5 ${item.tint}`}
-              >
-                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white text-[34px] shadow-sm">
-                  {item.icon}
-                </div>
+<div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  {pathInfo.map((item) => (
+    <div
+      key={item.label}
+      className="rounded-[20px] border border-[#E9DFC0] bg-[#FFFDF6] px-5 py-5 text-center shadow-[0_6px_18px_rgba(0,0,0,0.04)]"
+    >
+      <div className="text-[28px]">{item.icon}</div>
 
-                <h5 className="mt-5 break-keep text-center text-[20px] font-black tracking-[-0.03em] text-slate-950">
-                  {item.title}
-                </h5>
+      <div className="mt-3 text-[13px] font-black tracking-wide text-[#B7791F]">
+        {item.label}
+      </div>
 
-                <p className="mt-3 text-center text-[15px] font-semibold leading-7 text-slate-700">
-                  {item.desc}
-                </p>
-
-                <div className="mt-5 rounded-[16px] bg-white/80 px-4 py-4 text-center">
-                  <div className="text-[15px] font-black text-[#B7791F]">관련 직업 예시</div>
-                  <p className="mt-2 text-[15px] font-semibold leading-7 text-slate-700">{item.jobs}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="mt-2 break-keep text-[15px] font-bold leading-6 text-slate-800">
+        {item.value}
+      </div>
+    </div>
+  ))}
+</div>
 
           <div className="mt-6 rounded-[18px] border border-slate-100 bg-[#FAFBFD] px-5 py-4">
             <div className="text-[16px] font-black text-slate-900">추천 진로 방향 상세</div>
