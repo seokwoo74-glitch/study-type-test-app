@@ -2044,7 +2044,7 @@ const handlePrint = () => {
           </div>
         </SectionCard>
 
-        <div className="grid gap-4">
+        <div className="grid gap-4 no break">
           <SectionCard title="추천 학습 전략" icon="📘" className="border-slate-200">
             <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.strategy}</p>
           </SectionCard>
@@ -2074,7 +2074,7 @@ const handlePrint = () => {
           </SectionCard>
 
           <SectionCard title="지금 당장 해야 할 1가지" icon="🚀" className="border-slate-200">
-            <div className="rounded-[20px] bg-[#FFF4C8] px-4 py-4 text-[18px] font-black leading-8 text-slate-900">
+            <div className="rounded-[20px] bg-[#FFF4C8] px-4 py-4 text-[18px] font-black leading-8 text-slate-900 no break">
               {analysis.actionText}
             </div>
           </SectionCard>
