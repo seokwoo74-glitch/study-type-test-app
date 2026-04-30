@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
+import ResultScreen from "@/components/shared-result-screen";
 
 const supabase = createBrowserSupabaseClient();
 
@@ -1222,21 +1223,15 @@ export default function AdminDashboardPage() {
               </div>
             </aside>
 
-            <section className="min-w-0">
-              {selectedRow ? (
-                <AdminResultPreview
-                  row={selectedRow}
-                  editMemo={editMemo}
-                  setEditMemo={setEditMemo}
-                  editConsulted={editConsulted}
-                  setEditConsulted={setEditConsulted}
-                  isDirty={isDirty}
-                  saving={saving}
-                  saveMessage={saveMessage}
-                  onSave={handleSave}
-                />
-              ) : null}
-            </section>
+<section className="min-w-0">
+  {selectedRow ? (
+    <ResultScreen
+      payload={selectedRow.result_payload}
+      restartLabel="목록으로 돌아가기"
+      onRestart={() => setSelectedRow(null)}
+    />
+  ) : null}
+          </section>
           </section>
         )}
       </div>
