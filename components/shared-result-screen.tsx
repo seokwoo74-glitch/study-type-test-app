@@ -1979,22 +1979,9 @@ export default function ResultScreen({
     await shareNative(finalReport.title, url);
   };
 
-  const handlePrint = () => {
-    const html = generatePrintableReport({
-      report: finalReport,
-      resultCode: finalResolved.fullCode || finalResolved.code,
-      student: finalStudent,
-      percentile,
-      traits: analysis.traits,
-      dangerPatterns: analysis.dangerPatterns,
-      futureTitle: analysis.futureTitle,
-      futureBody: analysis.futureBody,
-      actionText: analysis.actionText,
-      characterBadge,
-    });
-
-    printReport(html);
-  };
+const handlePrint = () => {
+  window.print();
+};
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
