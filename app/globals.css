@@ -97,10 +97,12 @@ body {
 }
 @media print {
   .no-break {
-    break-inside: avoid;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
-}
-.no-break {
-  page-break-inside: avoid;
-  break-inside: avoid;
+
+  .page-break {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
 }

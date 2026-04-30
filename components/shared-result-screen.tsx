@@ -1765,7 +1765,7 @@ function SectionCard({
 }) {
   return (
     <section
-      className={`rounded-[24px] border bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] ${className}`}
+      className={`no-break rounded-[24px] border bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] ${className}`}
     >
       <div className="mb-4 flex items-center gap-3">
         <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-xl">
