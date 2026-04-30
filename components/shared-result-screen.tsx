@@ -2112,7 +2112,7 @@ const handlePrint = () => {
         </div>
 
         <div className="mt-20 text-[18px] font-extrabold text-slate-400">
-          강성재교육연구소
+          학습성향검사
         </div>
       </div>
     </div>
