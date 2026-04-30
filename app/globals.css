@@ -106,3 +106,38 @@ body {
     page-break-before: always !important;
   }
 }
+@media print {
+
+  /* 표지 스타일 */
+  .print-cover {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  /* 카드 안 잘리게 */
+  .no-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* 페이지 나누기 */
+  .page-break {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  /* 여백 제거 */
+  #result-print-area {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* 버튼 숨기기 */
+  button {
+    display: none !important;
+  }
+}

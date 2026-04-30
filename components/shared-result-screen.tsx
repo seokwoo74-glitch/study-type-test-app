@@ -1985,6 +1985,31 @@ const handlePrint = () => {
 
  return (
   <div id="result-print-area" className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+{/* 📄 표지 */}
+<div className="print-cover bg-gradient-to-br from-yellow-100 to-white">
+  <div className="text-center">
+<img src="/logo.png" className="w-16 mx-auto mb-6" />
+    <div className="text-sm text-gray-400 mb-2">
+      학습성향 분석 리포트
+    </div>
+
+    <h1 className="text-3xl font-black mb-3">
+      {finalStudent.name || "학생"}님 분석 결과
+    </h1>
+
+    <div className="text-xl font-bold text-slate-800 mb-2">
+      {finalReport.title}
+    </div>
+
+    <div className="text-sm text-gray-500 mb-6">
+      {finalReport.subtitle}
+    </div>
+
+    <div className="mt-10 text-sm text-gray-400">
+      Study Type Test
+    </div>
+  </div>
+</div>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <Badge>분석 완료 💛</Badge>
