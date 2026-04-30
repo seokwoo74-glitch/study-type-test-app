@@ -1983,8 +1983,8 @@ const handlePrint = () => {
   window.print();
 };
 
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+ return (
+  <div id="result-print-area" className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <Badge>분석 완료 💛</Badge>
