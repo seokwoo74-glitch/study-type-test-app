@@ -1226,7 +1226,7 @@ export default function AdminDashboardPage() {
 <section className="min-w-0">
   {selectedRow?.result_payload ? (
     <ResultScreen
-      payload={selectedRow.result_payload}
+      payload={selectedRow.result_payload as React.ComponentProps<typeof ResultScreen>["payload"]}
       restartLabel="목록으로 돌아가기"
       onRestart={() => setSelectedRow(null)}
     />
