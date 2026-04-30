@@ -1234,8 +1234,9 @@ export default function AdminDashboardPage() {
       <div className="text-lg font-black text-rose-700">
         저장된 결과 데이터가 없습니다.
       </div>
+
       <button
-        onClick={() => setSelectedRow(null)}
+        onClick={() => window.location.reload()}
         className="mt-4 rounded-[16px] bg-slate-900 px-5 py-3 text-sm font-black text-white"
       >
         목록으로 돌아가기
