@@ -1578,6 +1578,32 @@ function generatePrintableReport({
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/\"/g, "&quot;");
+  
+const cover = `
+    <div class="cover-page">
+      <div class="cover-inner">
+        <img src="/logo.png" class="cover-logo" />
+
+        <div class="cover-sub">✨ 학습성향 분석 리포트 ✨</div>
+
+        <h1 class="cover-name">
+          ${safe(student.name)}님 분석 결과
+        </h1>
+
+        <div class="cover-badge">
+          ${safe(report.title)}
+        </div>
+
+        <div class="cover-percent">
+          ${safe(report.subtitle)}
+        </div>
+
+        <div class="cover-footer">
+          Study Type Test
+        </div>
+      </div>
+    </div>
+  `;
 
   const traitItems = traits.map((item) => `<div class=\"chip\">${safe(item)}</div>`).join("");
   const dangerItems = dangerPatterns
@@ -1659,8 +1685,88 @@ function generatePrintableReport({
       border: 1px solid #f3e28d; font-size: 14px; font-weight: 900; color: #111827; line-height: 1.8;
     }
   </style>
+.cover-page {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #fff8c7 0%, #fffdf2 48%, #ffe082 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  page-break-after: always;
+  break-after: page;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-inner {
+  width: 88%;
+  max-width: 860px;
+  min-height: 620px;
+  border-radius: 36px;
+  background: rgba(255,255,255,0.56);
+  border: 1px solid rgba(255,210,80,0.55);
+  box-shadow: 0 28px 80px rgba(15,23,42,0.12);
+  text-align: center;
+  padding: 58px 40px;
+}
+
+.cover-logo {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  margin: 0 auto 34px;
+  border-radius: 26px;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 18px 36px rgba(15,23,42,0.12);
+}
+
+.cover-sub {
+  font-size: 21px;
+  font-weight: 900;
+  color: #8a8f9f;
+  letter-spacing: -0.03em;
+}
+
+.cover-name {
+  margin: 26px 0 18px;
+  font-size: 46px;
+  line-height: 1.22;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  color: #08142f;
+}
+
+.cover-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  padding: 14px 34px;
+  border-radius: 999px;
+  background: #fff1b8;
+  border: 1px solid #f3d270;
+  font-size: 24px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.cover-percent {
+  margin-top: 22px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #8a8f9f;
+}
+
+.cover-footer {
+  margin-top: 80px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #9ca3af;
+}
 </head>
 <body>
+  ${cover}
   <div class=\"page\">
     <section class=\"hero\">
       <div class=\"hero-sub\">${safe(report.subtitle)}</div>
