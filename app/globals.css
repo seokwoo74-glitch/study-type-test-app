@@ -95,3 +95,12 @@ body {
     display: none !important;
   }
 }
+@media print {
+  .no-break {
+    break-inside: avoid;
+  }
+}
+.no-break {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}

@@ -2086,7 +2086,7 @@ const handlePrint = () => {
         icon="📊"
         className="mt-5 border-[#CFE0FF] bg-[#F6FAFF]"
       >
-        <div className="rounded-[24px] border border-[#D8E6FF] bg-[#EEF5FF] p-5 sm:p-6">
+        <div className="rounded-[24px] border border-[#D8E6FF] bg-[#EEF5FF] p-5 sm:p-6 no-break">
           <div className="grid gap-5 lg:grid-cols-[220px_1fr] lg:items-center">
             <div className="flex flex-col items-center text-center">
               <div className="flex h-32 w-32 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#CDE7FF,transparent_30%),radial-gradient(circle_at_70%_70%,#8CC5FF,transparent_35%),#D9EDFF] text-[56px] shadow-inner">
@@ -2113,7 +2113,7 @@ const handlePrint = () => {
           </div>
         </div>
 
-        <div className="mt-5 rounded-[24px] border border-[#E7D7A1] bg-white p-5 sm:p-6">
+        <div className="mt-5 rounded-[24px] border border-[#E7D7A1] bg-white p-5 sm:p-6 no-break">
           <div className="flex items-start gap-3">
             <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF3D1] text-lg">
               🧭
