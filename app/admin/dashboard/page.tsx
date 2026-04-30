@@ -1228,7 +1228,6 @@ export default function AdminDashboardPage() {
     <ResultScreen
       payload={selectedRow.result_payload as React.ComponentProps<typeof ResultScreen>["payload"]}
       restartLabel="목록으로 돌아가기"
-      onRestart={() => setSelectedRow(null)}
     />
   ) : selectedRow ? (
     <div className="rounded-[24px] border border-rose-200 bg-rose-50 p-6 text-center">
