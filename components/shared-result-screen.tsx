@@ -2092,7 +2092,7 @@ const handlePrint = () => {
  return (
   <div id="result-print-area" className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
     <div className="print-cover bg-gradient-to-br from-yellow-100 via-white to-yellow-200">
-      <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 text-center">
+      <div className="mx-auto flex min-h-[420px] max-w-3xl flex-col items-center justify-center px-6 py-10 text-center">
         <img src="/logo.png" className="mb-8 h-24 w-24 rounded-[28px] bg-white p-3 shadow-xl" />
 
         <div className="text-[18px] font-black text-slate-400">
