@@ -2299,8 +2299,7 @@ const handlePrint = () => {
         </SectionCard>
       </div>
 
-<div className="print-hide flex gap-3 mt-6">      
-<div className="mt-6 grid gap-3 sm:grid-cols-3">
+      <div className="print-hide mt-6 grid gap-3 sm:grid-cols-3">
         <button
           onClick={handleShare}
           className="h-16 rounded-[20px] bg-[#F6D85F] text-[22px] font-black tracking-[-0.03em] text-slate-950 shadow-[0_10px_20px_rgba(246,216,95,0.28)] transition hover:-translate-y-0.5"
