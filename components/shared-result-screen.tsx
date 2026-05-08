@@ -2135,11 +2135,18 @@ export default function ResultScreen({
 
           html,
           body {
-            width: 210mm !important;
-            min-height: 297mm !important;
+            width: auto !important;
+            min-width: 0 !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
             background: white !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+          }
+
+          body {
+            display: block !important;
           }
 
           body * {
@@ -2152,13 +2159,22 @@ export default function ResultScreen({
           }
 
           #result-print-area {
-            position: absolute !important;
-            inset: 0 auto auto 0 !important;
+            position: static !important;
+            inset: auto !important;
+            left: auto !important;
+            top: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            display: block !important;
             width: 100% !important;
             max-width: none !important;
-            margin: 0 !important;
+            min-width: 0 !important;
+            height: auto !important;
+            margin: 0 auto !important;
             padding: 0 !important;
             background: white !important;
+            transform: none !important;
+            transform-origin: center top !important;
           }
 
           .screen-result-view,
@@ -2170,18 +2186,32 @@ export default function ResultScreen({
           .print-result-fixed {
             display: block !important;
             width: 100% !important;
+            max-width: 196mm !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
             color: #0f172a !important;
+            transform: none !important;
           }
 
           .print-page {
+            display: block !important;
             width: 196mm !important;
-            min-height: 283mm !important;
             height: 283mm !important;
+            min-height: 283mm !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
             overflow: hidden !important;
+            background: white !important;
+            box-sizing: border-box !important;
             page-break-after: always !important;
             break-after: page !important;
-            padding: 8mm !important;
-            background: white !important;
+          }
+
+          .print-page > div {
+            width: 100% !important;
+            height: 100% !important;
+            box-sizing: border-box !important;
+            padding: 7mm !important;
           }
 
           .print-page:last-child {
@@ -2196,28 +2226,28 @@ export default function ResultScreen({
           }
 
           .print-title {
-            font-size: 28px !important;
+            font-size: 27px !important;
             line-height: 1.12 !important;
             letter-spacing: -0.06em !important;
           }
 
           .print-subtitle {
-            font-size: 15px !important;
-            line-height: 1.45 !important;
+            font-size: 14px !important;
+            line-height: 1.42 !important;
           }
 
           .print-body {
-            font-size: 12.5px !important;
-            line-height: 1.58 !important;
+            font-size: 12.2px !important;
+            line-height: 1.52 !important;
           }
 
           .print-small {
-            font-size: 10.5px !important;
-            line-height: 1.45 !important;
+            font-size: 10px !important;
+            line-height: 1.38 !important;
           }
 
           .print-compact-card {
-            padding: 10px !important;
+            padding: 9px !important;
             border-radius: 14px !important;
             box-shadow: none !important;
           }
@@ -2225,13 +2255,13 @@ export default function ResultScreen({
           .print-grid-2 {
             display: grid !important;
             grid-template-columns: 1fr 1fr !important;
-            gap: 9px !important;
+            gap: 8px !important;
           }
 
           .print-grid-4 {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
-            gap: 8px !important;
+            gap: 7px !important;
           }
         }
       `}</style>
