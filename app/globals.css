@@ -164,3 +164,32 @@ body {
     break-inside: avoid;
   }
 }
+
+@media print {
+  #result-print-area {
+    transform: scale(0.7);
+    transform-origin: top center;
+    width: 140%;
+  }
+
+  /* 카드 간격 줄이기 */
+  section, .section, .card, .rounded-\[28px\] {
+    margin-bottom: 8px !important;
+    padding: 12px !important;
+  }
+
+  /* 텍스트 줄이기 */
+  p, span {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+
+  h1, h2, h3 {
+    font-size: 18px !important;
+  }
+
+  /* 페이지 여백 줄이기 */
+  @page {
+    margin: 8mm;
+  }
+}
