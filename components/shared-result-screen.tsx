@@ -2169,7 +2169,7 @@ const handlePrint = () => {
       </section>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-2">
-        <SectionCard title="이 아이 실제 모습 😮" icon="🟣" className="border-[#E9E2FF] bg-[#FCFBFF]">
+        <SectionCard title="이 아이 실제 모습 😮" icon="🟣" className="no-break">
           <div className="grid gap-3">
             {analysis.traits.map((trait) => (
               <TraitPill key={trait} text={trait} />
@@ -2178,18 +2178,18 @@ const handlePrint = () => {
         </SectionCard>
 
         <div className="grid gap-4 no break">
-          <SectionCard title="추천 학습 전략" icon="📘" className="border-slate-200">
+          <SectionCard title="추천 학습 전략" icon="📘" className="no-break">
             <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.strategy}</p>
           </SectionCard>
 
-          <SectionCard title="보호자 가이드" icon="👥" className="border-slate-200">
+          <SectionCard title="보호자 가이드" icon="👥" className="no-break">
             <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.parent}</p>
           </SectionCard>
         </div>
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <SectionCard title="주의 패턴 ⚠️" icon="🚨" className="border-[#FFD9DF] bg-[#FFFDFD]">
+        <SectionCard title="주의 패턴 ⚠️" icon="🚨" className="no-break">
           <div className="grid gap-3">
             {analysis.dangerPatterns.map((item) => (
               <DangerPill key={item} text={item} />
@@ -2198,15 +2198,15 @@ const handlePrint = () => {
         </SectionCard>
 
         <div className="grid gap-4">
-          <SectionCard title="이대로 가면 위험" icon="💡" className="border-slate-200">
+          <SectionCard title="이대로 가면 위험" icon="💡" className="no-break">
             <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.danger}</p>
           </SectionCard>
 
-          <SectionCard title="아이에게 이렇게 말해보세요" icon="💚" className="border-slate-200">
+          <SectionCard title="아이에게 이렇게 말해보세요" icon="💚" className="no-break">
             <p className="text-[18px] font-black leading-8 text-slate-800">“{finalReport.talk}”</p>
           </SectionCard>
 
-          <SectionCard title="지금 당장 해야 할 1가지" icon="🚀" className="border-slate-200">
+          <SectionCard title="지금 당장 해야 할 1가지" icon="🚀" className="no-break">
             <div className="rounded-[20px] bg-[#FFF4C8] px-4 py-4 text-[18px] font-black leading-8 text-slate-900 no break">
               {analysis.actionText}
             </div>
@@ -2217,7 +2217,7 @@ const handlePrint = () => {
       <SectionCard
         title="미래 성장 시나리오"
         icon="📊"
-        className="mt-5 border-[#CFE0FF] bg-[#F6FAFF]"
+        className="no-break"
       >
         <div className="rounded-[24px] border border-[#D8E6FF] bg-[#EEF5FF] p-5 sm:p-6 no-break">
           <div className="grid gap-5 lg:grid-cols-[220px_1fr] lg:items-center">
@@ -2225,7 +2225,7 @@ const handlePrint = () => {
               <div className="flex h-32 w-32 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#CDE7FF,transparent_30%),radial-gradient(circle_at_70%_70%,#8CC5FF,transparent_35%),#D9EDFF] text-[56px] shadow-inner">
                 🌍
               </div>
-              <div className="mt-4 rounded-full bg-[#DCEBFF] px-4 py-2 text-[15px] font-black text-[#2563EB]">
+              <div className="no-break">
                 통합적 성장형
               </div>
             </div>
@@ -2252,7 +2252,7 @@ const handlePrint = () => {
               🧭
             </div>
             <div>
-              <h4 className="text-[24px] font-black tracking-[-0.03em] text-slate-950 sm:text-[28px]">
+              <h4 className="no-break">
                 추천 진로 방향
               </h4>
               <p className="mt-1 text-[16px] font-semibold leading-7 text-slate-600">

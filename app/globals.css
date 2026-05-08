@@ -193,3 +193,42 @@ body {
     margin: 8mm;
   }
 }
+
+@media print {
+
+  /* 🔥 전체 강제 압축 */
+  #result-print-area {
+    transform: scale(0.65);
+    transform-origin: top left;
+    width: 155%;
+  }
+
+  /* 🔥 카드 패딩 박살내기 */
+  .rounded-\[28px\],
+  .rounded-\[24px\],
+  .rounded-\[20px\],
+  section {
+    padding: 10px !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* 🔥 텍스트 줄이기 */
+  p {
+    font-size: 12px !important;
+    line-height: 1.3 !important;
+  }
+
+  h1 { font-size: 20px !important; }
+  h2 { font-size: 16px !important; }
+  h3 { font-size: 14px !important; }
+
+  /* 🔥 카드 붙이기 */
+  .no-break {
+    break-inside: avoid;
+  }
+
+  /* 🔥 페이지 여백 최소화 */
+  @page {
+    margin: 6mm;
+  }
+}
