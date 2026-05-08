@@ -2001,6 +2001,31 @@ function buildFallbackPayload(params: {
   };
 }
 
+
+function CompactInfoCard({
+  title,
+  children,
+  tone = "white",
+}: {
+  title: string;
+  children: React.ReactNode;
+  tone?: "white" | "yellow" | "blue" | "pink";
+}) {
+  const toneClass = {
+    white: "border-slate-200 bg-white",
+    yellow: "border-[#EBD89A] bg-[#FFF8D8]",
+    blue: "border-[#CFE2FF] bg-[#F1F7FF]",
+    pink: "border-[#FFD6DE] bg-[#FFF5F7]",
+  }[tone];
+
+  return (
+    <section className={`print-compact-card no-break rounded-[18px] border p-4 ${toneClass}`}>
+      <h3 className="mb-2 text-[15px] font-black tracking-[-0.02em] text-slate-950">{title}</h3>
+      <div className="text-[13px] font-semibold leading-6 text-slate-700">{children}</div>
+    </section>
+  );
+}
+
 export default function ResultScreen({
   payload,
   student,
@@ -2049,10 +2074,7 @@ export default function ResultScreen({
     color: finalPayload.result.color || matchedProfile.report.color,
   };
 
-  const pathInfo = useMemo(
-  () => parsePathInfo(finalReport.path),
-  [finalReport.path]
-);
+  const pathInfo = useMemo(() => parsePathInfo(finalReport.path), [finalReport.path]);
 
   const percentile = useMemo(
     () => getPercentileFromSubtitle(finalReport.subtitle),
@@ -2085,241 +2107,520 @@ export default function ResultScreen({
     await shareNative(finalReport.title, url);
   };
 
-const handlePrint = () => {
-  window.print();
-};
+  const handlePrint = () => {
+    window.print();
+  };
 
- return (
-  <div id="result-print-area" className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-    <div className="print-cover bg-gradient-to-br from-yellow-100 via-white to-yellow-200">
-      <div className="mx-auto flex min-h-[420px] max-w-3xl flex-col items-center justify-center px-6 py-10 text-center">
-        <img src="/logo.png" className="mb-8 h-24 w-24 rounded-[28px] bg-white p-3 shadow-xl" />
+  const scorePairs = [
+    { label: "외향·내향", left: "E", right: "P", value: finalPayload.diffs.social },
+    { label: "이과·문과", left: "R", right: "C", value: finalPayload.diffs.judgment },
+    { label: "모범·자유", left: "M", right: "O", value: finalPayload.diffs.track },
+    { label: "실천·감각", left: "S", right: "F", value: finalPayload.diffs.style },
+  ];
 
-        <div className="text-[18px] font-black text-slate-400">
-          ✨ 학습성향 분석 리포트 ✨
-        </div>
+  return (
+    <div id="result-print-area" className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+      <style jsx global>{`
+        @media screen {
+          .print-result-fixed {
+            display: none !important;
+          }
+        }
 
-        <h1 className="mt-7 break-keep text-[42px] font-black tracking-[-0.06em] text-slate-950">
-          {finalStudent.name || "학생"}님 분석 결과
-        </h1>
+        @media print {
+          @page {
+            size: A4 portrait;
+            margin: 7mm;
+          }
 
-        <div className="mt-6 rounded-full border border-[#F3D270] bg-[#FFF1B8] px-8 py-4 text-[24px] font-black text-slate-950 shadow-sm">
-          {finalReport.title}
-        </div>
+          html,
+          body {
+            width: 210mm !important;
+            min-height: 297mm !important;
+            background: white !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
 
-        <div className="mt-5 text-[22px] font-black text-slate-400">
-          {finalReport.subtitle}
-        </div>
+          body * {
+            visibility: hidden !important;
+          }
 
-        <div className="mt-20 text-[18px] font-extrabold text-slate-400">
-          학습성향검사
-        </div>
-      </div>
-    </div>
+          #result-print-area,
+          #result-print-area * {
+            visibility: visible !important;
+          }
 
-    <div className="page-break" />
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <Badge>분석 완료 💛</Badge>
-          <div className="text-[15px] font-bold text-slate-600">학습성향 결과 리포트</div>
-        </div>
+          #result-print-area {
+            position: absolute !important;
+            inset: 0 auto auto 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+          }
 
-        <div className="rounded-full border border-[#E9DFC0] bg-[#FFF9EC] px-5 py-2">
-          <span className="mr-2 text-[13px] font-black text-[#A47A22]">결과 코드</span>
-          <span className="text-[18px] font-black tracking-[-0.03em] text-slate-950">
-            {finalResolved.code}
-          </span>
-        </div>
-      </div>
+          .screen-result-view,
+          .print-hide,
+          button {
+            display: none !important;
+          }
 
-      <section className="rounded-[30px] border border-[#EBD89A] bg-[#FFFDF6] px-5 py-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] sm:px-7">
-        <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-          <div className="flex flex-col items-center text-center">
-            <div className="relative flex h-40 w-40 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#FFE8C2,transparent_35%),radial-gradient(circle_at_70%_35%,#D9ECFF,transparent_35%),#F7F8FC] text-[74px] shadow-inner">
-              {characterBadge.emoji}
-            </div>
+          .print-result-fixed {
+            display: block !important;
+            width: 100% !important;
+            color: #0f172a !important;
+          }
 
-            <div className="mt-4 rounded-full bg-[#EAF2FF] px-4 py-2 text-[15px] font-black text-[#2563EB]">
-              {characterBadge.nickname}
-            </div>
+          .print-page {
+            width: 196mm !important;
+            min-height: 283mm !important;
+            height: 283mm !important;
+            overflow: hidden !important;
+            page-break-after: always !important;
+            break-after: page !important;
+            padding: 8mm !important;
+            background: white !important;
+          }
 
-            <p className="mt-3 break-keep text-[16px] font-bold leading-7 text-slate-700">
-              {characterBadge.tagline}
-            </p>
+          .print-page:last-child {
+            page-break-after: auto !important;
+            break-after: auto !important;
+          }
+
+          .no-break,
+          .print-compact-card {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+
+          .print-title {
+            font-size: 28px !important;
+            line-height: 1.12 !important;
+            letter-spacing: -0.06em !important;
+          }
+
+          .print-subtitle {
+            font-size: 15px !important;
+            line-height: 1.45 !important;
+          }
+
+          .print-body {
+            font-size: 12.5px !important;
+            line-height: 1.58 !important;
+          }
+
+          .print-small {
+            font-size: 10.5px !important;
+            line-height: 1.45 !important;
+          }
+
+          .print-compact-card {
+            padding: 10px !important;
+            border-radius: 14px !important;
+            box-shadow: none !important;
+          }
+
+          .print-grid-2 {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 9px !important;
+          }
+
+          .print-grid-4 {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 8px !important;
+          }
+        }
+      `}</style>
+
+      {/* 화면용: 기존 카카오 느낌 결과 화면 */}
+      <div className="screen-result-view">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge>분석 완료 💛</Badge>
+            <div className="text-[15px] font-bold text-slate-600">학습성향 결과 리포트</div>
           </div>
 
-          <div className="min-w-0">
-            <h1 className="break-keep text-[34px] font-black tracking-[-0.05em] text-[#09133F] sm:text-[52px]">
-              {finalReport.title}
-            </h1>
-
-            <p className="mt-2 text-[22px] font-black text-[#F59E0B]">{finalReport.subtitle}</p>
-
-            <div className="mt-5 space-y-2 text-[17px] leading-8 text-slate-700">
-              <p>{finalReport.summary}</p>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Badge>🏆 상위 {percentile}</Badge>
-              <Badge>🏷️ {finalResolved.code}</Badge>
-              <Badge>⭐ {finalResolved.diffText}</Badge>
-            </div>
+          <div className="rounded-full border border-[#E9DFC0] bg-[#FFF9EC] px-5 py-2">
+            <span className="mr-2 text-[13px] font-black text-[#A47A22]">결과 코드</span>
+            <span className="text-[18px] font-black tracking-[-0.03em] text-slate-950">
+              {finalResolved.code}
+            </span>
           </div>
         </div>
-      </section>
 
-      <div className="mt-5 grid gap-4 lg:grid-cols-2">
-        <SectionCard title="이 아이 실제 모습 😮" icon="🟣" className="no-break">
-          <div className="grid gap-3">
-            {analysis.traits.map((trait) => (
-              <TraitPill key={trait} text={trait} />
-            ))}
-          </div>
-        </SectionCard>
-
-        <div className="grid gap-4 no break">
-          <SectionCard title="추천 학습 전략" icon="📘" className="no-break">
-            <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.strategy}</p>
-          </SectionCard>
-
-          <SectionCard title="보호자 가이드" icon="👥" className="no-break">
-            <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.parent}</p>
-          </SectionCard>
-        </div>
-      </div>
-
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <SectionCard title="주의 패턴 ⚠️" icon="🚨" className="no-break">
-          <div className="grid gap-3">
-            {analysis.dangerPatterns.map((item) => (
-              <DangerPill key={item} text={item} />
-            ))}
-          </div>
-        </SectionCard>
-
-        <div className="grid gap-4">
-          <SectionCard title="이대로 가면 위험" icon="💡" className="no-break">
-            <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.danger}</p>
-          </SectionCard>
-
-          <SectionCard title="아이에게 이렇게 말해보세요" icon="💚" className="no-break">
-            <p className="text-[18px] font-black leading-8 text-slate-800">“{finalReport.talk}”</p>
-          </SectionCard>
-
-          <SectionCard title="지금 당장 해야 할 1가지" icon="🚀" className="no-break">
-            <div className="rounded-[20px] bg-[#FFF4C8] px-4 py-4 text-[18px] font-black leading-8 text-slate-900 no break">
-              {analysis.actionText}
-            </div>
-          </SectionCard>
-        </div>
-      </div>
-
-      <SectionCard
-        title="미래 성장 시나리오"
-        icon="📊"
-        className="no-break"
-      >
-        <div className="rounded-[24px] border border-[#D8E6FF] bg-[#EEF5FF] p-5 sm:p-6 no-break">
-          <div className="grid gap-5 lg:grid-cols-[220px_1fr] lg:items-center">
+        <section className="rounded-[30px] border border-[#EBD89A] bg-[#FFFDF6] px-5 py-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] sm:px-7">
+          <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
             <div className="flex flex-col items-center text-center">
-              <div className="flex h-32 w-32 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#CDE7FF,transparent_30%),radial-gradient(circle_at_70%_70%,#8CC5FF,transparent_35%),#D9EDFF] text-[56px] shadow-inner">
-                🌍
+              <div className="relative flex h-40 w-40 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#FFE8C2,transparent_35%),radial-gradient(circle_at_70%_35%,#D9ECFF,transparent_35%),#F7F8FC] text-[74px] shadow-inner">
+                {characterBadge.emoji}
               </div>
-              <div className="no-break">
-                통합적 성장형
+
+              <div className="mt-4 rounded-full bg-[#EAF2FF] px-4 py-2 text-[15px] font-black text-[#2563EB]">
+                {characterBadge.nickname}
               </div>
-            </div>
 
-            <div>
-              <h3 className="break-keep text-[26px] font-black leading-[1.35] tracking-[-0.04em] text-[#1F2A7A] sm:text-[34px]">
-                {analysis.futureTitle}
-              </h3>
-
-              <div className="mt-5 space-y-3">
-                {analysis.futureBody.map((line) => (
-                  <p key={line} className="text-[17px] leading-8 text-slate-700">
-                    {line}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-5 rounded-[24px] border border-[#E7D7A1] bg-white p-5 sm:p-6 no-break">
-          <div className="flex items-start gap-3">
-            <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF3D1] text-lg">
-              🧭
-            </div>
-            <div>
-              <h4 className="no-break">
-                추천 진로 방향
-              </h4>
-              <p className="mt-1 text-[16px] font-semibold leading-7 text-slate-600">
-                당신의 강점과 성향을 바탕으로 잘 맞는 진로 분야예요.
+              <p className="mt-3 break-keep text-[16px] font-bold leading-7 text-slate-700">
+                {characterBadge.tagline}
               </p>
             </div>
+
+            <div className="min-w-0">
+              <h1 className="break-keep text-[34px] font-black tracking-[-0.05em] text-[#09133F] sm:text-[52px]">
+                {finalReport.title}
+              </h1>
+
+              <p className="mt-2 text-[22px] font-black text-[#F59E0B]">{finalReport.subtitle}</p>
+
+              <div className="mt-5 space-y-2 text-[17px] leading-8 text-slate-700">
+                <p>{finalReport.summary}</p>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Badge>🏆 상위 {percentile}</Badge>
+                <Badge>🏷️ {finalResolved.code}</Badge>
+                <Badge>⭐ {finalResolved.diffText}</Badge>
+              </div>
+            </div>
           </div>
+        </section>
 
-<div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-  {pathInfo.map((item) => (
-    <div
-      key={item.label}
-      className="rounded-[20px] border border-[#E9DFC0] bg-[#FFFDF6] px-5 py-5 text-center shadow-[0_6px_18px_rgba(0,0,0,0.04)]"
-    >
-      <div className="text-[28px]">{item.icon}</div>
+        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+          <SectionCard title="이 아이 실제 모습 😮" icon="🟣" className="no-break">
+            <div className="grid gap-3">
+              {analysis.traits.map((trait) => (
+                <TraitPill key={trait} text={trait} />
+              ))}
+            </div>
+          </SectionCard>
 
-      <div className="mt-3 text-[13px] font-black tracking-wide text-[#B7791F]">
-        {item.label}
-      </div>
+          <div className="grid gap-4">
+            <SectionCard title="추천 학습 전략" icon="📘" className="no-break">
+              <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.strategy}</p>
+            </SectionCard>
 
-      <div className="mt-2 break-keep text-[15px] font-bold leading-6 text-slate-800">
-        {item.value}
-      </div>
-    </div>
-  ))}
-</div>
-
-          <div className="mt-6 rounded-[18px] border border-slate-100 bg-[#FAFBFD] px-5 py-4">
-            <div className="text-[16px] font-black text-slate-900">추천 진로 방향 상세</div>
-            <p className="mt-2 text-[16px] font-semibold leading-8 text-slate-700">{finalReport.path}</p>
+            <SectionCard title="보호자 가이드" icon="👥" className="no-break">
+              <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.parent}</p>
+            </SectionCard>
           </div>
         </div>
-      </SectionCard>
 
-      <div className="mt-5">
-        <SectionCard title="실제 대화 느낌" icon="💬" className="border-slate-200">
-          <div className="flex flex-col gap-3">
-            {analysis.chatScenario.map((item, index) => (
-              <ChatBubble key={`${item.type}-${index}`} type={item.type}>
-                {item.text}
-              </ChatBubble>
-            ))}
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <SectionCard title="주의 패턴 ⚠️" icon="🚨" className="no-break">
+            <div className="grid gap-3">
+              {analysis.dangerPatterns.map((item) => (
+                <DangerPill key={item} text={item} />
+              ))}
+            </div>
+          </SectionCard>
+
+          <div className="grid gap-4">
+            <SectionCard title="이대로 가면 위험" icon="💡" className="no-break">
+              <p className="text-[16px] font-semibold leading-8 text-slate-700">{finalReport.danger}</p>
+            </SectionCard>
+
+            <SectionCard title="아이에게 이렇게 말해보세요" icon="💚" className="no-break">
+              <p className="text-[18px] font-black leading-8 text-slate-800">“{finalReport.talk}”</p>
+            </SectionCard>
+
+            <SectionCard title="지금 당장 해야 할 1가지" icon="🚀" className="no-break">
+              <div className="rounded-[20px] bg-[#FFF4C8] px-4 py-4 text-[18px] font-black leading-8 text-slate-900">
+                {analysis.actionText}
+              </div>
+            </SectionCard>
+          </div>
+        </div>
+
+        <SectionCard title="미래 성장 시나리오" icon="📊" className="mt-4 no-break">
+          <div className="rounded-[24px] border border-[#D8E6FF] bg-[#EEF5FF] p-5 sm:p-6 no-break">
+            <div className="grid gap-5 lg:grid-cols-[220px_1fr] lg:items-center">
+              <div className="flex flex-col items-center text-center">
+                <div className="flex h-32 w-32 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#CDE7FF,transparent_30%),radial-gradient(circle_at_70%_70%,#8CC5FF,transparent_35%),#D9EDFF] text-[56px] shadow-inner">
+                  🌍
+                </div>
+                <div className="mt-3 rounded-full bg-white px-4 py-2 text-[13px] font-black text-[#2563EB]">
+                  통합적 성장형
+                </div>
+              </div>
+
+              <div>
+                <h3 className="break-keep text-[26px] font-black leading-[1.35] tracking-[-0.04em] text-[#1F2A7A] sm:text-[34px]">
+                  {analysis.futureTitle}
+                </h3>
+
+                <div className="mt-5 space-y-3">
+                  {analysis.futureBody.map((line) => (
+                    <p key={line} className="text-[17px] leading-8 text-slate-700">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-[24px] border border-[#E7D7A1] bg-white p-5 sm:p-6 no-break">
+            <div className="flex items-start gap-3">
+              <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF3D1] text-lg">
+                🧭
+              </div>
+              <div>
+                <h4 className="text-[20px] font-black tracking-[-0.03em] text-slate-900">추천 진로 방향</h4>
+                <p className="mt-1 text-[16px] font-semibold leading-7 text-slate-600">
+                  당신의 강점과 성향을 바탕으로 잘 맞는 진로 분야예요.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {pathInfo.map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-[20px] border border-[#E9DFC0] bg-[#FFFDF6] px-5 py-5 text-center shadow-[0_6px_18px_rgba(0,0,0,0.04)]"
+                >
+                  <div className="text-[28px]">{item.icon}</div>
+                  <div className="mt-3 text-[13px] font-black tracking-wide text-[#B7791F]">{item.label}</div>
+                  <div className="mt-2 break-keep text-[15px] font-bold leading-6 text-slate-800">{item.value}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 rounded-[18px] border border-slate-100 bg-[#FAFBFD] px-5 py-4">
+              <div className="text-[16px] font-black text-slate-900">추천 진로 방향 상세</div>
+              <p className="mt-2 text-[16px] font-semibold leading-8 text-slate-700">{finalReport.path}</p>
+            </div>
           </div>
         </SectionCard>
+
+        <div className="mt-5">
+          <SectionCard title="실제 대화 느낌" icon="💬" className="border-slate-200">
+            <div className="flex flex-col gap-3">
+              {analysis.chatScenario.map((item, index) => (
+                <ChatBubble key={`${item.type}-${index}`} type={item.type}>
+                  {item.text}
+                </ChatBubble>
+              ))}
+            </div>
+          </SectionCard>
+        </div>
+
+        <div className="print-hide mt-6 grid gap-3 sm:grid-cols-3">
+          <button
+            onClick={handleShare}
+            className="h-16 rounded-[20px] bg-[#F6D85F] text-[22px] font-black tracking-[-0.03em] text-slate-950 shadow-[0_10px_20px_rgba(246,216,95,0.28)] transition hover:-translate-y-0.5"
+          >
+            ⤴ 결과 공유하기
+          </button>
+
+          <button
+            onClick={handlePrint}
+            className="h-16 rounded-[20px] border border-slate-200 bg-white text-[22px] font-black tracking-[-0.03em] text-slate-900 transition hover:bg-slate-50"
+          >
+            🖨 결과 출력하기
+          </button>
+
+          <button
+            onClick={onRestart ?? (() => {})}
+            className="h-16 rounded-[20px] bg-[#02124D] text-[22px] font-black tracking-[-0.03em] text-white shadow-[0_10px_20px_rgba(2,18,77,0.18)] transition hover:-translate-y-0.5"
+          >
+            ↻ {restartLabel}
+          </button>
+        </div>
       </div>
 
-      <div className="print-hide mt-6 grid gap-3 sm:grid-cols-3">
-        <button
-          onClick={handleShare}
-          className="h-16 rounded-[20px] bg-[#F6D85F] text-[22px] font-black tracking-[-0.03em] text-slate-950 shadow-[0_10px_20px_rgba(246,216,95,0.28)] transition hover:-translate-y-0.5"
-        >
-          ⤴ 결과 공유하기
-        </button>
+      {/* PDF 전용: 총 2페이지 고정 압축 리포트 */}
+      <div className="print-result-fixed">
+        <section className="print-page">
+          <div className="flex h-full flex-col rounded-[24px] border border-[#EBD89A] bg-[#FFFDF6] p-5">
+            <header className="flex items-start justify-between gap-5 border-b border-[#EBD89A] pb-4">
+              <div>
+                <div className="text-[13px] font-black text-[#B7791F]">학습성향 분석 리포트</div>
+                <h1 className="print-title mt-2 break-keep font-black text-slate-950">
+                  {finalStudent.name || "학생"}님은
+                  <br />
+                  <span className="text-[#F59E0B]">{finalReport.title}</span>
+                </h1>
+                <p className="print-subtitle mt-2 font-black text-slate-500">
+                  {finalReport.subtitle} · {finalResolved.code} · {finalResolved.diffText}
+                </p>
+              </div>
 
-        <button
-          onClick={handlePrint}
-          className="h-16 rounded-[20px] border border-slate-200 bg-white text-[22px] font-black tracking-[-0.03em] text-slate-900 transition hover:bg-slate-50"
-        >
-          🖨 결과 출력하기
-        </button>
+              <div className="shrink-0 text-center">
+                <div className="flex h-28 w-28 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#FFE8C2,transparent_35%),radial-gradient(circle_at_70%_35%,#D9ECFF,transparent_35%),#F7F8FC] text-[52px] shadow-inner">
+                  {characterBadge.emoji}
+                </div>
+                <div className="mt-2 rounded-full bg-[#EAF2FF] px-3 py-1 text-[11px] font-black text-[#2563EB]">
+                  {characterBadge.nickname}
+                </div>
+              </div>
+            </header>
 
-        <button
-          onClick={onRestart ?? (() => {})}
-          className="h-16 rounded-[20px] bg-[#02124D] text-[22px] font-black tracking-[-0.03em] text-white shadow-[0_10px_20px_rgba(2,18,77,0.18)] transition hover:-translate-y-0.5"
-        >
-          ↻ {restartLabel}
-        </button>
+            <div className="mt-4 grid grid-cols-[1.1fr_0.9fr] gap-3">
+              <CompactInfoCard title="핵심 요약" tone="yellow">
+                <p>{finalReport.summary}</p>
+              </CompactInfoCard>
+
+              <CompactInfoCard title="학생 정보" tone="white">
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+                  <span>이름: {finalStudent.name || "-"}</span>
+                  <span>학년: {finalStudent.grade || "-"}</span>
+                  <span>학교: {finalStudent.school || "-"}</span>
+                  <span>연락처: {finalStudent.phone || "-"}</span>
+                </div>
+              </CompactInfoCard>
+            </div>
+
+            <div className="mt-3 print-grid-2">
+              <CompactInfoCard title="이 아이 실제 모습" tone="white">
+                <ul className="space-y-1.5">
+                  {analysis.traits.map((trait) => (
+                    <li key={trait}>• {trait}</li>
+                  ))}
+                </ul>
+              </CompactInfoCard>
+
+              <CompactInfoCard title="주의 패턴" tone="pink">
+                <ul className="space-y-1.5">
+                  {analysis.dangerPatterns.map((item) => (
+                    <li key={item}>• {item}</li>
+                  ))}
+                </ul>
+              </CompactInfoCard>
+            </div>
+
+            <div className="mt-3 print-grid-4">
+              {scorePairs.map((item) => (
+                <div key={item.label} className="rounded-[14px] border border-[#E9DFC0] bg-white p-3 text-center">
+                  <div className="text-[10px] font-black text-[#A47A22]">{item.label}</div>
+                  <div className="mt-1 text-[18px] font-black text-slate-950">{item.value}</div>
+                  <div className="print-small mt-1 font-bold text-slate-500">
+                    {item.left} / {item.right}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-3 print-grid-2">
+              <CompactInfoCard title="추천 학습 전략" tone="blue">
+                <p>{finalReport.strategy}</p>
+              </CompactInfoCard>
+
+              <CompactInfoCard title="보호자 가이드" tone="yellow">
+                <p>{finalReport.parent}</p>
+              </CompactInfoCard>
+            </div>
+
+            <div className="mt-3 print-grid-2">
+              <CompactInfoCard title="이대로 가면 위험" tone="pink">
+                <p>{finalReport.danger}</p>
+              </CompactInfoCard>
+
+              <CompactInfoCard title="아이에게 이렇게 말해보세요" tone="white">
+                <p className="font-black text-slate-900">“{finalReport.talk}”</p>
+              </CompactInfoCard>
+            </div>
+
+            <footer className="mt-auto flex items-center justify-between border-t border-[#EBD89A] pt-3 text-[10px] font-bold text-slate-400">
+              <span>학습성향검사 결과 리포트</span>
+              <span>1 / 2</span>
+            </footer>
+          </div>
+        </section>
+
+        <section className="print-page">
+          <div className="flex h-full flex-col rounded-[24px] border border-[#D8E6FF] bg-[#F8FBFF] p-5">
+            <header className="flex items-center justify-between gap-4 border-b border-[#D8E6FF] pb-4">
+              <div>
+                <div className="text-[13px] font-black text-[#2563EB]">상세 성장 설계</div>
+                <h2 className="mt-1 text-[26px] font-black tracking-[-0.05em] text-slate-950">
+                  {finalReport.title} 맞춤 상담 기록지
+                </h2>
+              </div>
+              <div className="rounded-full bg-white px-4 py-2 text-[12px] font-black text-slate-600">
+                {finalResolved.fullCode || finalResolved.code}
+              </div>
+            </header>
+
+            <div className="mt-4">
+              <CompactInfoCard title="미래 성장 시나리오" tone="blue">
+                <p className="mb-2 font-black text-[#1F2A7A]">{analysis.futureTitle}</p>
+                <ul className="space-y-1.5">
+                  {analysis.futureBody.map((line) => (
+                    <li key={line}>• {line}</li>
+                  ))}
+                </ul>
+              </CompactInfoCard>
+            </div>
+
+            <div className="mt-3 print-grid-4">
+              {pathInfo.map((item) => (
+                <div key={item.label} className="rounded-[14px] border border-[#E9DFC0] bg-white p-3 text-center">
+                  <div className="text-[22px]">{item.icon}</div>
+                  <div className="mt-1 text-[10px] font-black text-[#B7791F]">{item.label}</div>
+                  <div className="mt-1 break-keep text-[11px] font-bold leading-4 text-slate-800">
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-3">
+              <CompactInfoCard title="추천 진로 방향 상세" tone="white">
+                <p>{finalReport.path}</p>
+              </CompactInfoCard>
+            </div>
+
+            <div className="mt-3 print-grid-2">
+              <CompactInfoCard title="지금 당장 해야 할 1가지" tone="yellow">
+                <p className="font-black text-slate-950">{analysis.actionText}</p>
+              </CompactInfoCard>
+
+              <CompactInfoCard title="실제 대화 느낌" tone="white">
+                <div className="space-y-1.5">
+                  {analysis.chatScenario.slice(0, 4).map((item, index) => (
+                    <p key={`${item.type}-${index}`}>
+                      <b>{item.type === "parent" ? "보호자" : "학생"}</b> · {item.text}
+                    </p>
+                  ))}
+                </div>
+              </CompactInfoCard>
+            </div>
+
+            <div className="mt-3 grid grid-cols-[1fr_0.72fr] gap-3">
+              <section className="no-break rounded-[18px] border border-slate-200 bg-white p-4">
+                <h3 className="text-[15px] font-black text-slate-950">상담 코멘트</h3>
+                <div className="mt-3 h-[72px] rounded-[14px] border border-dashed border-slate-300 bg-slate-50" />
+                <div className="mt-3 h-[72px] rounded-[14px] border border-dashed border-slate-300 bg-slate-50" />
+              </section>
+
+              <section className="no-break rounded-[18px] border border-slate-200 bg-white p-4">
+                <h3 className="text-[15px] font-black text-slate-950">상담 확인</h3>
+                <div className="mt-4 space-y-3 text-[12px] font-bold text-slate-600">
+                  <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-2">
+                    <span>상담일</span>
+                    <span className="text-slate-300">____년 __월 __일</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-2">
+                    <span>담당자</span>
+                    <span className="text-slate-300">____________</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-2">
+                    <span>서명</span>
+                    <span className="text-slate-300">____________</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <footer className="mt-auto flex items-center justify-between border-t border-[#D8E6FF] pt-3 text-[10px] font-bold text-slate-400">
+              <span>관리자 화면에서도 동일한 ResultScreen payload 기준으로 출력됩니다.</span>
+              <span>2 / 2</span>
+            </footer>
+          </div>
+        </section>
       </div>
     </div>
   );
