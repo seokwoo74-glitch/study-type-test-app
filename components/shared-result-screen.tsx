@@ -2616,7 +2616,7 @@ export default function ResultScreen({
             </div>
 
             <footer className="mt-auto flex items-center justify-between border-t border-[#D8E6FF] pt-3 text-[10px] font-bold text-slate-400">
-              <span>관리자 화면에서도 동일한 ResultScreen payload 기준으로 출력됩니다.</span>
+              <span>학습성향검사 결과 리포트</span>
               <span>2 / 2</span>
             </footer>
           </div>
