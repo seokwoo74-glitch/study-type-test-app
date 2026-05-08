@@ -246,3 +246,24 @@ body {
   }
 
 }
+
+@media print {
+  html,
+  body {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  #result-print-area {
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) scale(0.65) !important;
+    transform-origin: top center !important;
+    width: 155% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
