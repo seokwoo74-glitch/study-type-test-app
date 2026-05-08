@@ -141,3 +141,9 @@ body {
     display: none !important;
   }
 }
+
+@media screen {
+  .print-cover {
+    display: none !important;
+  }
+}
