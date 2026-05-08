@@ -147,3 +147,20 @@ body {
     display: none !important;
   }
 }
+
+@media print {
+  #result-print-area {
+    transform: scale(0.75);
+    transform-origin: top center;
+    width: 133%;
+  }
+
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  .no-break {
+    break-inside: avoid;
+  }
+}
