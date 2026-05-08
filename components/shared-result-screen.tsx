@@ -2135,14 +2135,15 @@ export default function ResultScreen({
 
           html,
           body {
-            width: auto !important;
-            min-width: 0 !important;
+            width: 100% !important;
+            height: auto !important;
             min-height: 0 !important;
             margin: 0 !important;
             padding: 0 !important;
             background: white !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+            overflow: visible !important;
           }
 
           body {
@@ -2160,44 +2161,60 @@ export default function ResultScreen({
 
           #result-print-area {
             position: static !important;
-            inset: auto !important;
-            left: auto !important;
-            top: auto !important;
-            right: auto !important;
-            bottom: auto !important;
             display: block !important;
             width: 100% !important;
             max-width: none !important;
             min-width: 0 !important;
             height: auto !important;
-            margin: 0 auto !important;
+            margin: 0 !important;
             padding: 0 !important;
             background: white !important;
             transform: none !important;
-            transform-origin: center top !important;
+            overflow: visible !important;
           }
 
           .screen-result-view,
+          .screen-result-view *,
           .print-hide,
+          .print-hide *,
           button {
             display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            max-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
           }
 
           .print-result-fixed {
             display: block !important;
+            visibility: visible !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
             width: 100% !important;
-            max-width: 196mm !important;
-            margin: 0 auto !important;
+            max-width: none !important;
+            margin: 0 !important;
             padding: 0 !important;
             color: #0f172a !important;
+            background: white !important;
             transform: none !important;
+            overflow: visible !important;
+          }
+
+          .print-result-fixed,
+          .print-result-fixed * {
+            visibility: visible !important;
           }
 
           .print-page {
             display: block !important;
-            width: 196mm !important;
-            height: 283mm !important;
-            min-height: 283mm !important;
+            width: 190mm !important;
+            height: 278mm !important;
+            min-height: 278mm !important;
+            max-height: 278mm !important;
             margin: 0 auto !important;
             padding: 0 !important;
             overflow: hidden !important;
@@ -2210,8 +2227,10 @@ export default function ResultScreen({
           .print-page > div {
             width: 100% !important;
             height: 100% !important;
+            min-height: 0 !important;
             box-sizing: border-box !important;
-            padding: 7mm !important;
+            padding: 6mm !important;
+            margin: 0 !important;
           }
 
           .print-page:last-child {
@@ -2226,45 +2245,44 @@ export default function ResultScreen({
           }
 
           .print-title {
-            font-size: 27px !important;
-            line-height: 1.12 !important;
+            font-size: 25px !important;
+            line-height: 1.08 !important;
             letter-spacing: -0.06em !important;
           }
 
           .print-subtitle {
-            font-size: 14px !important;
-            line-height: 1.42 !important;
+            font-size: 13px !important;
+            line-height: 1.35 !important;
           }
 
           .print-body {
-            font-size: 12.2px !important;
-            line-height: 1.52 !important;
+            font-size: 11.5px !important;
+            line-height: 1.42 !important;
           }
 
           .print-small {
-            font-size: 10px !important;
-            line-height: 1.38 !important;
+            font-size: 9.5px !important;
+            line-height: 1.3 !important;
           }
 
           .print-compact-card {
-            padding: 9px !important;
-            border-radius: 14px !important;
+            padding: 8px !important;
+            border-radius: 13px !important;
             box-shadow: none !important;
           }
 
           .print-grid-2 {
             display: grid !important;
             grid-template-columns: 1fr 1fr !important;
-            gap: 8px !important;
+            gap: 7px !important;
           }
 
           .print-grid-4 {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
-            gap: 7px !important;
+            gap: 6px !important;
           }
-        }
-      `}</style>
+        }      `}</style>
 
       {/* 화면용: 기존 카카오 느낌 결과 화면 */}
       <div className="screen-result-view">
@@ -2299,7 +2317,7 @@ export default function ResultScreen({
             </div>
 
             <div className="min-w-0">
-              <h1 className="break-keep text-[34px] font-black tracking-[-0.05em] text-[#09133F] sm:text-[52px]">
+              <h1 className="break-keep text-[34px] font-black tracking-[-0.05em] text-[#09133F] sm:text-[44px]">
                 {finalReport.title}
               </h1>
 
@@ -2464,7 +2482,7 @@ export default function ResultScreen({
       {/* PDF 전용: 총 2페이지 고정 압축 리포트 */}
       <div className="print-result-fixed">
         <section className="print-page">
-          <div className="flex h-full flex-col rounded-[24px] border border-[#EBD89A] bg-[#FFFDF6] p-5">
+          <div className="flex h-full flex-col rounded-[24px] border border-[#EBD89A] bg-[#FFFDF6] p-4">
             <header className="flex items-start justify-between gap-5 border-b border-[#EBD89A] pb-4">
               <div>
                 <div className="text-[13px] font-black text-[#B7791F]">학습성향 분석 리포트</div>
@@ -2479,7 +2497,7 @@ export default function ResultScreen({
               </div>
 
               <div className="shrink-0 text-center">
-                <div className="flex h-28 w-28 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#FFE8C2,transparent_35%),radial-gradient(circle_at_70%_35%,#D9ECFF,transparent_35%),#F7F8FC] text-[52px] shadow-inner">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#FFE8C2,transparent_35%),radial-gradient(circle_at_70%_35%,#D9ECFF,transparent_35%),#F7F8FC] text-[52px] shadow-inner">
                   {characterBadge.emoji}
                 </div>
                 <div className="mt-2 rounded-full bg-[#EAF2FF] px-3 py-1 text-[11px] font-black text-[#2563EB]">
@@ -2561,7 +2579,7 @@ export default function ResultScreen({
         </section>
 
         <section className="print-page">
-          <div className="flex h-full flex-col rounded-[24px] border border-[#D8E6FF] bg-[#F8FBFF] p-5">
+          <div className="flex h-full flex-col rounded-[24px] border border-[#D8E6FF] bg-[#F8FBFF] p-4">
             <header className="flex items-center justify-between gap-4 border-b border-[#D8E6FF] pb-4">
               <div>
                 <div className="text-[13px] font-black text-[#2563EB]">상세 성장 설계</div>
