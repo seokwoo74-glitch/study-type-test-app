@@ -2108,7 +2108,88 @@ export default function ResultScreen({
   };
 
   const handlePrint = () => {
-    window.print();
+    if (typeof window === "undefined") return;
+
+    const printArea = document.getElementById("result-print-area");
+
+    if (!printArea) {
+      window.print();
+      return;
+    }
+
+    const printWindow = window.open("", "_blank", "width=960,height=900");
+
+    if (!printWindow) {
+      alert("새 창이 차단됐어요. 팝업 허용 후 다시 눌러주세요.");
+      window.print();
+      return;
+    }
+
+    const title = `${finalStudent.name || "학생"} 학습성향 검사 결과`;
+
+    printWindow.document.open();
+    printWindow.document.write(`<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${title}</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      color: #0f172a;
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body { padding: 0; }
+    .print-hide, button { display: none !important; }
+    #result-print-area {
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      background: white !important;
+    }
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    @media print {
+      html, body {
+        width: 210mm;
+        min-height: 297mm;
+        background: white !important;
+      }
+      #result-print-area {
+        position: static !important;
+        transform: none !important;
+      }
+      .print-result-fixed {
+        display: block !important;
+      }
+      .screen-result {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  ${printArea.outerHTML}
+  <script>
+    window.onload = function () {
+      setTimeout(function () {
+        window.focus();
+        window.print();
+      }, 350);
+    };
+  <\/script>
+</body>
+</html>`);
+    printWindow.document.close();
   };
 
   const scorePairs = [
@@ -2467,7 +2548,7 @@ export default function ResultScreen({
             onClick={handlePrint}
             className="h-16 rounded-[20px] border border-slate-200 bg-white text-[22px] font-black tracking-[-0.03em] text-slate-900 transition hover:bg-slate-50"
           >
-            🖨 결과 출력하기
+            💾 PDF 저장하기
           </button>
 
           <button
