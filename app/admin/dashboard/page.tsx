@@ -557,6 +557,9 @@ function AdminResultPreview({
   isDirty,
   saving,
   saveMessage,
+  aiGenerating,
+  aiMessage,
+  onGenerateAiComment,
   onSave,
 }: {
   row: Row;
@@ -567,6 +570,9 @@ function AdminResultPreview({
   isDirty: boolean;
   saving: boolean;
   saveMessage: string;
+  aiGenerating: boolean;
+  aiMessage: string;
+  onGenerateAiComment: () => void;
   onSave: () => void;
 }) {
   const payload = getPayloadFromRow(row);
@@ -679,19 +685,40 @@ function AdminResultPreview({
             </h3>
           </div>
 
-          <button
-            type="button"
-            onClick={onSave}
-            disabled={!isDirty || saving}
-            className={`rounded-2xl px-5 py-3 text-sm font-bold text-white transition ${
-              !isDirty || saving
-                ? "cursor-not-allowed bg-slate-300"
-                : "bg-slate-900 hover:translate-y-[-1px]"
-            }`}
-          >
-            {saving ? "저장 중..." : "저장"}
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={onGenerateAiComment}
+              disabled={aiGenerating}
+              className={`rounded-2xl px-5 py-3 text-sm font-bold text-white transition ${
+                aiGenerating
+                  ? "cursor-not-allowed bg-indigo-300"
+                  : "bg-indigo-600 hover:translate-y-[-1px] hover:bg-indigo-700"
+              }`}
+            >
+              {aiGenerating ? "AI 작성 중..." : "🤖 AI 코멘트 생성"}
+            </button>
+
+            <button
+              type="button"
+              onClick={onSave}
+              disabled={!isDirty || saving}
+              className={`rounded-2xl px-5 py-3 text-sm font-bold text-white transition ${
+                !isDirty || saving
+                  ? "cursor-not-allowed bg-slate-300"
+                  : "bg-slate-900 hover:translate-y-[-1px]"
+              }`}
+            >
+              {saving ? "저장 중..." : "메모 저장"}
+            </button>
+          </div>
         </div>
+
+        {aiMessage ? (
+          <div className="mt-5 rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-sm font-semibold text-indigo-700">
+            {aiMessage}
+          </div>
+        ) : null}
 
         <div className="mt-5 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
           <div>
@@ -751,6 +778,7 @@ export default function AdminDashboardPage() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | number | null>(null);
   const [typeFilter, setTypeFilter] = useState<"all" | "elementary" | "high">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "waiting" | "done" | "today">("all");
 
   const [password, setPassword] = useState("");
   const [unlocked, setUnlocked] = useState(false);
@@ -759,8 +787,9 @@ export default function AdminDashboardPage() {
   const [editMemo, setEditMemo] = useState("");
   const [editConsulted, setEditConsulted] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [aiGenerating, setAiGenerating] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiMessage, setAiMessage] = useState("");
 
   const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "1234";
 
@@ -863,6 +892,25 @@ export default function AdminDashboardPage() {
 
       if (!matchesType) return false;
 
+      const created = row.created_at ? new Date(row.created_at) : null;
+      const now = new Date();
+      const isToday =
+        created &&
+        created.getFullYear() === now.getFullYear() &&
+        created.getMonth() === now.getMonth() &&
+        created.getDate() === now.getDate();
+
+      const matchesStatus =
+        statusFilter === "all"
+          ? true
+          : statusFilter === "waiting"
+          ? !row.is_consulted
+          : statusFilter === "done"
+          ? Boolean(row.is_consulted)
+          : Boolean(isToday);
+
+      if (!matchesStatus) return false;
+
       if (!q) return true;
 
       const fields = [
@@ -879,7 +927,7 @@ export default function AdminDashboardPage() {
 
       return fields.some((value) => value.toLowerCase().includes(q));
     });
-  }, [rows, query, typeFilter]);
+  }, [rows, query, typeFilter, statusFilter]);
 
   const selectedRow = useMemo(() => {
     return (
@@ -893,6 +941,21 @@ export default function AdminDashboardPage() {
     () => rows.filter((row) => Boolean(row.is_consulted)).length,
     [rows]
   );
+
+  const todayCount = useMemo(() => {
+    const now = new Date();
+    return rows.filter((row) => {
+      if (!row.created_at) return false;
+      const created = new Date(row.created_at);
+      return (
+        created.getFullYear() === now.getFullYear() &&
+        created.getMonth() === now.getMonth() &&
+        created.getDate() === now.getDate()
+      );
+    }).length;
+  }, [rows]);
+
+  const waitingCount = rows.length - consultedCount;
 
   useEffect(() => {
     if (!filteredRows.length) {
@@ -953,7 +1016,7 @@ export default function AdminDashboardPage() {
 
     try {
       setAiGenerating(true);
-      setSaveMessage("AI 상담 코멘트를 생성하는 중입니다...");
+      setAiMessage("AI가 상담 코멘트를 작성하고 있어요...");
 
       const payload = getPayloadFromRow(selectedRow);
 
@@ -962,24 +1025,23 @@ export default function AdminDashboardPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          payload,
-          memo: editMemo,
-        }),
+        body: JSON.stringify({ payload }),
       });
 
       const data = await res.json();
 
       if (!res.ok || !data?.ok) {
-        throw new Error(data?.error || "AI 상담 코멘트 생성에 실패했어요.");
+        throw new Error(data?.error || "AI 코멘트 생성에 실패했어요.");
       }
 
-      setEditMemo(String(data.comment || ""));
-      setSaveMessage("AI 상담 코멘트가 생성되었습니다. 확인 후 저장해 주세요.");
+      setEditMemo(String(data.comment || "").trim());
+      setAiMessage("AI 상담 코멘트를 메모칸에 작성했어요. 확인 후 저장해 주세요.");
     } catch (err) {
       console.error(err);
-      setSaveMessage(
-        err instanceof Error ? err.message : "AI 상담 코멘트 생성에 실패했어요."
+      setAiMessage(
+        err instanceof Error
+          ? err.message
+          : "AI 코멘트 생성 중 오류가 발생했어요."
       );
     } finally {
       setAiGenerating(false);
@@ -1103,8 +1165,10 @@ export default function AdminDashboardPage() {
               </p>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-4">
+            <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
               <InfoMini label="전체 검사" value={`${rows.length}건`} />
+              <InfoMini label="오늘 검사" value={`${todayCount}건`} />
+              <InfoMini label="상담 전" value={`${waitingCount}건`} />
               <InfoMini label="상담 완료" value={`${consultedCount}건`} />
               <InfoMini
                 label="검색 결과"
@@ -1164,6 +1228,56 @@ export default function AdminDashboardPage() {
                 }`}
               >
                 고등용
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2 border-t border-slate-100 pt-3">
+              <button
+                type="button"
+                onClick={() => setStatusFilter("all")}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  statusFilter === "all"
+                    ? "bg-indigo-600 text-white"
+                    : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
+                }`}
+              >
+                상태 전체
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setStatusFilter("waiting")}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  statusFilter === "waiting"
+                    ? "bg-amber-400 text-slate-900"
+                    : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+                }`}
+              >
+                상담 전
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setStatusFilter("done")}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  statusFilter === "done"
+                    ? "bg-emerald-500 text-white"
+                    : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                }`}
+              >
+                상담 완료
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setStatusFilter("today")}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  statusFilter === "today"
+                    ? "bg-slate-900 text-white"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                오늘 검사
               </button>
             </div>
 
@@ -1263,7 +1377,7 @@ export default function AdminDashboardPage() {
               </div>
             </aside>
 
-<section className="min-w-0 space-y-5">
+<section className="min-w-0">
   {selectedRow?.result_payload ? (
     (() => {
       const SITE_URL =
@@ -1271,106 +1385,16 @@ export default function AdminDashboardPage() {
         "https://study-type-test-app-zbmw.vercel.app";
 
       return (
-        <>
-          <section className="rounded-[28px] border border-white/70 bg-white/95 p-5 shadow-sm">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-500">
-                  AI Consultation Memo
-                </p>
-                <h2 className="mt-1 text-2xl font-black text-slate-900">
-                  AI 상담 코멘트 자동 생성
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-slate-500">
-                  선택된 학생의 결과 유형, 점수, 주의 패턴을 바탕으로 상담 메모 초안을 만들어줘요.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={handleGenerateAiComment}
-                  disabled={aiGenerating}
-                  className={`rounded-2xl px-5 py-3 text-sm font-black text-white transition ${
-                    aiGenerating
-                      ? "cursor-not-allowed bg-slate-300"
-                      : "bg-indigo-600 hover:translate-y-[-1px] hover:bg-indigo-700"
-                  }`}
-                >
-                  {aiGenerating ? "생성 중..." : "🤖 AI 코멘트 생성"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={!isDirty || saving}
-                  className={`rounded-2xl px-5 py-3 text-sm font-black text-white transition ${
-                    !isDirty || saving
-                      ? "cursor-not-allowed bg-slate-300"
-                      : "bg-slate-900 hover:translate-y-[-1px]"
-                  }`}
-                >
-                  {saving ? "저장 중..." : "메모 저장"}
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_180px]">
-              <textarea
-                value={editMemo}
-                onChange={(e) => setEditMemo(e.target.value)}
-                placeholder="AI 상담 코멘트가 여기에 생성됩니다. 직접 수정한 뒤 메모 저장을 눌러주세요."
-                className="min-h-[180px] w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-800 outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
-              />
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-black text-slate-900">상담 상태</p>
-                <button
-                  type="button"
-                  onClick={() => setEditConsulted(!editConsulted)}
-                  className={`mt-3 w-full rounded-full px-4 py-2 text-sm font-bold transition ${
-                    editConsulted
-                      ? "bg-emerald-500 text-white"
-                      : "bg-slate-200 text-slate-700"
-                  }`}
-                >
-                  {editConsulted ? "상담 완료" : "상담 전"}
-                </button>
-
-                <p className="mt-4 text-xs leading-5 text-slate-500">
-                  AI 코멘트는 초안입니다. 실제 상담 상황에 맞게 꼭 확인하고 수정해 주세요.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <span
-                className={`rounded-full px-3 py-1 text-xs font-bold ${
-                  isDirty
-                    ? "bg-amber-100 text-amber-700"
-                    : "bg-emerald-100 text-emerald-700"
-                }`}
-              >
-                {isDirty ? "저장되지 않은 변경 있음" : "저장 완료 상태"}
-              </span>
-
-              {saveMessage ? (
-                <span className="text-sm font-medium text-slate-600">{saveMessage}</span>
-              ) : null}
-            </div>
-          </section>
-
-          <ResultScreen
-            payload={
-              selectedRow.result_payload as React.ComponentProps<typeof ResultScreen>["payload"]
-            }
-            shareUrl={`${SITE_URL}/result/${selectedRow.id}`}
-            restartLabel="목록으로 돌아가기"
-            onRestart={() => {
-              window.location.reload();
-            }}
-          />
-        </>
+        <ResultScreen
+          payload={
+            selectedRow.result_payload as React.ComponentProps<typeof ResultScreen>["payload"]
+          }
+          shareUrl={`${SITE_URL}/result/${selectedRow.id}`}
+          restartLabel="목록으로 돌아가기"
+          onRestart={() => {
+            window.location.reload();
+          }}
+        />
       );
     })()
   ) : selectedRow ? (
