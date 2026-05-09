@@ -83,7 +83,7 @@ function fallbackComment(payload: ResultPayload) {
     payload.result?.danger ||
     "목표가 막연하면 실천력이 떨어질 수 있으므로 작은 목표부터 확인하는 것이 좋습니다.";
 
-  return `[AI 상담 코멘트 초안]
+  return `[AI 상담 코멘트]
 
 1. 핵심 요약
 ${name} 학생은 「${title}」 성향으로 보입니다. ${summary}
@@ -140,7 +140,7 @@ export async function POST(req: Request) {
 - 상담사가 바로 읽을 수 있게 제목과 번호를 붙인다.
 
 출력 형식:
-[AI 상담 코멘트 초안]
+[AI 상담 코멘트]
 
 1. 한 줄 핵심
 - 학생을 한 문장으로 요약
