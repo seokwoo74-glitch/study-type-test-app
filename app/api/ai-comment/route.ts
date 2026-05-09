@@ -8,10 +8,11 @@ type ResultPayload = {
     phone?: string;
   };
   result?: {
-    title?: string;
-    subtitle?: string;
+    key?: string;
     code?: string;
     fullCode?: string;
+    title?: string;
+    subtitle?: string;
     summary?: string;
     strategy?: string;
     parent?: string;
@@ -66,100 +67,166 @@ function compactPayload(payload: ResultPayload) {
   };
 }
 
+function fallbackComment(payload: ResultPayload) {
+  const name = payload.student?.name || "학생";
+  const title = payload.result?.title || "학습성향 분석 결과";
+  const summary =
+    payload.result?.summary ||
+    "현재 응답을 바탕으로 학습 성향과 전략을 정리할 필요가 있습니다.";
+  const strategy =
+    payload.result?.strategy ||
+    "기본 학습 루틴을 안정화하고 강점 과목 중심으로 성취 경험을 쌓는 것이 좋습니다.";
+  const parent =
+    payload.result?.parent ||
+    "학생의 현재 방식과 정서를 함께 살피며 무리하지 않는 점검이 필요합니다.";
+  const danger =
+    payload.result?.danger ||
+    "목표가 막연하면 실천력이 떨어질 수 있으므로 작은 목표부터 확인하는 것이 좋습니다.";
+
+  return `[AI 상담 코멘트 초안]
+
+1. 핵심 요약
+${name} 학생은 「${title}」 성향으로 보입니다. ${summary}
+
+2. 상담 시 강조 포인트
+현재 결과에서 가장 중요한 부분은 강점을 살리되, 학습 루틴이 흔들리지 않도록 관리하는 것입니다. ${strategy}
+
+3. 학부모 안내 문장
+학부모님께는 “아이의 성향을 바꾸려고 하기보다, 지금 가진 강점이 실제 성과로 이어지도록 환경과 루틴을 함께 잡아주는 것이 중요합니다.”라고 안내하면 좋겠습니다. ${parent}
+
+4. 주의할 부분
+${danger}
+
+5. 다음 실행 제안
+이번 상담 후에는 한 번에 많은 것을 바꾸기보다, 2주 동안 실천할 과목 1개와 습관 1개를 정해 확인하는 방식이 적합합니다.`;
+}
+
 export async function POST(req: Request) {
   try {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
       return NextResponse.json(
-        { ok: false, error: "OPENAI_API_KEY가 설정되어 있지 않습니다." },
+        { ok: false, error: "OPENAI_API_KEY is not set" },
         { status: 500 }
       );
     }
 
     const body = await req.json();
-    const payload = (body?.payload ?? {}) as ResultPayload;
-    const existingMemo = String(body?.memo ?? "").trim();
+    const payload = (body?.payload || body?.result_payload || {}) as ResultPayload;
 
-    const prompt = `
-너는 학습성향검사 결과를 바탕으로 학부모 상담 메모를 작성하는 전문 상담 코치야.
-아래 검사 결과를 바탕으로 관리자 메모칸에 바로 붙여넣을 수 있는 상담 코멘트를 작성해줘.
+    if (!payload || typeof payload !== "object") {
+      return NextResponse.json(
+        { ok: false, error: "결과 데이터가 없습니다." },
+        { status: 400 }
+      );
+    }
 
-작성 규칙:
-- 한국어로 작성
-- 과장하거나 단정하지 말고, 상담용 문장으로 부드럽게 작성
-- 학생을 비난하지 말 것
-- 학부모에게 바로 설명할 수 있게 실용적으로 작성
-- 너무 길지 않게 작성하되, 상담 기록으로 충분히 쓸 수 있게 작성
-- 형식은 아래 5개 섹션으로 고정
+    const compact = compactPayload(payload);
 
-[상담 요약]
-[강점]
-[주의할 점]
-[학습 전략]
-[부모 코칭 멘트]
+    const systemPrompt = `
+너는 학원/교육상담 현장에서 사용하는 전문 상담 코멘트 작성자다.
+목표는 관리자가 학부모 상담 전에 바로 읽고 사용할 수 있는 고급 상담 메모를 만드는 것이다.
 
-기존 메모가 있다면 참고만 하고, 더 정리된 최종 메모로 다시 작성해줘.
+반드시 지킬 규칙:
+- 한국어로 작성한다.
+- 과장, 단정, 진단 표현을 피한다.
+- "무조건", "반드시 성공", "문제아" 같은 표현 금지.
+- 학부모에게 전달 가능한 부드럽고 전문적인 말투.
+- 학생의 강점을 먼저 인정하고, 이후 보완점을 제시한다.
+- 결과 유형명, 점수, 전략, 위험 포인트를 반영한다.
+- 너무 길지 않게, 실제 메모칸에 넣기 좋은 분량으로 작성한다.
+- 마크다운 표는 쓰지 않는다.
+- 상담사가 바로 읽을 수 있게 제목과 번호를 붙인다.
+
+출력 형식:
+[AI 상담 코멘트 초안]
+
+1. 한 줄 핵심
+- 학생을 한 문장으로 요약
+
+2. 상담 요약
+- 현재 학습성향을 3~4문장으로 설명
+
+3. 학부모 안내 포인트
+- 학부모에게 말하기 좋은 문장 3개
+
+4. 학습 전략
+- 오늘부터 적용할 수 있는 실행 전략 3개
+
+5. 주의할 점
+- 상담 시 조심해야 할 부분 2~3개
+
+6. 다음 상담 전 확인할 것
+- 2주 뒤 확인할 체크포인트 3개
+`.trim();
+
+    const userPrompt = `
+아래 검사 결과를 바탕으로 상담 메모를 작성해줘.
 
 검사 결과 JSON:
-${JSON.stringify(compactPayload(payload), null, 2)}
-
-기존 메모:
-${existingMemo || "없음"}
+${JSON.stringify(compact, null, 2)}
 `.trim();
 
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-        input: prompt,
-        temperature: 0.4,
-        max_output_tokens: 900,
+        model: "gpt-4.1-mini",
+        input: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+          {
+            role: "user",
+            content: userPrompt,
+          },
+        ],
+        temperature: 0.65,
+        max_output_tokens: 1200,
       }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("[api/ai-comment] OpenAI error:", data);
+      const message =
+        data?.error?.message ||
+        data?.message ||
+        "AI 코멘트 생성에 실패했습니다.";
+
       return NextResponse.json(
-        {
-          ok: false,
-          error:
-            data?.error?.message || "AI 상담 코멘트 생성 중 오류가 발생했습니다.",
-        },
+        { ok: false, error: message },
         { status: response.status }
       );
     }
 
     const comment =
-      typeof data?.output_text === "string"
-        ? data.output_text
-        : Array.isArray(data?.output)
-        ? data.output
-            .flatMap((item: any) => item?.content ?? [])
-            .map((content: any) => content?.text ?? "")
-            .join("\n")
-            .trim()
-        : "";
+      data?.output_text ||
+      data?.output?.[0]?.content?.[0]?.text ||
+      data?.output?.[1]?.content?.[0]?.text ||
+      "";
 
-    if (!comment) {
-      return NextResponse.json(
-        { ok: false, error: "AI 응답을 읽지 못했습니다." },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ ok: true, comment });
+    return NextResponse.json({
+      ok: true,
+      comment: String(comment || fallbackComment(payload)).trim(),
+    });
   } catch (error) {
     console.error("[api/ai-comment] unexpected error:", error);
+
     return NextResponse.json(
-      { ok: false, error: "AI 상담 코멘트 생성 요청에 실패했습니다." },
-      { status: 400 }
+      {
+        ok: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "AI 코멘트 생성 중 알 수 없는 오류가 발생했습니다.",
+      },
+      { status: 500 }
     );
   }
 }
