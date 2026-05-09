@@ -1377,7 +1377,7 @@ export default function AdminDashboardPage() {
               </div>
             </aside>
 
-<section className="min-w-0">
+<section className="min-w-0 space-y-5">
   {selectedRow?.result_payload ? (
     (() => {
       const SITE_URL =
@@ -1385,16 +1385,120 @@ export default function AdminDashboardPage() {
         "https://study-type-test-app-zbmw.vercel.app";
 
       return (
-        <ResultScreen
-          payload={
-            selectedRow.result_payload as React.ComponentProps<typeof ResultScreen>["payload"]
-          }
-          shareUrl={`${SITE_URL}/result/${selectedRow.id}`}
-          restartLabel="목록으로 돌아가기"
-          onRestart={() => {
-            window.location.reload();
-          }}
-        />
+        <>
+          <ResultScreen
+            payload={
+              selectedRow.result_payload as React.ComponentProps<typeof ResultScreen>["payload"]
+            }
+            shareUrl={`${SITE_URL}/result/${selectedRow.id}`}
+            restartLabel="목록으로 돌아가기"
+            onRestart={() => {
+              window.location.reload();
+            }}
+          />
+
+          <section className="rounded-[28px] border border-indigo-100 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-indigo-600">
+                  AI 상담 코멘트
+                </p>
+                <h3 className="mt-1 text-2xl font-black text-slate-900">
+                  상담 메모 자동 생성
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  선택된 학생의 결과를 바탕으로 학부모 상담용 코멘트를 자동 작성합니다.
+                  생성 후 내용을 확인하고 필요한 부분만 수정한 뒤 저장해 주세요.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleGenerateAiComment}
+                  disabled={aiGenerating}
+                  className={`rounded-2xl px-5 py-3 text-sm font-black text-white transition ${
+                    aiGenerating
+                      ? "cursor-not-allowed bg-indigo-300"
+                      : "bg-indigo-600 hover:translate-y-[-1px] hover:bg-indigo-700"
+                  }`}
+                >
+                  {aiGenerating ? "AI 작성 중..." : "🤖 AI 코멘트 생성"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={!isDirty || saving}
+                  className={`rounded-2xl px-5 py-3 text-sm font-black text-white transition ${
+                    !isDirty || saving
+                      ? "cursor-not-allowed bg-slate-300"
+                      : "bg-slate-900 hover:translate-y-[-1px]"
+                  }`}
+                >
+                  {saving ? "저장 중..." : "메모 저장"}
+                </button>
+              </div>
+            </div>
+
+            {aiMessage ? (
+              <div className="mt-5 rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-sm font-bold text-indigo-700">
+                {aiMessage}
+              </div>
+            ) : null}
+
+            {saveMessage ? (
+              <div className="mt-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700">
+                {saveMessage}
+              </div>
+            ) : null}
+
+            <div className="mt-5 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+              <div>
+                <p className="text-sm font-bold text-slate-900">상담 완료 처리</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  상담을 끝냈다면 완료 상태로 바꿔둘 수 있어요.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setEditConsulted(!editConsulted)}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  editConsulted
+                    ? "bg-emerald-500 text-white"
+                    : "bg-slate-200 text-slate-700"
+                }`}
+              >
+                {editConsulted ? "상담 완료" : "상담 전"}
+              </button>
+            </div>
+
+            <div className="mt-5">
+              <label className="text-sm font-semibold text-slate-600">
+                상담 메모
+              </label>
+              <textarea
+                value={editMemo}
+                onChange={(e) => setEditMemo(e.target.value)}
+                placeholder="AI 코멘트를 생성하거나 직접 상담 내용을 입력하세요."
+                className="mt-2 min-h-[240px] w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-800 outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
+              />
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-bold ${
+                  isDirty
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-emerald-100 text-emerald-700"
+                }`}
+              >
+                {isDirty ? "저장되지 않은 변경 있음" : "저장 완료 상태"}
+              </span>
+            </div>
+          </section>
+        </>
       );
     })()
   ) : selectedRow ? (
