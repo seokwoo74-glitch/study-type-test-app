@@ -2126,6 +2126,12 @@ export default function ResultScreen({
     }
 
     const title = `${finalStudent.name || "학생"} 학습성향 검사 결과`;
+    const origin = window.location.origin;
+    const headStyles = Array.from(
+      document.querySelectorAll('link[rel="stylesheet"], style')
+    )
+      .map((node) => node.outerHTML)
+      .join("\n");
 
     printWindow.document.open();
     printWindow.document.write(`<!doctype html>
@@ -2133,48 +2139,63 @@ export default function ResultScreen({
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="${origin}/" />
   <title>${title}</title>
+  ${headStyles}
   <style>
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     html, body {
-      margin: 0;
-      padding: 0;
-      background: #ffffff;
-      color: #0f172a;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      color: #0f172a !important;
       font-family: Arial, Helvetica, sans-serif;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
     }
-    body { padding: 0; }
-    .print-hide, button { display: none !important; }
+    body { width: 100% !important; overflow: visible !important; }
+    .screen-result-view, .screen-result-view *, .print-hide, .print-hide *, button {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      max-height: 0 !important;
+      overflow: hidden !important;
+    }
     #result-print-area {
+      position: static !important;
+      display: block !important;
       width: 100% !important;
       max-width: none !important;
-      margin: 0 auto !important;
+      min-width: 0 !important;
+      height: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: white !important;
+      transform: none !important;
+      overflow: visible !important;
+    }
+    .print-result-fixed {
+      display: block !important;
+      width: 100% !important;
+      margin: 0 !important;
       padding: 0 !important;
       background: white !important;
     }
-    @page {
-      size: A4;
-      margin: 0;
+    .print-page {
+      width: 196mm !important;
+      height: 283mm !important;
+      min-height: 283mm !important;
+      max-height: 283mm !important;
+      margin: 0 auto !important;
+      padding: 7mm !important;
+      overflow: hidden !important;
+      page-break-after: always !important;
+      break-after: page !important;
+      border-radius: 6mm !important;
     }
-    @media print {
-      html, body {
-        width: 210mm;
-        min-height: 297mm;
-        background: white !important;
-      }
-      #result-print-area {
-        position: static !important;
-        transform: none !important;
-      }
-      .print-result-fixed {
-        display: block !important;
-      }
-      .screen-result {
-        display: none !important;
-      }
+    .print-page:last-child {
+      page-break-after: auto !important;
+      break-after: auto !important;
     }
+    @page { size: A4 portrait; margin: 7mm; }
   </style>
 </head>
 <body>
@@ -2184,7 +2205,7 @@ export default function ResultScreen({
       setTimeout(function () {
         window.focus();
         window.print();
-      }, 350);
+      }, 700);
     };
   <\/script>
 </body>
