@@ -759,6 +759,7 @@ export default function AdminDashboardPage() {
   const [editMemo, setEditMemo] = useState("");
   const [editConsulted, setEditConsulted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
   const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "1234";
@@ -944,6 +945,45 @@ export default function AdminDashboardPage() {
     setPassword("");
     setPasswordError("");
     sessionStorage.removeItem("admin-unlocked");
+  };
+
+  const handleGenerateAiComment = async () => {
+    if (!selectedRow) return;
+    if (aiGenerating) return;
+
+    try {
+      setAiGenerating(true);
+      setSaveMessage("AI 상담 코멘트를 생성하는 중입니다...");
+
+      const payload = getPayloadFromRow(selectedRow);
+
+      const res = await fetch("/api/ai-comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          payload,
+          memo: editMemo,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data?.ok) {
+        throw new Error(data?.error || "AI 상담 코멘트 생성에 실패했어요.");
+      }
+
+      setEditMemo(String(data.comment || ""));
+      setSaveMessage("AI 상담 코멘트가 생성되었습니다. 확인 후 저장해 주세요.");
+    } catch (err) {
+      console.error(err);
+      setSaveMessage(
+        err instanceof Error ? err.message : "AI 상담 코멘트 생성에 실패했어요."
+      );
+    } finally {
+      setAiGenerating(false);
+    }
   };
 
   const handleSave = async () => {
@@ -1223,7 +1263,7 @@ export default function AdminDashboardPage() {
               </div>
             </aside>
 
-<section className="min-w-0">
+<section className="min-w-0 space-y-5">
   {selectedRow?.result_payload ? (
     (() => {
       const SITE_URL =
@@ -1231,16 +1271,106 @@ export default function AdminDashboardPage() {
         "https://study-type-test-app-zbmw.vercel.app";
 
       return (
-        <ResultScreen
-          payload={
-            selectedRow.result_payload as React.ComponentProps<typeof ResultScreen>["payload"]
-          }
-          shareUrl={`${SITE_URL}/result/${selectedRow.id}`}
-          restartLabel="목록으로 돌아가기"
-          onRestart={() => {
-            window.location.reload();
-          }}
-        />
+        <>
+          <section className="rounded-[28px] border border-white/70 bg-white/95 p-5 shadow-sm">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.16em] text-indigo-500">
+                  AI Consultation Memo
+                </p>
+                <h2 className="mt-1 text-2xl font-black text-slate-900">
+                  AI 상담 코멘트 자동 생성
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  선택된 학생의 결과 유형, 점수, 주의 패턴을 바탕으로 상담 메모 초안을 만들어줘요.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleGenerateAiComment}
+                  disabled={aiGenerating}
+                  className={`rounded-2xl px-5 py-3 text-sm font-black text-white transition ${
+                    aiGenerating
+                      ? "cursor-not-allowed bg-slate-300"
+                      : "bg-indigo-600 hover:translate-y-[-1px] hover:bg-indigo-700"
+                  }`}
+                >
+                  {aiGenerating ? "생성 중..." : "🤖 AI 코멘트 생성"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={!isDirty || saving}
+                  className={`rounded-2xl px-5 py-3 text-sm font-black text-white transition ${
+                    !isDirty || saving
+                      ? "cursor-not-allowed bg-slate-300"
+                      : "bg-slate-900 hover:translate-y-[-1px]"
+                  }`}
+                >
+                  {saving ? "저장 중..." : "메모 저장"}
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_180px]">
+              <textarea
+                value={editMemo}
+                onChange={(e) => setEditMemo(e.target.value)}
+                placeholder="AI 상담 코멘트가 여기에 생성됩니다. 직접 수정한 뒤 메모 저장을 눌러주세요."
+                className="min-h-[180px] w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-800 outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
+              />
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-sm font-black text-slate-900">상담 상태</p>
+                <button
+                  type="button"
+                  onClick={() => setEditConsulted(!editConsulted)}
+                  className={`mt-3 w-full rounded-full px-4 py-2 text-sm font-bold transition ${
+                    editConsulted
+                      ? "bg-emerald-500 text-white"
+                      : "bg-slate-200 text-slate-700"
+                  }`}
+                >
+                  {editConsulted ? "상담 완료" : "상담 전"}
+                </button>
+
+                <p className="mt-4 text-xs leading-5 text-slate-500">
+                  AI 코멘트는 초안입니다. 실제 상담 상황에 맞게 꼭 확인하고 수정해 주세요.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-bold ${
+                  isDirty
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-emerald-100 text-emerald-700"
+                }`}
+              >
+                {isDirty ? "저장되지 않은 변경 있음" : "저장 완료 상태"}
+              </span>
+
+              {saveMessage ? (
+                <span className="text-sm font-medium text-slate-600">{saveMessage}</span>
+              ) : null}
+            </div>
+          </section>
+
+          <ResultScreen
+            payload={
+              selectedRow.result_payload as React.ComponentProps<typeof ResultScreen>["payload"]
+            }
+            shareUrl={`${SITE_URL}/result/${selectedRow.id}`}
+            restartLabel="목록으로 돌아가기"
+            onRestart={() => {
+              window.location.reload();
+            }}
+          />
+        </>
       );
     })()
   ) : selectedRow ? (
