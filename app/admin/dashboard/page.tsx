@@ -6,6 +6,10 @@ import ResultScreen from "@/components/shared-result-screen";
 
 const supabase = createBrowserSupabaseClient();
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://study-type-test-app-zbmw.vercel.app";
+
 type ResultPayload = {
   version?: number;
   submittedAt?: string;
@@ -1223,35 +1227,32 @@ export default function AdminDashboardPage() {
               </div>
             </aside>
 
-<section className="min-w-0">
-  {selectedRow?.result_payload ? (
-    (() => {
-      const SITE_URL =
-        process.env.NEXT_PUBLIC_SITE_URL ||
-        "https://study-type-test-app-zbmw.vercel.app";
+            <section className="min-w-0">
+              {selectedRow?.result_payload ? (
+                <ResultScreen
+                  payload={selectedRow.result_payload as any}
+                  shareUrl={`${SITE_URL}/result/${selectedRow.id}`}
+                  restartLabel="목록으로 돌아가기"
+                />
+              ) : selectedRow ? (
+                <div className="rounded-[24px] border border-rose-200 bg-rose-50 p-6 text-center">
+                  <div className="text-lg font-black text-rose-700">
+                    저장된 결과 데이터가 없습니다.
+                  </div>
 
-      return (
-        <ResultScreen
-          payload={
-            selectedRow.result_payload as React.ComponentProps<typeof ResultScreen>["payload"]
-          }
-          shareUrl={`${SITE_URL}/result/${selectedRow.id}`} // 🔥 추가
-          restartLabel="목록으로 돌아가기"
-        />
-      );
-    })()
-  ) : selectedRow ? (
-    <div className="rounded-[24px] border border-rose-200 bg-rose-50 p-6 text-center">
-      <div className="text-lg font-black text-rose-700">
-        저장된 결과 데이터가 없습니다.
+                  <button
+                    type="button"
+                    onClick={() => window.location.reload()}
+                    className="mt-4 rounded-[16px] bg-slate-900 px-5 py-3 text-sm font-black text-white"
+                  >
+                    목록으로 돌아가기
+                  </button>
+                </div>
+              ) : null}
+            </section>
+          </section>
+        )}
       </div>
-
-      <button
-        onClick={() => window.location.reload()}
-        className="mt-4 rounded-[16px] bg-slate-900 px-5 py-3 text-sm font-black text-white"
-      >
-        목록으로 돌아가기
-      </button>
-    </div>
-  ) : null}
-</section>
+    </main>
+  );
+}
