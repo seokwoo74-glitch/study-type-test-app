@@ -1233,6 +1233,9 @@ export default function AdminDashboardPage() {
                   payload={selectedRow.result_payload as any}
                   shareUrl={`${SITE_URL}/result/${selectedRow.id}`}
                   restartLabel="목록으로 돌아가기"
+                  onRestart={() => {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                 />
               ) : selectedRow ? (
                 <div className="rounded-[24px] border border-rose-200 bg-rose-50 p-6 text-center">
