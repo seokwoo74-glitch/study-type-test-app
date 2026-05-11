@@ -1,9 +1,8 @@
 "use client";
 
-import ResultScreen from "@/components/shared-result-screen";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
-type Step = "landing" | "form" | "test" | "loading" | "result";
+type Step = "landing" | "form" | "test" | "loading" | "submitted";
 type TestType = "elementary" | "high";
 
 type StudentInfo = {
@@ -1510,13 +1509,74 @@ function LoadingScreen() {
   );
 }
 
+
+function SubmittedScreen({ onRestart }: { onRestart: () => void }) {
+  return (
+    <div className="mx-auto flex min-h-screen max-w-3xl items-center justify-center px-4 py-10">
+      <section className="w-full overflow-hidden rounded-[36px] border border-white/70 bg-white shadow-[0_24px_90px_rgba(15,23,42,0.12)]">
+        <div className="bg-[linear-gradient(135deg,#facc15_0%,#fde68a_45%,#ffffff_100%)] px-7 py-8 text-center">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[28px] bg-white text-4xl shadow-xl">
+            ✅
+          </div>
+
+          <p className="mt-6 text-sm font-black uppercase tracking-[0.18em] text-slate-700">
+            제출 완료
+          </p>
+
+          <h1 className="mt-3 text-3xl font-black leading-tight text-slate-950 sm:text-4xl">
+            검사가 정상적으로 제출되었습니다
+          </h1>
+
+          <p className="mx-auto mt-4 max-w-xl text-base font-medium leading-7 text-slate-700">
+            결과 분석 자료는 담당자가 관리자 페이지에서 확인한 뒤 안내드립니다.
+            상담 결과는 학원 또는 담당 선생님을 통해 전달될 예정입니다.
+          </p>
+        </div>
+
+        <div className="space-y-4 px-7 py-6">
+          <div className="rounded-[24px] border border-yellow-200 bg-yellow-50 px-5 py-4">
+            <p className="text-sm font-black text-slate-900">
+              안내사항
+            </p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              검사 결과는 바로 화면에 공개되지 않으며, 관리자 확인 후 상담용 리포트로 정리됩니다.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-center">
+              <div className="text-2xl">📩</div>
+              <p className="mt-2 text-xs font-bold text-slate-600">결과 저장</p>
+            </div>
+            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-center">
+              <div className="text-2xl">🧑‍🏫</div>
+              <p className="mt-2 text-xs font-bold text-slate-600">담당자 확인</p>
+            </div>
+            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-center">
+              <div className="text-2xl">📄</div>
+              <p className="mt-2 text-xs font-bold text-slate-600">상담 안내</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onRestart}
+            className="mt-2 w-full rounded-[22px] bg-slate-900 px-5 py-4 text-base font-black text-white shadow-lg transition hover:translate-y-[-1px]"
+          >
+            처음 화면으로 돌아가기
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export default function Page() {
   const [step, setStep] = useState<Step>("landing");
   const [testType, setTestType] = useState<TestType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [hasSavedResult, setHasSavedResult] = useState(false);
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
 
   const [student, setStudent] = useState<StudentInfo>({
     name: "",
@@ -1544,7 +1604,7 @@ export default function Page() {
   const report = RESULT_DB[resolved.key] || RESULT_DB.DEFAULT;
 
   useEffect(() => {
-    if (step !== "result" || hasSavedResult || !isComplete) return;
+    if (step !== "submitted" || hasSavedResult || !isComplete) return;
 
     let cancelled = false;
 
@@ -1595,14 +1655,8 @@ export default function Page() {
           throw new Error(json?.error || "결과 저장 실패");
         }
 
-        const savedId = json?.id || json?.row?.id;
-
         if (!cancelled) {
           setHasSavedResult(true);
-
-          if (savedId) {
-            setShareUrl(`${window.location.origin}/result/${savedId}`);
-          }
         }
       } catch (error) {
         console.error("결과 저장 실패:", error);
@@ -1648,7 +1702,6 @@ export default function Page() {
       setAnswers(Array(questions.length).fill(-1));
       setCurrentIndex(0);
       setHasSavedResult(false);
-      setShareUrl(null);
       setStep("form");
     });
   };
@@ -1669,7 +1722,7 @@ export default function Page() {
         setStep("loading");
 
         window.setTimeout(() => {
-          setStep("result");
+          setStep("submitted");
           setIsTransitioning(false);
         }, 1600);
 
@@ -1703,7 +1756,6 @@ export default function Page() {
     setAnswers(Array(QUESTIONS_ELEMENTARY.length).fill(-1));
     setCurrentIndex(0);
     setHasSavedResult(false);
-    setShareUrl(null);
     setStep("landing");
   };
 
@@ -1741,16 +1793,8 @@ export default function Page() {
 
         {step === "loading" && <LoadingScreen />}
 
-        {step === "result" && (
-          <ResultScreen
-            student={student}
-            scores={scores}
-            resolved={resolved}
-            report={report}
-            meta={CHARACTER_META[resolved.key]}
-            shareUrl={shareUrl ?? undefined}
-            onRestart={restart}
-          />
+        {step === "submitted" && (
+          <SubmittedScreen onRestart={restart} />
         )}
       </div>
     </Shell>
