@@ -790,6 +790,7 @@ export default function AdminDashboardPage() {
   const [saveMessage, setSaveMessage] = useState("");
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiMessage, setAiMessage] = useState("");
+  const [deletingId, setDeletingId] = useState<string | number | null>(null);
 
   const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "1234";
 
@@ -1093,6 +1094,44 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleDeleteRow = async (row: Row) => {
+    const payload = getPayloadFromRow(row);
+    const name = payload.student.name || row.student_name || "이름 없음";
+
+    const ok = window.confirm(
+      `${name} 학생의 검사 결과를 삭제할까요?\n\n삭제하면 관리자 목록과 공유 결과 페이지에서 모두 사라집니다.`
+    );
+
+    if (!ok) return;
+
+    try {
+      setDeletingId(row.id);
+
+      const { error } = await supabase
+        .from("test_results")
+        .delete()
+        .eq("id", row.id);
+
+      if (error) {
+        throw error;
+      }
+
+      setRows((prev) => prev.filter((item) => String(item.id) !== String(row.id)));
+
+      if (String(selectedId) === String(row.id)) {
+        const nextRow = rows.find((item) => String(item.id) !== String(row.id));
+        setSelectedId(nextRow?.id ?? null);
+      }
+
+      setSaveMessage("삭제되었습니다.");
+    } catch (err) {
+      console.error(err);
+      alert("삭제에 실패했어요. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   if (!unlocked) {
     return (
       <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.12),transparent_36%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)] px-4 py-10">
@@ -1324,54 +1363,84 @@ export default function AdminDashboardPage() {
                   const active = String(selectedRow?.id) === String(row.id);
 
                   return (
-                    <button
+                    <div
                       key={String(row.id)}
-                      type="button"
-                      onClick={() => setSelectedId(row.id)}
                       className={`w-full rounded-[22px] border px-4 py-4 text-left transition ${
                         active
                           ? "border-indigo-400 bg-indigo-50 shadow-sm"
                           : "border-slate-200 bg-white hover:bg-slate-50"
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-base font-black text-slate-900">
-                              {payload.student.name || "이름 없음"}
+                      <button
+                        type="button"
+                        onClick={() => setSelectedId(row.id)}
+                        className="w-full text-left"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="text-base font-black text-slate-900">
+                                {payload.student.name || "이름 없음"}
+                              </p>
+                              <TestTypeBadge testType={payload.meta.testType} />
+                            </div>
+
+                            <p className="mt-1 text-sm font-medium text-slate-500">
+                              {payload.student.school || "-"} / {payload.student.grade || "-"}
                             </p>
-                            <TestTypeBadge testType={payload.meta.testType} />
                           </div>
 
-                          <p className="mt-1 text-sm font-medium text-slate-500">
-                            {payload.student.school || "-"} / {payload.student.grade || "-"}
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                              row.is_consulted
+                                ? "bg-emerald-100 text-emerald-700"
+                                : "bg-amber-100 text-amber-700"
+                            }`}
+                          >
+                            {row.is_consulted ? "상담 완료" : "상담 전"}
+                          </span>
+                        </div>
+
+                        <div className="mt-3">
+                          <p className="text-sm font-bold text-slate-800">
+                            {payload.result.title || "결과명 없음"}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {payload.result.fullCode || payload.result.code || "-"}
                           </p>
                         </div>
 
-                        <span
-                          className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
-                            row.is_consulted
-                              ? "bg-emerald-100 text-emerald-700"
-                              : "bg-amber-100 text-amber-700"
+                        <div className="mt-3 text-xs text-slate-500">
+                          {formatDateTime(payload.submittedAt)}
+                        </div>
+                      </button>
+
+                      <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedId(row.id)}
+                          className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-black text-slate-700 transition hover:bg-slate-200"
+                        >
+                          상세 보기
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void handleDeleteRow(row);
+                          }}
+                          disabled={String(deletingId) === String(row.id)}
+                          className={`rounded-full px-3 py-1.5 text-xs font-black transition ${
+                            String(deletingId) === String(row.id)
+                              ? "cursor-not-allowed bg-rose-100 text-rose-300"
+                              : "bg-rose-50 text-rose-600 hover:bg-rose-100"
                           }`}
                         >
-                          {row.is_consulted ? "상담 완료" : "상담 전"}
-                        </span>
+                          {String(deletingId) === String(row.id) ? "삭제 중..." : "삭제"}
+                        </button>
                       </div>
-
-                      <div className="mt-3">
-                        <p className="text-sm font-bold text-slate-800">
-                          {payload.result.title || "결과명 없음"}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {payload.result.fullCode || payload.result.code || "-"}
-                        </p>
-                      </div>
-
-                      <div className="mt-3 text-xs text-slate-500">
-                        {formatDateTime(payload.submittedAt)}
-                      </div>
-                    </button>
+                    </div>
                   );
                 })}
               </div>
