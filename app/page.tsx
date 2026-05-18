@@ -1511,60 +1511,122 @@ function LoadingScreen() {
 
 
 function SubmittedScreen({ onRestart }: { onRestart: () => void }) {
+  const kakaoUrl = "https://open.kakao.com/o/sTiswtvi";
+  const instagramUrl =
+    "https://www.instagram.com/2mc_edu?igsh=MWhqaXczMWd0c3BxdA%3D%3D&utm_source=qr";
+  const email = "2mcedu@naver.com";
+
   return (
     <div className="mx-auto flex min-h-screen max-w-3xl items-center justify-center px-4 py-10">
-      <section className="w-full overflow-hidden rounded-[36px] border border-white/70 bg-white shadow-[0_24px_90px_rgba(15,23,42,0.12)]">
-        <div className="bg-[linear-gradient(135deg,#facc15_0%,#fde68a_45%,#ffffff_100%)] px-7 py-8 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[28px] bg-white text-4xl shadow-xl">
+      <section className="relative w-full overflow-hidden rounded-[38px] border border-white/70 bg-white shadow-[0_28px_100px_rgba(15,23,42,0.14)]">
+        <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-yellow-200/60 blur-2xl" />
+        <div className="absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-blue-200/50 blur-2xl" />
+
+        <div className="relative bg-[linear-gradient(135deg,#fff7cc_0%,#ffffff_48%,#eff6ff_100%)] px-7 py-10 text-center sm:px-10">
+          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[32px] bg-white text-5xl shadow-[0_18px_50px_rgba(250,204,21,0.35)]">
             ✅
           </div>
 
-          <p className="mt-6 text-sm font-black uppercase tracking-[0.18em] text-slate-700">
-            제출 완료
+          <p className="mt-7 text-sm font-black uppercase tracking-[0.2em] text-yellow-600">
+            Submission Complete
           </p>
 
           <h1 className="mt-3 text-3xl font-black leading-tight text-slate-950 sm:text-4xl">
-            검사가 정상적으로 제출되었습니다
+            분석이 정상적으로 완료되었습니다
           </h1>
 
-          <p className="mx-auto mt-4 max-w-xl text-base font-medium leading-7 text-slate-700">
-            결과 분석 자료는 담당자가 관리자 페이지에서 확인한 뒤 안내드립니다.
-            상담 결과는 학원 또는 담당 선생님을 통해 전달될 예정입니다.
+          <p className="mx-auto mt-5 max-w-xl text-base font-semibold leading-8 text-slate-700">
+            학생의 검사 결과가 안전하게 저장되었으며,
+            <br className="hidden sm:block" />
+            담당 연구원이 결과를 검토 중입니다.
           </p>
         </div>
 
-        <div className="space-y-4 px-7 py-6">
-          <div className="rounded-[24px] border border-yellow-200 bg-yellow-50 px-5 py-4">
-            <p className="text-sm font-black text-slate-900">
-              안내사항
-            </p>
+        <div className="relative space-y-5 px-7 py-7 sm:px-10">
+          <div className="rounded-[28px] border border-slate-200 bg-slate-50/80 px-5 py-5">
+            <p className="text-sm font-black text-slate-900">문의 및 상담 안내</p>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              검사 결과는 바로 화면에 공개되지 않으며, 관리자 확인 후 상담용 리포트로 정리됩니다.
+              결과 상담, 예약 문의, 검사 관련 안내는 아래 채널로 연락해 주세요.
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-center">
-              <div className="text-2xl">📩</div>
-              <p className="mt-2 text-xs font-bold text-slate-600">결과 저장</p>
-            </div>
-            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-center">
-              <div className="text-2xl">🧑‍🏫</div>
-              <p className="mt-2 text-xs font-bold text-slate-600">담당자 확인</p>
-            </div>
-            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-center">
-              <div className="text-2xl">📄</div>
-              <p className="mt-2 text-xs font-bold text-slate-600">상담 안내</p>
-            </div>
+          <div className="grid gap-3">
+            <a
+              href={kakaoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center justify-between rounded-[24px] bg-yellow-300 px-5 py-4 text-slate-950 shadow-[0_14px_36px_rgba(250,204,21,0.25)] transition hover:translate-y-[-2px]"
+            >
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 text-2xl">
+                  💬
+                </span>
+                <div className="text-left">
+                  <p className="text-base font-black">카카오톡 문의</p>
+                  <p className="mt-0.5 text-xs font-bold text-slate-700">
+                    오픈채팅으로 빠르게 상담 문의하기
+                  </p>
+                </div>
+              </div>
+              <span className="text-xl font-black transition group-hover:translate-x-1">
+                →
+              </span>
+            </a>
+
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center justify-between rounded-[24px] bg-[linear-gradient(135deg,#f43f5e_0%,#a855f7_48%,#2563eb_100%)] px-5 py-4 text-white shadow-[0_14px_36px_rgba(168,85,247,0.25)] transition hover:translate-y-[-2px]"
+            >
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 text-2xl">
+                  📸
+                </span>
+                <div className="text-left">
+                  <p className="text-base font-black">인스타그램</p>
+                  <p className="mt-0.5 text-xs font-bold text-white/85">
+                    2mc_edu 소식과 상담 콘텐츠 보기
+                  </p>
+                </div>
+              </div>
+              <span className="text-xl font-black transition group-hover:translate-x-1">
+                →
+              </span>
+            </a>
+
+            <a
+              href={`mailto:${email}`}
+              className="group flex items-center justify-between rounded-[24px] border border-slate-200 bg-white px-5 py-4 text-slate-900 shadow-sm transition hover:translate-y-[-2px] hover:shadow-md"
+            >
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-2xl">
+                  ✉️
+                </span>
+                <div className="text-left">
+                  <p className="text-base font-black">이메일 문의</p>
+                  <p className="mt-0.5 text-xs font-bold text-slate-500">
+                    {email}
+                  </p>
+                </div>
+              </div>
+              <span className="text-xl font-black transition group-hover:translate-x-1">
+                →
+              </span>
+            </a>
           </div>
 
           <button
             type="button"
             onClick={onRestart}
-            className="mt-2 w-full rounded-[22px] bg-slate-900 px-5 py-4 text-base font-black text-white shadow-lg transition hover:translate-y-[-1px]"
+            className="mt-2 w-full rounded-[24px] bg-slate-900 px-5 py-4 text-base font-black text-white shadow-lg transition hover:translate-y-[-1px]"
           >
             처음 화면으로 돌아가기
           </button>
+
+          <p className="text-center text-xs font-medium leading-5 text-slate-400">
+            강성재교육연구소 · Vision Scenario Planner
+          </p>
         </div>
       </section>
     </div>
