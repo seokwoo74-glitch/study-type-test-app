@@ -46,6 +46,8 @@ type ResultPayload = {
     track?: number;
     style?: number;
   };
+  answers?: number[];
+  questions?: string[];
   meta?: {
     testType?: "elementary" | "high" | null;
     totalAnswered?: number;
@@ -122,6 +124,8 @@ type NormalizedPayload = {
     track: number;
     style: number;
   };
+  answers: number[];
+  questions: string[];
   meta: {
     testType: "elementary" | "high" | null;
     totalAnswered: number;
@@ -472,6 +476,12 @@ function getPayloadFromRow(row: Row): NormalizedPayload {
     },
     scores: { E, P, R, C, M, O, S, F },
     diffs: { social, judgment, track, style },
+    answers: Array.isArray(payload.answers)
+      ? payload.answers.map((answer) => toNumber(answer))
+      : [],
+    questions: Array.isArray(payload.questions)
+      ? payload.questions.map((question) => String(question ?? ""))
+      : [],
     meta: {
       testType: payload.meta?.testType === "high" ? "high" : "elementary",
       totalAnswered: toNumber(payload.meta?.totalAnswered ?? 0),
@@ -768,6 +778,109 @@ function AdminResultPreview({
         </div>
       </section>
     </div>
+  );
+}
+
+
+function AnswerTable({ payload }: { payload: NormalizedPayload }) {
+  const answers = payload.answers || [];
+  const questions = payload.questions || [];
+  const yesCount = answers.filter((answer) => answer === 1).length;
+  const noCount = answers.filter((answer) => answer === 0).length;
+  const unansweredCount = answers.filter((answer) => answer !== 0 && answer !== 1).length;
+
+  if (!questions.length || !answers.length) {
+    return (
+      <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-semibold text-slate-500">검사 응답 상세</p>
+          <h3 className="text-2xl font-black text-slate-900">응답 기록이 없습니다</h3>
+          <p className="text-sm leading-6 text-slate-500">
+            이 기능 적용 이전에 저장된 결과는 문항별 체크 기록이 없을 수 있어요.
+            새로 검사한 결과부터 표로 확인됩니다.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-indigo-600">검사 응답 상세</p>
+          <h3 className="mt-1 text-2xl font-black text-slate-900">
+            체크 항목 표
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-slate-500">
+            검사자가 각 문항에서 선택한 답변을 번호별로 확인할 수 있어요.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="rounded-2xl bg-emerald-50 px-4 py-3">
+            <p className="text-xs font-bold text-emerald-600">그렇다</p>
+            <p className="mt-1 text-xl font-black text-emerald-700">{yesCount}</p>
+          </div>
+          <div className="rounded-2xl bg-slate-100 px-4 py-3">
+            <p className="text-xs font-bold text-slate-500">아니다</p>
+            <p className="mt-1 text-xl font-black text-slate-700">{noCount}</p>
+          </div>
+          <div className="rounded-2xl bg-amber-50 px-4 py-3">
+            <p className="text-xs font-bold text-amber-600">미응답</p>
+            <p className="mt-1 text-xl font-black text-amber-700">{unansweredCount}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 max-h-[520px] overflow-auto rounded-[22px] border border-slate-200">
+        <table className="w-full min-w-[760px] border-collapse text-left">
+          <thead className="sticky top-0 z-10 bg-slate-900 text-white">
+            <tr>
+              <th className="w-[72px] px-4 py-3 text-xs font-black">번호</th>
+              <th className="px-4 py-3 text-xs font-black">문항</th>
+              <th className="w-[140px] px-4 py-3 text-center text-xs font-black">
+                응답
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {questions.map((question, index) => {
+              const answer = answers[index];
+              const isYes = answer === 1;
+              const isNo = answer === 0;
+
+              return (
+                <tr
+                  key={`${index}-${question}`}
+                  className="border-t border-slate-100 odd:bg-white even:bg-slate-50/70"
+                >
+                  <td className="px-4 py-3 text-sm font-black text-slate-500">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 py-3 text-sm leading-6 text-slate-800">
+                    {question || "-"}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <span
+                      className={`inline-flex min-w-[86px] justify-center rounded-full px-3 py-1.5 text-xs font-black ${
+                        isYes
+                          ? "bg-emerald-100 text-emerald-700"
+                          : isNo
+                          ? "bg-slate-200 text-slate-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {isYes ? "✅ 그렇다" : isNo ? "❌ 아니다" : "미응답"}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 
@@ -1465,6 +1578,8 @@ export default function AdminDashboardPage() {
               window.location.reload();
             }}
           />
+
+          <AnswerTable payload={getPayloadFromRow(selectedRow)} />
 
           <section className="rounded-[28px] border border-indigo-100 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">

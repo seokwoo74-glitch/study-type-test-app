@@ -78,6 +78,8 @@ type ResultPayload = {
     track: number;
     style: number;
   };
+  answers: number[];
+  questions: string[];
   meta: {
     testType: TestType | null;
     totalAnswered: number;
@@ -90,6 +92,8 @@ function buildResultPayload(params: {
   resolved: ResolvedResult;
   report: Report;
   scores: Record<string, number>;
+  answers: number[];
+  questions: string[];
   testType: TestType | null;
   totalAnswered: number;
   totalQuestions: number;
@@ -99,6 +103,8 @@ function buildResultPayload(params: {
     resolved,
     report,
     scores,
+    answers,
+    questions,
     testType,
     totalAnswered,
     totalQuestions,
@@ -149,6 +155,8 @@ function buildResultPayload(params: {
       track,
       style,
     },
+    answers: answers.map((answer) => Number(answer)),
+    questions: questions.map((question) => String(question)),
     meta: {
       testType,
       totalAnswered,
@@ -1677,6 +1685,8 @@ export default function Page() {
           resolved,
           report,
           scores,
+          answers,
+          questions: activeQuestions,
           testType,
           totalAnswered: answeredCount,
           totalQuestions: activeQuestions.length,
