@@ -1546,7 +1546,7 @@ function SubmittedScreen({ onRestart }: { onRestart: () => void }) {
           <p className="mx-auto mt-5 max-w-xl text-base font-semibold leading-8 text-slate-700">
             학생의 검사 결과가 안전하게 저장되었으며,
             <br className="hidden sm:block" />
-            담당 연구원이 결과를 검토 중입니다.
+            문의전화는 010-2130-3797 입니다.
           </p>
         </div>
 
